@@ -1,0 +1,29 @@
+TODO
+
+ADD USER FIELD TO DATABASE !!
+
+--SERVER--
+
+Write daos
+Make sure db connects to Spring app
+
+write controllers
+
+--CLIENT--
+
+hook up restful APIs
+
+design main page
+design recipe browser
+design log browser
+
+design search functionality
+
+
+--SECURITY--
+learn how to implement jwt to make secure logins
+
+--FUNCTIONALITY--
+implement server and DB on my NAS
+host webpage on my nas
+explore VPN connectivity
