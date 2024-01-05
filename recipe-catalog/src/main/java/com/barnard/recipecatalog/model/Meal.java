@@ -7,6 +7,7 @@ public class Meal {
     private int mealId;
     private int recipeId;
     private String mealName;
+    private String mealComment;
     private LocalDate date;
     private int cookTime;
     private String notes;
