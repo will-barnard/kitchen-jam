@@ -7,7 +7,9 @@ add methods to dao interfaces
 
 --SERVER--
 
+getters and setters in model
 Write daos
+test daos with postgres
 Make sure db connects to Spring app
 
 write controllers
