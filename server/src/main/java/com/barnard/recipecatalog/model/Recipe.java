@@ -3,6 +3,7 @@ package com.barnard.recipecatalog.model;
 public class Recipe {
 
     private int recipeId;
+    private int userId;
     private String recipeName;
     private int avgCookTime;
     private String description;
@@ -14,6 +15,14 @@ public class Recipe {
 
     public void setRecipeId(int recipeId) {
         this.recipeId = recipeId;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public String getRecipeName() {

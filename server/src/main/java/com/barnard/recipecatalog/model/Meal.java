@@ -5,6 +5,7 @@ import java.time.LocalDate;
 public class Meal {
 
     private int mealId;
+    private int userId;
     private int recipeId;
     private String mealName;
     private String mealComment;
@@ -21,6 +22,14 @@ public class Meal {
 
     public void setMealId(int mealId) {
         this.mealId = mealId;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public int getRecipeId() {
