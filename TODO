@@ -3,6 +3,7 @@ TODO
 ADD USER FIELD TO DATABASE !!
 create tag model
 add methods to dao interfaces
+Check for null in date dao rows
 
 
 --SERVER--
