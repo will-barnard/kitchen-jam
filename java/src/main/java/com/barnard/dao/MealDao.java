@@ -8,12 +8,12 @@ import java.util.List;
 public interface MealDao {
 
     Meal getMeal(int mealId);
-    List<Meal> searchLikeMeals(String search);
+    List<Meal> searchLikeMeals(String search, int userId);
     List<Meal> getMealsByTag(int tagId);
     List<Meal> getMealsByUserId(int userId);
     List<Meal> getMealsByRecipeId(int recipeId);
     int createMeal(Meal meal);
     Meal updateMeal(Meal meal);
-    int deleteMealById(int mealId);
+    void deleteMealById(int mealId);
 
 }

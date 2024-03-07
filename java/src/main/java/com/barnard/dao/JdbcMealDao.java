@@ -1,7 +1,10 @@
 package com.barnard.dao;
 
+import com.barnard.exception.DaoException;
 import com.barnard.model.Meal;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 
@@ -36,18 +39,19 @@ public class JdbcMealDao implements MealDao {
     }
 
     @Override
-    public List<Meal> searchLikeMeals(String search) {
+    public List<Meal> searchLikeMeals(String search, int userId) {
 
         List<Meal> meals = new ArrayList<Meal>();
         search = "%" + search + "%";
 
         String sql = "SELECT * " +
                 "from meal " +
-                "where meal_name LIKE ?;";
+                "where meal_name LIKE ? " +
+                "AND user_id = ?;";
 
         try {
 
-            SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, search);
+            SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, search, userId);
             while (rowSet.next()) {
                 meals.add(mapRowToMeal(rowSet));
             }
@@ -186,8 +190,24 @@ public class JdbcMealDao implements MealDao {
     }
 
     @Override
-    public int deleteMealById(int mealId) {
-        return 0;
+    public void deleteMealById(int mealId) {
+
+        String sql = "DELETE FROM meal " +
+                "WHERE meal_id = ?;";
+
+        try {
+
+            int rowsAffected = jdbcTemplate.update(sql, mealId);
+            if (rowsAffected != 1) {
+                throw new DaoException();
+            }
+
+        } catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Unable to connect to server or database", e);
+        } catch (DataIntegrityViolationException e) {
+            throw new DaoException("Data integrity violation", e);
+        }
+
     }
 
     private Meal mapRowToMeal(SqlRowSet rs) {

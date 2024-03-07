@@ -6,10 +6,9 @@ audit the mealDao
 
 --SERVER--
 
-getters and setters in model
+add "public" field to database
 Write daos
-test daos with postgres
-Make sure db connects to Spring app
+write dao tests
 
 write controllers
 
