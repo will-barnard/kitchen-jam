@@ -1,10 +1,8 @@
 TODO
 
-ADD USER FIELD TO DATABASE !!
-create tag model
-add methods to dao interfaces
+write create database shell scripts
 Check for null in date dao rows
-
+audit the mealDao
 
 --SERVER--
 
@@ -25,9 +23,6 @@ design log browser
 
 design search functionality
 
-
---SECURITY--
-learn how to implement jwt to make secure logins
 
 --FUNCTIONALITY--
 implement server and DB on my NAS

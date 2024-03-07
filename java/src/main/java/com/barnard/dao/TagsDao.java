@@ -3,11 +3,14 @@ package com.barnard.dao;
 
 import com.barnard.model.Tag;
 
+import java.util.List;
+
 public interface TagsDao {
 
     Tag getTag(int tagId);
+    List<Tag> getTagsByMealId(int mealId);
     Tag createTag(Tag tag);
     Tag updateTag(Tag tag);
-    int deleteTag(int tagId);
+    void deleteTag(int tagId);
 
 }
