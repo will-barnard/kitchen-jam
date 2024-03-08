@@ -3,6 +3,7 @@ package com.barnard.dao;
 
 import com.barnard.exception.DaoException;
 import com.barnard.model.Category;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -10,6 +11,7 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 
 public class JdbcCategoryDao implements CategoryDao{
 
+    @Autowired
     private JdbcTemplate jdbcTemplate;
 
     @Override
