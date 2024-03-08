@@ -20,7 +20,8 @@ CREATE TABLE recipe (
 	recipe_name varchar(50) not null,
 	avg_cook_time int,
 	description varchar(200),
-	image_id int REFERENCES image(image_id)
+	image_id int REFERENCES image(image_id),
+	is_public boolean
 );
 
 CREATE TABLE meal (
@@ -34,7 +35,8 @@ CREATE TABLE meal (
 	notes varchar(200),
 	ingredients varchar(200),
 	rating int check(rating <= 10 and rating > 0),
-	image_id int REFERENCES image(image_id)
+	image_id int REFERENCES image(image_id),
+	is_public boolean
 );
 
 CREATE TABLE category (
