@@ -104,18 +104,60 @@ public class JdbcTagsDao implements TagsDao{
     }
 
     @Override
+    public void addTagToMeal(int tagId, int mealId) {
+
+        String sql = "INSERT INTO tags_meal (tag_id, meal_id) " +
+                "VALUES (?, ?);";
+
+        try {
+            int rowsAffected = jdbcTemplate.update(sql, tagId, mealId);
+            if (rowsAffected != 1) {
+                throw new DaoException();
+            }
+        } catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Unable to connect to server or database", e);
+        } catch (DataIntegrityViolationException e) {
+            throw new DaoException("Data integrity violation", e);
+        }
+    }
+
+    @Override
+    public void removeTagFromMeal(int tagId, int mealId) {
+
+        String sql = "DELETE FROM tags_meal " +
+                "WHERE tag_id = ? " +
+                "AND meal_id = ?;";
+
+        try {
+            int rowsAffected = jdbcTemplate.update(sql, tagId, mealId);
+            if (rowsAffected != 1) {
+                throw new DaoException();
+            }
+        } catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Unable to connect to server or database", e);
+        } catch (DataIntegrityViolationException e) {
+            throw new DaoException("Data integrity violation", e);
+        }
+    }
+
+    @Override
     public void deleteTag(int tagId) {
 
-        String sql = "DELETE FROM tags " +
+        String sql = "DELETE FROM tags_meal " +
+                "WHERE tag_id = ?";
+
+        String sql2 = "DELETE FROM tags " +
                 "WHERE tag_id = ?;";
 
         try {
-
             int rowsAffected = jdbcTemplate.update(sql, tagId);
             if (rowsAffected != 1) {
                 throw new DaoException();
             }
-
+            rowsAffected = jdbcTemplate.update(sql2, tagId);
+            if (rowsAffected != 1) {
+                throw new DaoException();
+            }
         } catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database", e);
         } catch (DataIntegrityViolationException e) {

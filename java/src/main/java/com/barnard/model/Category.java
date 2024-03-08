@@ -3,7 +3,7 @@ package com.barnard.model;
 public class Category {
 
     private int categoryId;
-    private int categoryName;
+    private String categoryName;
 
     public int getCategoryId() {
         return categoryId;
@@ -13,11 +13,11 @@ public class Category {
         this.categoryId = categoryId;
     }
 
-    public int getCategoryName() {
+    public String getCategoryName() {
         return categoryName;
     }
 
-    public void setCategoryName(int categoryName) {
+    public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
     }
 }
