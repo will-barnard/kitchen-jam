@@ -12,7 +12,7 @@ public interface MealDao {
     List<Meal> getMealsByTag(int tagId);
     List<Meal> getMealsByUserId(int userId);
     List<Meal> getMealsByRecipeId(int recipeId);
-    int createMeal(Meal meal);
+    Meal createMeal(Meal meal);
     Meal updateMeal(Meal meal);
     void deleteMealById(int mealId);
 

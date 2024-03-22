@@ -144,16 +144,13 @@ public class JdbcRecipeDao implements RecipeDao {
     public Recipe createRecipe(Recipe recipe) {
 
         Recipe newRecipe = null;
-
         String sql = "INSERT INTO recipe (user_id, recipe_name, avg_cook_time, description, image_id) " +
                 "VALUES (?, ?, ?, ?, ?) " +
                 "RETURNING recipe_id;";
 
         try {
-
             int recipeId = jdbcTemplate.queryForObject(sql, int.class, recipe.getUserId(), recipe.getRecipeName(), recipe.getAvgCookTime(), recipe.getDescription(), recipe.getImage_id());
             newRecipe = getRecipe(recipeId);
-
         } catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database", e);
         } catch (DataIntegrityViolationException e) {
@@ -193,12 +190,18 @@ public class JdbcRecipeDao implements RecipeDao {
     @Override
     public void deleteRecipeById(int recipeId) {
 
-        String sql = "DELETE FROM recipe " +
+        String sql = "DELETE FROM recipe_category " +
+                "WHERE recipe_id = ?;";
+        String sql2 = "DELETE FROM recipe_image " +
+                "WHERE recipe_id = ?;";
+        String sql3 = "DELETE FROM recipe " +
                 "WHERE recipe_id = ?;";
 
         try {
 
-            int rowsAffected = jdbcTemplate.update(sql, recipeId);
+            jdbcTemplate.update(sql, recipeId);
+            jdbcTemplate.update(sql2, recipeId);
+            int rowsAffected = jdbcTemplate.update(sql3, recipeId);
             if (rowsAffected != 1) {
                 throw new DaoException();
             }

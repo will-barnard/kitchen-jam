@@ -2,30 +2,26 @@ BEGIN TRANSACTION;
 
 DROP TABLE IF EXISTS tags_meal, recipe_category, meal_image, recipe_image, users, tags, recipe, image, meal, category;
 
+CREATE SEQUENCE seq_user_id
+  INCREMENT BY 1
+  START WITH 1001
+  NO MAXVALUE;
+
 CREATE TABLE users (
-	user_id serial PRIMARY KEY,
+	user_id int NOT NULL DEFAULT nextval('seq_user_id'),
 	username varchar(50) NOT NULL,
 	password_hash varchar(200) NOT NULL,
+	CONSTRAINT PK_users PRIMARY KEY (user_id),
 	CONSTRAINT UQ_username UNIQUE (username)
 );
 
-CREATE TABLE image (
-	image_id serial PRIMARY KEY,
-	image_path varchar(200)
-);
-
-CREATE TABLE recipe (
-	recipe_id serial primary key,
-	user_id int REFERENCES users(user_id),
-	recipe_name varchar(50) not null,
-	avg_cook_time int,
-	description varchar(200),
-	image_id int REFERENCES image(image_id),
-	is_public boolean
-);
+CREATE SEQUENCE seq_meal_id
+  INCREMENT BY 1
+  START WITH 1001
+  NO MAXVALUE;
 
 CREATE TABLE meal (
-	meal_id serial PRIMARY KEY,
+	meal_id int NOT NULL DEFAULT nextval('seq_meal_id'),
 	user_id int REFERENCES users(user_id),
 	recipe_id int REFERENCES recipe(recipe_id),
 	meal_name varchar(50),
@@ -36,7 +32,24 @@ CREATE TABLE meal (
 	ingredients varchar(200),
 	rating int check(rating <= 10 and rating > 0),
 	image_id int REFERENCES image(image_id),
-	is_public boolean
+	is_public boolean,
+	CONSTRAINT PK_meal PRIMARY KEY (meal_id)
+);
+
+CREATE SEQUENCE seq_recipe_id
+  INCREMENT BY 1
+  START WITH 1001
+  NO MAXVALUE;
+
+CREATE TABLE recipe (
+	recipe_id int NOT NULL DEFAULT nextval('seq_recipe_id'),
+	user_id int REFERENCES users(user_id),
+	recipe_name varchar(50) not null,
+	avg_cook_time int,
+	description varchar(200),
+	image_id int REFERENCES image(image_id),
+	is_public boolean,
+	CONSTRAINT PK_recipe PRIMARY KEY (recipe_id)
 );
 
 CREATE TABLE category (
@@ -47,6 +60,11 @@ CREATE TABLE category (
 CREATE TABLE tags (
 	tag_id serial PRIMARY KEY,
 	tag_name varchar(50) not null
+);
+
+CREATE TABLE image (
+	image_id serial PRIMARY KEY,
+	image_path varchar(200)
 );
 
 CREATE TABLE recipe_category (
