@@ -9,7 +9,7 @@ public interface MealDao {
 
     Meal getMeal(int mealId);
     List<Meal> searchLikeMeals(String search, int userId);
-    List<Meal> getMealsByTag(int tagId);
+    List<Meal> getMealsByTagAndUser(int tagId, int userId);
     List<Meal> getMealsByUserId(int userId);
     List<Meal> getMealsByRecipeId(int recipeId);
     Meal createMeal(Meal meal);

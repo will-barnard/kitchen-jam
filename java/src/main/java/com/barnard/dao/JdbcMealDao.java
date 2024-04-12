@@ -65,17 +65,18 @@ public class JdbcMealDao implements MealDao {
     }
 
     @Override
-    public List<Meal> getMealsByTag(int tagId) {
+    public List<Meal> getMealsByTagAndUser(int tagId, int userId) {
 
         List<Meal> meals = new ArrayList<Meal>();
         String sql = "SELECT * " +
                 "from meal " +
                 "join tags_meal on meal.meal_id = tags_meal.meal_id " +
                 "join tags on tags_meal.tag_id = tags.tag_id " +
-                "where tags.tag_id = ?;";
+                "where tags.tag_id = ? " +
+                "AND meal.user_id = ?;";
 
         try {
-            SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, tagId);
+            SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, tagId, userId);
             while (rowSet.next()) {
                 meals.add(mapRowToMeal(rowSet));
             }
