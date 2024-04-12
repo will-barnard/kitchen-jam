@@ -22,6 +22,8 @@ import java.util.List;
 @RequestMapping(path = "/meal")
 public class MealController {
 
+    // todo add authentication and security
+
     @Autowired
     private MealDao mealDao;
     @Autowired
@@ -38,7 +40,7 @@ public class MealController {
     }
 
     @GetMapping(path = "/search")
-    public List<Meal> searchLikeMeals(@RequestBody String search, Principal principal) {
+    public List<Meal> searchMeals(@RequestBody String search, Principal principal) {
         int userId = userDao.getUserByUsername(principal.getName()).getId();
         List<Meal> meals = null;
         try {

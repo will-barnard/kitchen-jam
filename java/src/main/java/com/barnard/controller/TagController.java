@@ -19,6 +19,8 @@ import java.util.List;
 @RequestMapping(path = "/tag")
 public class TagController {
 
+    // todo add authentication and security
+
     @Autowired
     private MealDao mealDao;
     @Autowired
