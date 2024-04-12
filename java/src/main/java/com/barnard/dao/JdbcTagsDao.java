@@ -66,8 +66,10 @@ public class JdbcTagsDao implements TagsDao{
     }
 
     @Override
-    public Tag createTag(Tag tag) {
+    public Tag createTag(String name) {
 
+        Tag tag = new Tag();
+        tag.setTagName(name);
         String sql = "INSERT INTO tags (tag_name) " +
                 "VALUES (?) " +
                 "RETURNING tag_id;";
@@ -108,8 +110,9 @@ public class JdbcTagsDao implements TagsDao{
     }
 
     @Override
-    public void addTagToMeal(int tagId, int mealId) {
+    public List<Tag> addTagToMeal(int tagId, int mealId) {
 
+        List<Tag> tags = new ArrayList<>();
         String sql = "INSERT INTO tags_meal (tag_id, meal_id) " +
                 "VALUES (?, ?);";
 
@@ -118,16 +121,19 @@ public class JdbcTagsDao implements TagsDao{
             if (rowsAffected != 1) {
                 throw new DaoException();
             }
+            tags = getTagsByMealId(mealId);
         } catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database", e);
         } catch (DataIntegrityViolationException e) {
             throw new DaoException("Data integrity violation", e);
         }
+        return tags;
     }
 
     @Override
-    public void removeTagFromMeal(int tagId, int mealId) {
+    public List<Tag> deleteTagFromMeal(int tagId, int mealId) {
 
+        List<Tag> tags = new ArrayList<>();
         String sql = "DELETE FROM tags_meal " +
                 "WHERE tag_id = ? " +
                 "AND meal_id = ?;";
@@ -137,11 +143,13 @@ public class JdbcTagsDao implements TagsDao{
             if (rowsAffected != 1) {
                 throw new DaoException();
             }
+            tags = getTagsByMealId(mealId);
         } catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database", e);
         } catch (DataIntegrityViolationException e) {
             throw new DaoException("Data integrity violation", e);
         }
+        return tags;
     }
 
     @Override
