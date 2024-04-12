@@ -9,6 +9,9 @@ import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class JdbcCategoryDao implements CategoryDao{
 
     @Autowired
@@ -34,6 +37,30 @@ public class JdbcCategoryDao implements CategoryDao{
         }
 
         return category;
+    }
+
+    @Override
+    public List<Category> getCategoriesByUser(int userId) {
+
+        List<Category> categories = new ArrayList<>();
+        String sql = "SELECT * " +
+                "FROM category " +
+                "JOIN recipe_category ON category.category_id = recipe_category.category_id " +
+                "JOIN recipe ON recipe_category.recipe_id = recipe.recipe_id " +
+                "JOIN users ON recipe.user_id = user.user_id " +
+                "WHERE user_id = ?;";
+
+        try {
+            SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, userId);
+            while(rowSet.next()) {
+                categories.add(mapRowToCategory(rowSet));
+            }
+        } catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Unable to connect to server or database", e);
+        } catch (DataIntegrityViolationException e) {
+            throw new DaoException("Data integrity violation", e);
+        }
+        return categories;
     }
 
     @Override
@@ -76,8 +103,9 @@ public class JdbcCategoryDao implements CategoryDao{
     }
 
     @Override
-    public void addCategoryToRecipe(int categoryId, int recipeId) {
+    public Category addCategoryToRecipe(int categoryId, int recipeId) {
 
+        Category category = null;
         String sql = "INSERT INTO recipe_category (category_id, recipe_id) " +
                 "VALUES (?, ?);";
 
@@ -86,15 +114,17 @@ public class JdbcCategoryDao implements CategoryDao{
             if (rowsAffected != 1) {
                 throw new DaoException();
             }
+            category = getCategoryById(categoryId);
         } catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database", e);
         } catch (DataIntegrityViolationException e) {
             throw new DaoException("Data integrity violation", e);
         }
+        return category;
     }
 
     @Override
-    public void removeCategoryFromRecipe(int categoryId, int recipeId) {
+    public void deleteCategoryFromRecipe(int categoryId, int recipeId) {
 
         String sql = "DELETE FROM recipe_category " +
                 "WHERE category_id = ? " +
