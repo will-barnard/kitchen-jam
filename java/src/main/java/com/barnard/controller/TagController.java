@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin
-@PreAuthorize("permitAll()")
+@PreAuthorize("isAuthenticated()")
 @RequestMapping(path = "/tag")
 public class TagController {
 
@@ -29,7 +29,7 @@ public class TagController {
     private UserDao userDao;
 
     @GetMapping(path = "/{tagId}")
-    public Tag getTag(@RequestParam int tagId) {
+    public Tag getTag(@PathVariable int tagId) {
         Tag tag = null;
         try {
             tag = tagsDao.getTag(tagId);
@@ -40,7 +40,7 @@ public class TagController {
     }
 
     @GetMapping(path = "/meal/{mealId}")
-    public List<Tag> getTagsByMealId(@RequestParam int mealId) {
+    public List<Tag> getTagsByMealId(@PathVariable int mealId) {
         List<Tag> tags = null;
         try {
             tags = tagsDao.getTagsByMealId(mealId);
@@ -50,7 +50,8 @@ public class TagController {
         return tags;
     }
 
-    @PostMapping
+    @PostMapping(path="")
+    @ResponseStatus(HttpStatus.CREATED)
     public Tag createTag(@RequestBody String name) {
         Tag tag = null;
         try {
@@ -61,7 +62,7 @@ public class TagController {
         return tag;
     }
 
-    @PutMapping
+    @PutMapping(path="")
     public Tag updateTag(@RequestBody Tag tag) {
         Tag newTag = null;
         try {
@@ -73,7 +74,7 @@ public class TagController {
     }
 
     @PostMapping(path = "/meal/{mealId}/{tagId}")
-    public List<Tag> addTagToMeal(@RequestParam int mealId, @RequestParam int tagId) {
+    public List<Tag> addTagToMeal(@PathVariable int mealId, @PathVariable int tagId) {
         List<Tag> tags = null;
         try {
             tags = tagsDao.addTagToMeal(tagId, mealId);
@@ -84,7 +85,7 @@ public class TagController {
     }
 
     @DeleteMapping(path = "/meal/{mealId}/{tagId}")
-    public List<Tag> deleteTagFromMeal(@RequestParam int mealId, @RequestParam int tagId) {
+    public List<Tag> deleteTagFromMeal(@PathVariable int mealId, @PathVariable int tagId) {
         List<Tag> tags = null;
         try {
             tags = tagsDao.deleteTagFromMeal(tagId, mealId);
@@ -96,7 +97,7 @@ public class TagController {
 
     @ResponseStatus(HttpStatus.ACCEPTED)
     @DeleteMapping(path = "/{tagId}")
-    public void deleteTag(@RequestParam int tagId) {
+    public void deleteTag(@PathVariable int tagId) {
         try {
             tagsDao.deleteTag(tagId);
         } catch(Exception e) {

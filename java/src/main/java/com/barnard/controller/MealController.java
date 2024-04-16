@@ -18,7 +18,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin
-@PreAuthorize("permitAll()")
+@PreAuthorize("isAuthenticated()")
 @RequestMapping(path = "/meal")
 public class MealController {
 
@@ -81,6 +81,7 @@ public class MealController {
     }
 
     @PostMapping(path = "/create")
+    @ResponseStatus(HttpStatus.CREATED)
     public Meal createMeal(@RequestBody Meal meal, Principal principal) {
         int userId = userDao.getUserByUsername(principal.getName()).getId();
         meal.setUserId(userId);

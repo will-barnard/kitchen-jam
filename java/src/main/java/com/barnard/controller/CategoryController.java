@@ -17,7 +17,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin
-@PreAuthorize("permitAll()")
+@PreAuthorize("isAuthenticated()")
 @RequestMapping(path = "/category")
 public class CategoryController {
 
@@ -33,7 +33,7 @@ public class CategoryController {
     private MealDao mealDao;
 
     @GetMapping(path = "/{categoryId")
-    public Category getCategory(@RequestParam int categoryId, Principal principal) {
+    public Category getCategory(@PathVariable int categoryId, Principal principal) {
         Category category = null;
         try {
             category = categoryDao.getCategoryById(categoryId);
@@ -55,7 +55,8 @@ public class CategoryController {
         return categories;
     }
 
-    @PostMapping
+    @PostMapping(path="")
+    @ResponseStatus(HttpStatus.CREATED)
     public Category createCategory(@RequestBody Category category) {
         Category newCategory = null;
         try {
@@ -66,7 +67,7 @@ public class CategoryController {
         return newCategory;
     }
 
-    @PutMapping
+    @PutMapping(path="")
     public Category updateCategory(@RequestBody Category category) {
         Category newCategory = null;
         try {
@@ -78,7 +79,7 @@ public class CategoryController {
     }
 
     @PostMapping(path = "/{recipeId}/{categoryId}")
-    public Category addCategoryToRecipe(@RequestParam int recipeId, @RequestParam int categoryId) {
+    public Category addCategoryToRecipe(@PathVariable int recipeId, @PathVariable int categoryId) {
         Category category = null;
         try {
             category = categoryDao.addCategoryToRecipe(categoryId, recipeId);
@@ -90,7 +91,7 @@ public class CategoryController {
 
     @ResponseStatus(HttpStatus.ACCEPTED)
     @DeleteMapping(path = "/{recipeId}/{categoryId}")
-    public void deleteCategoryFromRecipe(@RequestParam int recipeId, @RequestParam int categoryId) {
+    public void deleteCategoryFromRecipe(@PathVariable int recipeId, @PathVariable int categoryId) {
         try {
             categoryDao.deleteCategoryFromRecipe(categoryId, recipeId);
         } catch(Exception e) {
@@ -100,7 +101,7 @@ public class CategoryController {
 
     @ResponseStatus(HttpStatus.ACCEPTED)
     @DeleteMapping(path = "/{categoryId}")
-    public void deleteCategory(@RequestParam int categoryId) {
+    public void deleteCategory(@PathVariable int categoryId) {
         try {
             categoryDao.deleteCategory(categoryId);
         } catch(Exception e) {

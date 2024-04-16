@@ -15,7 +15,7 @@ import java.security.Principal;
 
 @RestController
 @CrossOrigin
-@PreAuthorize("permitAll()")
+@PreAuthorize("isAuthenticated()")
 @RequestMapping(path = "/recipe")
 public class RecipeController {
 
@@ -31,7 +31,7 @@ public class RecipeController {
     private ImageDao imageDao;
 
     @GetMapping(path = "/{recipeId}")
-    public Recipe getRecipe(@RequestParam int recipeId) {
+    public Recipe getRecipe(@PathVariable int recipeId) {
         Recipe recipe = null;
         try {
             recipe = recipeDao.getRecipe(recipeId);
@@ -66,7 +66,7 @@ public class RecipeController {
     }
 
     @GetMapping(path = "/category/{categoryId}")
-    public List<Recipe> getRecipesByCategory(@RequestParam int categoryId, Principal principal) {
+    public List<Recipe> getRecipesByCategory(@PathVariable int categoryId, Principal principal) {
         List<Recipe> recipes = null;
         int userId = userDao.getUserByUsername(principal.getName()).getId();
         try {
@@ -78,7 +78,7 @@ public class RecipeController {
     }
 
     @GetMapping(path = "/meal/{mealId}")
-    public Recipe getRecipeByMeal(@RequestParam int mealId, Principal principal) {
+    public Recipe getRecipeByMeal(@PathVariable int mealId, Principal principal) {
         Recipe recipe = null;
         int userId = userDao.getUserByUsername(principal.getName()).getId();
         try {
@@ -95,7 +95,8 @@ public class RecipeController {
         return recipe;
     }
 
-    @PostMapping
+    @PostMapping(path = "")
+    @ResponseStatus(HttpStatus.CREATED)
     public Recipe createRecipe(@RequestBody Recipe recipe, Principal principal) {
         int userId = userDao.getUserByUsername(principal.getName()).getId();
         recipe.setUserId(userId);
@@ -125,7 +126,7 @@ public class RecipeController {
 
     @ResponseStatus(HttpStatus.ACCEPTED)
     @DeleteMapping(path = "/{recipeId}")
-    public void deleteRecipe(@RequestParam int recipeId, Principal principal) {
+    public void deleteRecipe(@PathVariable int recipeId, Principal principal) {
         int userId = userDao.getUserByUsername(principal.getName()).getId();
         try {
             Recipe recipe = recipeDao.getRecipe(recipeId);

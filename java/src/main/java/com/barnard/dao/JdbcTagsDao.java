@@ -162,11 +162,8 @@ public class JdbcTagsDao implements TagsDao{
                 "WHERE tag_id = ?;";
 
         try {
-            int rowsAffected = jdbcTemplate.update(sql, tagId);
-            if (rowsAffected != 1) {
-                throw new DaoException();
-            }
-            rowsAffected = jdbcTemplate.update(sql2, tagId);
+            jdbcTemplate.update(sql, tagId);
+            int rowsAffected = jdbcTemplate.update(sql2, tagId);
             if (rowsAffected != 1) {
                 throw new DaoException();
             }
