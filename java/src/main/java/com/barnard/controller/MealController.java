@@ -22,7 +22,7 @@ import java.util.List;
 @RequestMapping(path = "/meal")
 public class MealController {
 
-    // todo add authentication and security
+    // todo add authentication and security when doing GET
 
     @Autowired
     private MealDao mealDao;

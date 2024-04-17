@@ -11,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -19,7 +20,7 @@ import java.util.List;
 @RequestMapping(path = "/tag")
 public class TagController {
 
-    // todo add authentication and security
+    // todo add authentication and security when doing GET
 
     @Autowired
     private MealDao mealDao;
@@ -52,10 +53,11 @@ public class TagController {
 
     @PostMapping(path="")
     @ResponseStatus(HttpStatus.CREATED)
-    public Tag createTag(@RequestBody String name) {
-        Tag tag = null;
+    public Tag createTag(@RequestBody Tag tag, Principal principal) {
+        Tag newTag = null;
+        int userId = userDao.getUserByUsername(principal.getName()).getId();
         try {
-            tag = tagsDao.createTag(name);
+            tag = tagsDao.createTag(tag, userId);
         } catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
         }

@@ -16,6 +16,8 @@ import java.util.List;
 @Component
 public class JdbcCategoryDao implements CategoryDao{
 
+    // todo add authentication and security when doing GET
+
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
@@ -66,15 +68,15 @@ public class JdbcCategoryDao implements CategoryDao{
     }
 
     @Override
-    public Category createCategory(Category category) {
+    public Category createCategory(Category category, int userId) {
 
         Category newCategory = null;
-        String sql = "INSERT INTO category (category_name) " +
-                "VALUES (?) " +
+        String sql = "INSERT INTO category (category_name, user_id) " +
+                "VALUES (?, ?) " +
                 "RETURNING category_id;";
 
         try {
-            int categoryId = jdbcTemplate.queryForObject(sql, int.class, category.getCategoryName());
+            int categoryId = jdbcTemplate.queryForObject(sql, int.class, category.getCategoryName(), userId);
             newCategory = getCategoryById(categoryId);
         } catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database", e);

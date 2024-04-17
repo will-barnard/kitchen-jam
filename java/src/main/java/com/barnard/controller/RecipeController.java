@@ -19,7 +19,7 @@ import java.security.Principal;
 @RequestMapping(path = "/recipe")
 public class RecipeController {
 
-    // todo add authentication and security
+    // todo add authentication and security when doing GET
 
     @Autowired
     private MealDao mealDao;

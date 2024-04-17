@@ -9,7 +9,7 @@ public interface TagsDao {
 
     Tag getTag(int tagId);
     List<Tag> getTagsByMealId(int mealId);
-    Tag createTag(String name);
+    Tag createTag(Tag tag, int userId);
     Tag updateTag(Tag tag);
     List<Tag> addTagToMeal(int tagId, int mealId);
     List<Tag> deleteTagFromMeal(int tagId, int mealId);

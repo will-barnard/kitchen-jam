@@ -66,16 +66,14 @@ public class JdbcTagsDao implements TagsDao{
     }
 
     @Override
-    public Tag createTag(String name) {
+    public Tag createTag(Tag tag, int userId) {
 
-        Tag tag = new Tag();
-        tag.setTagName(name);
-        String sql = "INSERT INTO tags (tag_name) " +
-                "VALUES (?) " +
+        String sql = "INSERT INTO tags (tag_name, user_id) " +
+                "VALUES (?, ?) " +
                 "RETURNING tag_id;";
 
         try {
-            int tagId = jdbcTemplate.queryForObject(sql, int.class, tag.getTagName());
+            int tagId = jdbcTemplate.queryForObject(sql, int.class, tag.getTagName(), userId);
             tag.setTagId(tagId);
         }  catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database", e);

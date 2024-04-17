@@ -9,7 +9,7 @@ public interface CategoryDao {
 
     Category getCategoryById(int categoryId);
     List<Category> getCategoriesByUser(int userId);
-    Category createCategory(Category category);
+    Category createCategory(Category category, int userId);
     Category updateCategory(Category category);
     Category addCategoryToRecipe(int categoryId, int recipeId);
     void deleteCategoryFromRecipe(int categoryId, int recipeId);

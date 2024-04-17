@@ -9,18 +9,19 @@ CREATE SEQUENCE seq_user_id
   START WITH 1001
   NO MAXVALUE;
 
+CREATE TABLE image (
+	image_id serial PRIMARY KEY,
+	image_path varchar(200)
+);
+
 CREATE TABLE users (
 	user_id int NOT NULL DEFAULT nextval('seq_user_id'),
 	username varchar(50) NOT NULL,
 	password_hash varchar(200) NOT NULL,
 	role varchar(50) NOT NULL,
+	email varchar(50) NOT NULL,
 	CONSTRAINT PK_users PRIMARY KEY (user_id),
 	CONSTRAINT UQ_username UNIQUE (username)
-);
-
-CREATE TABLE image (
-	image_id serial PRIMARY KEY,
-	image_path varchar(200)
 );
 
 CREATE SEQUENCE seq_recipe_id
@@ -62,11 +63,13 @@ CREATE TABLE meal (
 
 CREATE TABLE category (
 	category_id serial PRIMARY KEY,
+	user_id int REFERENCES users(user_id),
 	category_name varchar(50)
 );
 
 CREATE TABLE tags (
 	tag_id serial PRIMARY KEY,
+	user_id int REFERENCES users(user_id),
 	tag_name varchar(50) not null
 );
 

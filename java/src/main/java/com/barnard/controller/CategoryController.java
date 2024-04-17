@@ -57,10 +57,11 @@ public class CategoryController {
 
     @PostMapping(path="")
     @ResponseStatus(HttpStatus.CREATED)
-    public Category createCategory(@RequestBody Category category) {
+    public Category createCategory(@RequestBody Category category, Principal principal) {
         Category newCategory = null;
+        int userId = userDao.getUserByUsername(principal.getName()).getId();
         try {
-            newCategory = categoryDao.createCategory(category);
+            newCategory = categoryDao.createCategory(category, userId);
         } catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
         }
