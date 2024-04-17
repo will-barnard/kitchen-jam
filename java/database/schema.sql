@@ -1,6 +1,6 @@
 BEGIN TRANSACTION;
 
-DROP TABLE IF EXISTS tags_meal, recipe_category, meal_image, recipe_image, users, tags, recipe, image, meal, category;
+DROP TABLE IF EXISTS tags_meal, recipe_category, meal_image, recipe_image, user_email, users, tags, recipe, image, meal, category;
 
 DROP SEQUENCE IF EXISTS seq_user_id, seq_meal_id, seq_recipe_id;
 
@@ -19,9 +19,13 @@ CREATE TABLE users (
 	username varchar(50) NOT NULL,
 	password_hash varchar(200) NOT NULL,
 	role varchar(50) NOT NULL,
-	email varchar(50) NOT NULL,
 	CONSTRAINT PK_users PRIMARY KEY (user_id),
 	CONSTRAINT UQ_username UNIQUE (username)
+);
+
+CREATE TABLE user_email (
+    user_id int REFERENCES users(user_id),
+    email varchar(100) NOT NULL
 );
 
 CREATE SEQUENCE seq_recipe_id

@@ -6,6 +6,7 @@ import java.util.Objects;
 
 import com.barnard.exception.DaoException;
 import com.barnard.model.RegisterUserDto;
+import com.barnard.model.UserEmail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.CannotGetJdbcConnectionException;
@@ -40,6 +41,7 @@ public class JdbcUserDao implements UserDao {
             throw new DaoException("Unable to connect to server or database", e);
         }
 
+
         return user;
     }
 
@@ -60,6 +62,29 @@ public class JdbcUserDao implements UserDao {
 
         }
         return users;
+    }
+
+    @Override
+    public UserEmail getEmailByUser(int userId) {
+
+        UserEmail userEmail = new UserEmail();
+        String sql = "SELECT * FROM user_email WHERE user_id = ?;";
+
+        try {
+
+            SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, userId);
+            if (rowSet.next()) {
+                userEmail = mapRowToUserEmail(rowSet);
+            }
+
+        } catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Unable to connect to server or database", e);
+        } catch (DataIntegrityViolationException e) {
+            throw new DaoException("Data integrity violation", e);
+        }
+
+        return userEmail;
+
     }
 
     @Override
@@ -88,15 +113,18 @@ public class JdbcUserDao implements UserDao {
         String insertUserSql = "INSERT INTO users (username, password_hash, role) values (?, ?, ?) RETURNING user_id";
         String password_hash = new BCryptPasswordEncoder().encode(user.getPassword());
         String ssRole = user.getRole().toUpperCase().startsWith("ROLE_") ? user.getRole().toUpperCase() : "ROLE_" + user.getRole().toUpperCase();
+        String sql2 = "INSERT INTO user_email (user_id, email) VALUES (?, ?)";
 
         try {
             int newUserId = jdbcTemplate.queryForObject(insertUserSql, int.class, user.getUsername(), password_hash, ssRole);
             newUser = getUserById(newUserId);
+            jdbcTemplate.update(sql2, newUserId, user.getEmail());
         } catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database", e);
         } catch (DataIntegrityViolationException e) {
             throw new DaoException("Data integrity violation", e);
         }
+
 
         return newUser;
     }
@@ -111,5 +139,14 @@ public class JdbcUserDao implements UserDao {
         user.setActivated(true);
 
         return user;
+    }
+
+    private UserEmail mapRowToUserEmail(SqlRowSet rs) {
+        UserEmail userEmail = new UserEmail();
+
+        userEmail.setUserId(rs.getInt("user_id"));
+        userEmail.setEmail(rs.getString("email"));
+
+        return userEmail;
     }
 }
