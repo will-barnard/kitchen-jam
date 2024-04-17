@@ -1,20 +1,22 @@
 package com.barnard.model;
 
+import org.springframework.data.relational.core.sql.In;
+
 import java.time.LocalDate;
 
 public class Meal {
 
     private int mealId;
     private int userId;
-    private int recipeId;
+    private Integer recipeId;
     private String mealName;
     private String mealComment;
     private LocalDate date;
-    private int cookTime;
+    private Integer cookTime;
     private String notes;
     private String ingredients;
-    private int rating;
-    private int imageId;
+    private Integer rating;
+    private Integer imageId;
 
     public int getMealId() {
         return mealId;

@@ -143,21 +143,20 @@ public class JdbcRecipeDao implements RecipeDao {
     @Override
     public Recipe createRecipe(Recipe recipe) {
 
-        Recipe newRecipe = null;
-        String sql = "INSERT INTO recipe (user_id, recipe_name, avg_cook_time, description, image_id) " +
-                "VALUES (?, ?, ?, ?, ?) " +
+        String sql = "INSERT INTO recipe (user_id, recipe_name, avg_cook_time, description) " +
+                "VALUES (?, ?, ?, ?) " +
                 "RETURNING recipe_id;";
 
         try {
-            int recipeId = jdbcTemplate.queryForObject(sql, int.class, recipe.getUserId(), recipe.getRecipeName(), recipe.getAvgCookTime(), recipe.getDescription(), recipe.getImage_id());
-            newRecipe = getRecipe(recipeId);
+            int recipeId = jdbcTemplate.queryForObject(sql, int.class, recipe.getUserId(), recipe.getRecipeName(), recipe.getAvgCookTime(), recipe.getDescription());
+            recipe.setRecipeId(recipeId);
         } catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database", e);
         } catch (DataIntegrityViolationException e) {
             throw new DaoException("Data integrity violation", e);
         }
 
-        return newRecipe;
+        return recipe;
 
     }
 
@@ -166,13 +165,12 @@ public class JdbcRecipeDao implements RecipeDao {
         Recipe newRecipe = null;
 
         String sql = "UPDATE recipe SET " +
-                "user_id = ?, recipe_name = ?, avg_cook_time = ?, description = ?, image_id = ?) " +
-                "VALUES (?, ?, ?, ?, ?) " +
-                "WHERE recipe_id;";
+                "user_id = ?, recipe_name = ?, avg_cook_time = ?, description = ? " +
+                "WHERE recipe_id = ?;";
 
         try {
 
-            int rowsAffected = jdbcTemplate.update(sql, recipe.getUserId(), recipe.getRecipeName(), recipe.getAvgCookTime(), recipe.getDescription(), recipe.getImage_id());
+            int rowsAffected = jdbcTemplate.update(sql, recipe.getUserId(), recipe.getRecipeName(), recipe.getAvgCookTime(), recipe.getDescription(), recipe.getRecipeId());
             if (rowsAffected == 0) {
                 throw new DaoException();
             }
@@ -218,7 +216,7 @@ public class JdbcRecipeDao implements RecipeDao {
         Recipe recipe = new Recipe();
 
         recipe.setRecipeId(rs.getInt("recipe_id"));
-        recipe.setUserId(rs.getInt("user_is"));
+        recipe.setUserId(rs.getInt("user_id"));
         recipe.setRecipeName(rs.getString("recipe_name"));
         recipe.setAvgCookTime(rs.getInt("avg_cook_time"));
         recipe.setDescription(rs.getString("description"));

@@ -163,7 +163,7 @@ public class JdbcMealDao implements MealDao {
         String sql = "UPDATE meal " +
                 "SET user_id = ?, recipe_id = ?, meal_name = ?, mean_comment = ?, " +
                 "date_created = ?, cook_time = ?, notes = ?, ingredients = ?, " +
-                "rating = ?, image_id = ? " +
+                "rating = ? " +
                 "WHERE meal_id = ?;";
 
         try {

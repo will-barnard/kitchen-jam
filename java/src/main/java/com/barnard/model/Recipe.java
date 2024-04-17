@@ -5,9 +5,9 @@ public class Recipe {
     private int recipeId;
     private int userId;
     private String recipeName;
-    private int avgCookTime;
+    private Integer avgCookTime;
     private String description;
-    private int image_id;
+    private Integer image_id;
 
     public int getRecipeId() {
         return recipeId;
@@ -33,7 +33,7 @@ public class Recipe {
         this.recipeName = recipeName;
     }
 
-    public int getAvgCookTime() {
+    public Integer getAvgCookTime() {
         return avgCookTime;
     }
 
@@ -49,11 +49,11 @@ public class Recipe {
         this.description = description;
     }
 
-    public int getImage_id() {
+    public Integer getImage_id() {
         return image_id;
     }
 
-    public void setImage_id(int image_id) {
+    public void setImage_id(Integer image_id) {
         this.image_id = image_id;
     }
 }

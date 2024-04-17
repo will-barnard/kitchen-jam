@@ -108,11 +108,13 @@ public class RecipeController {
         return recipe;
     }
 
-    @PutMapping(path = "/recipeId")
+    @PutMapping(path = "")
     public Recipe updateRecipe(@RequestBody Recipe recipe, Principal principal) {
         int userId = userDao.getUserByUsername(principal.getName()).getId();
+        recipe.setUserId(userId);
         try {
-            if (recipe.getUserId() != userId) {
+            int userAuth = recipeDao.getRecipe(recipe.getRecipeId()).getUserId();
+            if (userAuth != userId) {
                 throw new AuthException("Not authorized");
             }
             recipe = recipeDao.updateRecipe(recipe);
