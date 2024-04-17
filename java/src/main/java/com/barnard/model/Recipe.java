@@ -2,14 +2,14 @@ package com.barnard.model;
 
 public class Recipe {
 
-    private int recipeId;
+    private Integer recipeId;
     private int userId;
     private String recipeName;
     private Integer avgCookTime;
     private String description;
     private Integer image_id;
 
-    public int getRecipeId() {
+    public Integer getRecipeId() {
         return recipeId;
     }
 

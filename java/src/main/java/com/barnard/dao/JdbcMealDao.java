@@ -136,7 +136,6 @@ public class JdbcMealDao implements MealDao {
     @Override
     public Meal createMeal(Meal meal) {
 
-        Meal newMeal = null;
         String sql = "INSERT into meal (user_id, recipe_id, meal_name, meal_comment, date_created, cook_time, notes, ingredients, rating) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) " +
                 "RETURNING meal_id;";
@@ -146,7 +145,7 @@ public class JdbcMealDao implements MealDao {
             int mealId = jdbcTemplate.queryForObject(sql, int.class, meal.getUserId(), meal.getRecipeId(),
                     meal.getMealName(), meal.getMealComment(), meal.getDate(), meal.getCookTime(),
                     meal.getNotes(), meal.getIngredients(), meal.getRating());
-            newMeal = getMeal(mealId);
+            meal.setMealId(mealId);
 
         } catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database", e);
@@ -154,7 +153,7 @@ public class JdbcMealDao implements MealDao {
             throw new DaoException("Data integrity violation", e);
         }
 
-        return newMeal;
+        return meal;
     }
 
     @Override

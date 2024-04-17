@@ -34,7 +34,7 @@ public class Meal {
         this.userId = userId;
     }
 
-    public int getRecipeId() {
+    public Integer getRecipeId() {
         return recipeId;
     }
 
@@ -98,7 +98,7 @@ public class Meal {
         this.rating = rating;
     }
 
-    public int getImageId() {
+    public Integer getImageId() {
         return imageId;
     }
 

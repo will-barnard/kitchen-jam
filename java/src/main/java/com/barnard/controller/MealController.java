@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -80,7 +81,7 @@ public class MealController {
         return meals;
     }
 
-    @PostMapping(path = "/create")
+    @PostMapping(path = "")
     @ResponseStatus(HttpStatus.CREATED)
     public Meal createMeal(@RequestBody Meal meal, Principal principal) {
         int userId = userDao.getUserByUsername(principal.getName()).getId();
@@ -88,7 +89,6 @@ public class MealController {
         Meal newMeal = null;
         try {
             newMeal = mealDao.createMeal(meal);
-
         } catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
         }
