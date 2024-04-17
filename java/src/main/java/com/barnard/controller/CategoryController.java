@@ -32,7 +32,7 @@ public class CategoryController {
     @Autowired
     private MealDao mealDao;
 
-    @GetMapping(path = "/{categoryId")
+    @GetMapping(path = "/{categoryId}")
     public Category getCategory(@PathVariable int categoryId, Principal principal) {
         Category category = null;
         try {
