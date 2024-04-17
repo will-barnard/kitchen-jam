@@ -178,6 +178,7 @@ public class JdbcTagsDao implements TagsDao{
 
         tag.setTagId(rs.getInt("tag_id"));
         tag.setTagName(rs.getString("tag_name"));
+        tag.setUserId(rs.getInt("user_id"));
 
         return tag;
     }

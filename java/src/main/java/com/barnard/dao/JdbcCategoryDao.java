@@ -172,6 +172,7 @@ public class JdbcCategoryDao implements CategoryDao{
 
         category.setCategoryId(rs.getInt("category_id"));
         category.setCategoryName(rs.getString("category_name"));
+        category.setUserId(rs.getInt("user_id"));
 
         return category;
     }

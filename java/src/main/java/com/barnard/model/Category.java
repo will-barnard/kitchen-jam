@@ -4,6 +4,7 @@ public class Category {
 
     private int categoryId;
     private String categoryName;
+    private int userId;
 
     public int getCategoryId() {
         return categoryId;
@@ -19,5 +20,13 @@ public class Category {
 
     public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 }
