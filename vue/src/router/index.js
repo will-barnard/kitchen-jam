@@ -6,6 +6,8 @@ import HomeView from '../views/HomeView.vue';
 import LoginView from '../views/LoginView.vue';
 import LogoutView from '../views/LogoutView.vue';
 import RegisterView from '../views/RegisterView.vue';
+import MealView from '../views/MealView.vue';
+import RecipeBookView from '../views/RecipeBookView.vue';
 
 /**
  * The Vue Router is used to "direct" the browser to render a specific view component
@@ -15,6 +17,7 @@ import RegisterView from '../views/RegisterView.vue';
  * If the user has not yet authenticated (and needs to) they are redirected to /login
  * If they have (or don't need to) they're allowed to go about their way.
  */
+
 const routes = [
   {
     path: '/',
@@ -46,6 +49,30 @@ const routes = [
     component: RegisterView,
     meta: {
       requiresAuth: false
+    }
+  },
+  {
+    path: "/log",
+    name: "meal-log",
+    component: MealView,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: "/log",
+    name: "meal-log",
+    component: MealView,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: "/cookbook",
+    name: "cookbook",
+    component: RecipeBookView,
+    meta: {
+      requiresAuth: true
     }
   }
 ];

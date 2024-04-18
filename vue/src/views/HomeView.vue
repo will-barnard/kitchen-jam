@@ -1,7 +1,8 @@
 <template>
   <div class="home">
     <h1>Home</h1>
-    <p>You must be authenticated to see this</p>
+    <p>You are currently authenticated</p>
+    <p>username is {{ $store.state.user.username }}</p>
   </div>
 </template>
 
@@ -9,3 +10,7 @@
 export default {
 };
 </script>
+
+<style>
+    
+</style>

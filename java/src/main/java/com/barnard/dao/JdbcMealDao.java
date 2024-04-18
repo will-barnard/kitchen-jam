@@ -213,6 +213,7 @@ public class JdbcMealDao implements MealDao {
         Meal meal = new Meal();
 
         meal.setMealId(rs.getInt("meal_id"));
+        meal.setUserId(rs.getInt("user_id"));
         meal.setMealName(rs.getString("meal_name"));
         meal.setRecipeId(rs.getInt("recipe_id"));
         meal.setMealComment(rs.getString("meal_comment"));
