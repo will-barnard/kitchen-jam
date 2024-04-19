@@ -1,7 +1,7 @@
 <template>
     <div>
         <p v-if="!mealList">you have not logged any meals</p>  
-        <MealCard class="meal-card" v-for="meal in $store.state.userMeals" :key="meal.mealId" :meal="meal"/>
+        <MealCard class="meal-card" v-for="meal in $store.state.userMeals" :key="meal.mealId" :meal="meal" :selected="select == meal.mealId" v-on:click="selectCard()"/>
     </div>
 </template>
 
@@ -14,11 +14,10 @@ export default {
     data() {
         return {
             mealList: [],
-            tab: ""
+            select: 0
         }
     },
     created() {
-        // this.tab = this.$route.params.tab
         if (!this.$store.state.userMeals) {
             this.mealList = this.$store.state.userMeals;
         } else {
@@ -28,6 +27,11 @@ export default {
                     this.$store.commit('GET_USER_MEALS', this.mealList);
                 }
             )
+        }
+    },
+    methods: {
+        selectCard() {
+
         }
     }
 }

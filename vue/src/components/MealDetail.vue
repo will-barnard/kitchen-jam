@@ -2,6 +2,8 @@
      <body>
 
         <div class="controls">
+            <h2 @click="$router.go(-1)">Back</h2>
+            <div class="spacer"></div>
             <h2 v-if="!editing" v-on:click="editing=true">
                 Edit
             </h2>
@@ -202,5 +204,8 @@ export default {
     }
     #delete-check:hover {
         cursor: default;
+    }
+    .spacer {
+        flex-grow: 1;
     }
 </style>

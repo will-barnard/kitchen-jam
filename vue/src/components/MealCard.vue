@@ -3,7 +3,7 @@
     
         <body>
 
-            <div id="details" v-on:click="showMore = true" :class="showMore == true ? 'body-detail' : 'body-card'">
+            <div id="details" @click="switch" class="body-card">
                 <div class="meal-img" v-on:click="showMore = !showMore">
                     <img src="src/img/placeholder.jpeg" />
                     <!-- img goes here -->
@@ -35,12 +35,13 @@
                 </div>
                 
             </div>
+
+
             <div id="controls" v-if="showMore">
-                <div class="control" v-on:click="showMore = false">^</div>
-                <div id="spacer"></div>
-                <div class="control" v-on:click="goDetail()">✎</div>
-                <div class="control">X</div>
+                <div class="control" v-on:click="goDetail()">...</div>
             </div>
+
+
         </body>
 
  
@@ -58,6 +59,9 @@ export default {
     methods: {
         goDetail() {
             this.$router.push( {name: 'meal-detail', params: {mealId: this.meal.mealId} })
+        },
+        switch() {
+            this.showMore = !this.showMore;
         }
     },
     created() {
@@ -85,7 +89,6 @@ export default {
         margin: 10px;
         padding: 10px;
         border: 1px solid black;
-        border-radius: 100%;
         font-size: 3em;
     }
     .control:hover {

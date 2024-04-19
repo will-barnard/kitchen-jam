@@ -1,8 +1,4 @@
 meal {
-    date_cooked
-    date created
-    last modified
-
     meal GET include recipe obj
 }
 
