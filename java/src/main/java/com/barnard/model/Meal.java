@@ -3,6 +3,7 @@ package com.barnard.model;
 import org.springframework.data.relational.core.sql.In;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class Meal {
 
@@ -17,6 +18,7 @@ public class Meal {
     private String ingredients;
     private Integer rating;
     private Integer imageId;
+    private List<Tag> tags;
 
     public int getMealId() {
         return mealId;
@@ -38,7 +40,7 @@ public class Meal {
         return recipeId;
     }
 
-    public void setRecipeId(int recipeId) {
+    public void setRecipeId(Integer recipeId) {
         this.recipeId = recipeId;
     }
 
@@ -104,5 +106,13 @@ public class Meal {
 
     public void setImageId(int imageId) {
         this.imageId = imageId;
+    }
+
+    public List<Tag> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<Tag> tags) {
+        this.tags = tags;
     }
 }

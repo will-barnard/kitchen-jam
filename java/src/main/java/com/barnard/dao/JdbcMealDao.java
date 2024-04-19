@@ -95,7 +95,8 @@ public class JdbcMealDao implements MealDao {
         List<Meal> meals = new ArrayList<Meal>();
         String sql = "SELECT * " +
                 "FROM meal " +
-                "WHERE user_id = ?;";
+                "WHERE user_id = ? " +
+                "ORDER BY date_created DESC;";
 
         try {
             SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, userId);
@@ -160,14 +161,14 @@ public class JdbcMealDao implements MealDao {
     public Meal updateMeal(Meal meal) {
 
         String sql = "UPDATE meal " +
-                "SET user_id = ?, recipe_id = ?, meal_name = ?, mean_comment = ?, " +
+                "SET recipe_id = ?, meal_name = ?, meal_comment = ?, " +
                 "date_created = ?, cook_time = ?, notes = ?, ingredients = ?, " +
                 "rating = ? " +
                 "WHERE meal_id = ?;";
 
         try {
             int rowsAffected = 0;
-            rowsAffected = jdbcTemplate.update(sql, meal.getUserId(), meal.getRecipeId(),
+            rowsAffected = jdbcTemplate.update(sql, meal.getRecipeId(),
                     meal.getMealName(), meal.getMealComment(), meal.getDate(), meal.getCookTime(),
                     meal.getNotes(), meal.getIngredients(), meal.getRating(), meal.getMealId());
             if (rowsAffected == 0) {

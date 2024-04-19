@@ -1,37 +1,36 @@
 <template>
-
-    <body>
-        <h1>Meal Log</h1>
-
-
-
-        <nav>
-            <p v-on:click="nav()">My Log</p>
-            <p v-on:click="nav()">Log New Meal</p>
-        </nav>
-
-        <div>
-            <p v-if="!mealList">you have not logged any meals</p>
-            <MealCard class="meal-card" v-for="meal in $store.state.userMeals" :key="meal.mealId" :meal="meal"/>
-        </div>
-    </body>
-
+    <div>
+        <MealMenu />
+        <body>
+            <MealLog />
+        </body>
+    </div>
 </template>
 
 <script>
 import MealService from '../services/MealService.js';
-import MealCard from '../components/MealCard.vue';
+import MealLog from '../components/MealLog.vue';
+import MealMenu from '../components/MealMenu.vue';
+
 
 export default {
-    components: {MealCard},
+    components: {MealLog, MealMenu},
     data() {
         return {
             mealList: [],
             tab: ""
         }
     },
+    methods: {
+        log() {
+            this.tab = 'log';
+        },
+        newMeal() {
+            this.tab = 'new';
+        }
+    },
     created() {
-        // this.tab = this.$route.params.tab
+        this.tab = 'log';
         if (!this.$store.state.userMeals) {
             this.mealList = this.$store.state.userMeals;
         } else {
@@ -41,11 +40,6 @@ export default {
                     this.$store.commit('GET_USER_MEALS', this.mealList);
                 }
             )
-        }
-    },
-    methods: {
-        nav() {
-            this.$router.push({})
         }
     }
 }
@@ -68,5 +62,8 @@ export default {
         padding: 5px;
         display: inline;
         border: 1px solid black;
+    }
+    p:hover {
+        cursor: pointer;
     }
 </style>

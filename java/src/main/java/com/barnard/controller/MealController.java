@@ -4,6 +4,7 @@ import com.barnard.dao.ImageDao;
 import com.barnard.dao.MealDao;
 import com.barnard.dao.TagsDao;
 import com.barnard.dao.UserDao;
+import com.barnard.exception.AuthException;
 import com.barnard.model.Meal;
 import com.barnard.model.Recipe;
 import com.barnard.model.Tag;
@@ -55,7 +56,11 @@ public class MealController {
     @GetMapping(path = "/user")
     public List<Meal> getMealsByUser(Principal principal) {
         int userId = userDao.getUserByUsername(principal.getName()).getId();
-        return mealDao.getMealsByUserId(userId);
+        List<Meal> result = mealDao.getMealsByUserId(userId);
+        for (Meal meal : result) {
+            meal.setTags(tagsDao.getTagsByMealId(meal.getMealId()));
+        }
+        return result;
     }
 
     @GetMapping(path = "/tag")
@@ -96,9 +101,16 @@ public class MealController {
     }
 
     @PutMapping(path = "/update")
-    public Meal updateMeal(@RequestBody Meal meal) {
+    public Meal updateMeal(@RequestBody Meal meal, Principal principal) {
+        if (meal.getRecipeId() == 0) {
+            meal.setRecipeId(null);
+        }
         Meal updatedMeal = null;
+        int userId = userDao.getUserByUsername(principal.getName()).getId();
         try {
+            if (mealDao.getMeal(meal.getMealId()).getUserId() != userId) {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+            }
             mealDao.updateMeal(meal);
             updatedMeal = mealDao.getMeal(meal.getMealId());
         } catch(Exception e) {
@@ -109,8 +121,12 @@ public class MealController {
 
     @ResponseStatus(HttpStatus.ACCEPTED)
     @DeleteMapping(path = "/{mealId}")
-    public void deleteMeal(@PathVariable int mealId) {
+    public void deleteMeal(@PathVariable int mealId, Principal principal) {
+        int userId = userDao.getUserByUsername(principal.getName()).getId();
         try {
+            if (mealDao.getMeal(mealId).getUserId() != userId) {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+            }
             mealDao.deleteMealById(mealId);
         } catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");

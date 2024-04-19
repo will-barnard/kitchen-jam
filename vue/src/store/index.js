@@ -7,7 +7,8 @@ export function createStore(currentToken, currentUser) {
     state: {
       token: currentToken || '',
       user: currentUser || {},
-      userMeals: []
+      userMeals: [],
+      subMenu: {}
     },
     mutations: {
       SET_AUTH_TOKEN(state, token) {
