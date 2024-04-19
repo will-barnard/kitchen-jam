@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 import com.barnard.exception.DaoException;
+import com.barnard.model.LoginDto;
 import com.barnard.model.RegisterUserDto;
 import com.barnard.model.UserAttributes;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -67,15 +68,13 @@ public class JdbcUserDao implements UserDao {
     public UserAttributes getAttributesByUser(int userId) {
 
         UserAttributes userAttributes = new UserAttributes();
-
-        //todo adjust sql
-        String sql = "SELECT * FROM user_email WHERE user_id = ?;";
+        String sql = "SELECT * FROM user_attributes WHERE user_id = ?;";
 
         try {
 
             SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, userId);
             if (rowSet.next()) {
-                userAttributes = mapRowToUserEmail(rowSet);
+                userAttributes = mapRowToUserAttributes(rowSet);
             }
 
         } catch (CannotGetJdbcConnectionException e) {
@@ -86,6 +85,26 @@ public class JdbcUserDao implements UserDao {
 
         return userAttributes;
 
+    }
+
+    @Override
+    public String getUsernameByEmail(LoginDto loginDto) {
+        String username = null;
+        User user = null;
+        String sql = "SELECT * FROM users " +
+                "JOIN user_attributes ON users.user_id = user_attributes.user_id " +
+                "WHERE user_attributes.email = ?;";
+        try {
+            SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, loginDto.getEmail());
+            if (rowSet.next()) {
+                username = mapRowToUser(rowSet).getUsername();
+            }
+        } catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Unable to connect to server or database", e);
+        } catch (DataIntegrityViolationException e) {
+            throw new DaoException("Data integrity violation", e);
+        }
+        return username;
     }
 
     @Override
@@ -144,7 +163,7 @@ public class JdbcUserDao implements UserDao {
         return user;
     }
 
-    private UserAttributes mapRowToUserEmail(SqlRowSet rs) {
+    private UserAttributes mapRowToUserAttributes(SqlRowSet rs) {
         UserAttributes userAttributes = new UserAttributes();
 
         userAttributes.setUserId(rs.getInt("user_id"));

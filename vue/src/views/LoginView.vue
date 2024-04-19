@@ -10,8 +10,8 @@
         Thank you for registering, please sign in.
       </div>
       <div class="form-input-group">
-        <label for="username">Username</label>
-        <input type="text" id="username" v-model="user.username" required autofocus />
+        <label for="email">Email</label>
+        <input type="email" id="email" v-model="user.email" required autofocus />
       </div>
       <div class="form-input-group">
         <label for="password">Password</label>
@@ -33,7 +33,7 @@ export default {
   data() {
     return {
       user: {
-        username: "",
+        email: "",
         password: ""
       },
       invalidCredentials: false

@@ -35,6 +35,8 @@ public class AuthenticationController {
     @RequestMapping(path = "/login", method = RequestMethod.POST)
     public ResponseEntity<LoginResponseDto> login(@Valid @RequestBody LoginDto loginDto) {
 
+        loginDto.setUsername(userDao.getUsernameByEmail(loginDto));
+
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword());
 
