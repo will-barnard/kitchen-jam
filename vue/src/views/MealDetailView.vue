@@ -24,6 +24,7 @@ export default {
             (response) => {
                 this.getMeal = response.data;
                 this.loading = false;
+                console.log(response.data.tags);
             }
         )
     }

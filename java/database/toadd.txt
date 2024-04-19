@@ -1,3 +1,5 @@
+what is my mvp!
+
 meal {
 date cooked
 date created
@@ -44,3 +46,6 @@ have "more about recipes and meals" pages
 roles are insecure, privileges can be customized with a post req
 
 dates make sure to add if not null catch
+
+switch html tags where <div id="header" /> is <header />
+and update style as such

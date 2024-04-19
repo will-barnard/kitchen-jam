@@ -16,3 +16,5 @@ ingredients {
     ingredient_name
 }
 
+still issue with create tag returns user_id is null
+move mealget in mealdetailview to mealdetail.vue

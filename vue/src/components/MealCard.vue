@@ -1,10 +1,9 @@
 <template>
-    <div>
-    
+    <div @click="showMore = !showMore">
         <body>
 
-            <div id="details" @click="switch" class="body-card">
-                <div class="meal-img" v-on:click="showMore = !showMore">
+            <div id="details" class="body-card">
+                <div class="meal-img" >
                     <img src="src/img/placeholder.jpeg" />
                     <!-- img goes here -->
                 </div>
@@ -14,6 +13,10 @@
                     <div class="title">
                         <h2 class="name">{{ meal.mealName }}</h2>
                         <h3>{{ meal.date }}</h3>
+                    </div>
+
+                    <div id="tags" v-if="meal.tags">
+                        <Tag v-for="tag in meal.tags" :key="tag.tagId" :tag="tag" />
                     </div>
 
                     <p>{{ meal.mealComment }}</p>
@@ -40,16 +43,14 @@
             <div id="controls" v-if="showMore">
                 <div class="control" v-on:click="goDetail()">...</div>
             </div>
-
-
         </body>
-
- 
     </div>
-
 </template>
 <script>
+import Tag from './Tag.vue';
+
 export default {
+    components: {Tag},
     props: ['meal'],
     data() {
         return {
@@ -156,5 +157,10 @@ export default {
     }
     .widget {
         flex-grow: 1;
+    }
+    #tags {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
     }
 </style>

@@ -39,6 +39,7 @@ public class MealController {
     @GetMapping(path = "/{mealId}")
     public Meal getMealById(@PathVariable int mealId) {
         Meal meal = mealDao.getMeal(mealId);
+        meal.setTags(tagsDao.getTagsByMealId(mealId));
         return meal;
     }
 

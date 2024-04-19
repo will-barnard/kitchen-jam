@@ -38,6 +38,10 @@
 
                     <p>{{ staticMeal.mealComment }}</p>
 
+                    <div>
+                        div tag
+                        <Tag v-for="tag in meal.tags" :key="tag.tagId" :tag="tag" />
+                    </div>
 
                     <div>
                         <div class="widget">
@@ -100,9 +104,11 @@
 
 <script>
 import MealService from '../services/MealService.js'
+import Tag from './Tag.vue';
 
 export default {
     props: ['meal', 'loading'],
+    components: {Tag},
     data() {
         return {
             editing: false,
@@ -114,6 +120,7 @@ export default {
     created() {
         this.staticMeal = this.cloneMeal(this.meal);
         this.newMeal = this.cloneMeal(this.staticMeal);
+        console.log(this.meal.tags);
     },
     methods: {
         cancelEdit() {
