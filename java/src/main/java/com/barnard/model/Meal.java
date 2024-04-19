@@ -3,6 +3,7 @@ package com.barnard.model;
 import org.springframework.data.relational.core.sql.In;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class Meal {
@@ -12,7 +13,9 @@ public class Meal {
     private Integer recipeId;
     private String mealName;
     private String mealComment;
-    private LocalDate date;
+    private LocalDate dateCooked;
+    private LocalDateTime dateCreated;
+    private LocalDateTime lastModified;
     private Integer cookTime;
     private String notes;
     private String ingredients;
@@ -60,19 +63,35 @@ public class Meal {
         this.mealComment = mealComment;
     }
 
-    public LocalDate getDate() {
-        return date;
+    public LocalDate getDateCooked() {
+        return dateCooked;
     }
 
-    public void setDate(LocalDate date) {
-        this.date = date;
+    public void setDateCooked(LocalDate dateCooked) {
+        this.dateCooked = dateCooked;
     }
 
-    public int getCookTime() {
+    public LocalDateTime getDateCreated() {
+        return dateCreated;
+    }
+
+    public void setDateCreated(LocalDateTime dateCreated) {
+        this.dateCreated = dateCreated;
+    }
+
+    public LocalDateTime getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(LocalDateTime lastModified) {
+        this.lastModified = lastModified;
+    }
+
+    public Integer getCookTime() {
         return cookTime;
     }
 
-    public void setCookTime(int cookTime) {
+    public void setCookTime(Integer cookTime) {
         this.cookTime = cookTime;
     }
 
@@ -92,11 +111,11 @@ public class Meal {
         this.ingredients = ingredients;
     }
 
-    public int getRating() {
+    public Integer getRating() {
         return rating;
     }
 
-    public void setRating(int rating) {
+    public void setRating(Integer rating) {
         this.rating = rating;
     }
 
@@ -104,7 +123,7 @@ public class Meal {
         return imageId;
     }
 
-    public void setImageId(int imageId) {
+    public void setImageId(Integer imageId) {
         this.imageId = imageId;
     }
 

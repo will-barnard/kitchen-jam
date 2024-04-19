@@ -1,0 +1,22 @@
+meal {
+    date_cooked
+    date created
+    last modified
+
+    meal GET include recipe obj
+}
+
+user_attributes {
+    email
+    nurture workflow state
+}
+
+tags {
+}
+
+ingredients {
+    ingredient_id pk
+    meal_id fk
+    ingredient_name
+}
+

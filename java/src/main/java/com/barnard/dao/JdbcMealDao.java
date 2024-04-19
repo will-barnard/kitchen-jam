@@ -137,15 +137,16 @@ public class JdbcMealDao implements MealDao {
     @Override
     public Meal createMeal(Meal meal) {
 
-        String sql = "INSERT into meal (user_id, recipe_id, meal_name, meal_comment, date_created, cook_time, notes, ingredients, rating) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) " +
+        String sql = "INSERT into meal (user_id, recipe_id, meal_name, meal_comment, date_cooked, " +
+                "cook_time, notes, ingredients, rating, date_created, last_modified) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) " +
                 "RETURNING meal_id;";
 
         try {
 
             int mealId = jdbcTemplate.queryForObject(sql, int.class, meal.getUserId(), meal.getRecipeId(),
-                    meal.getMealName(), meal.getMealComment(), meal.getDate(), meal.getCookTime(),
-                    meal.getNotes(), meal.getIngredients(), meal.getRating());
+                    meal.getMealName(), meal.getMealComment(), meal.getDateCooked(), meal.getCookTime(),
+                    meal.getNotes(), meal.getIngredients(), meal.getRating(), meal.getDateCreated(), meal.getLastModified());
             meal.setMealId(mealId);
 
         } catch (CannotGetJdbcConnectionException e) {
@@ -162,14 +163,14 @@ public class JdbcMealDao implements MealDao {
 
         String sql = "UPDATE meal " +
                 "SET recipe_id = ?, meal_name = ?, meal_comment = ?, " +
-                "date_created = ?, cook_time = ?, notes = ?, ingredients = ?, " +
+                "date_cooked = ?, last_modified = ?, cook_time = ?, notes = ?, ingredients = ?, " +
                 "rating = ? " +
                 "WHERE meal_id = ?;";
 
         try {
             int rowsAffected = 0;
             rowsAffected = jdbcTemplate.update(sql, meal.getRecipeId(),
-                    meal.getMealName(), meal.getMealComment(), meal.getDate(), meal.getCookTime(),
+                    meal.getMealName(), meal.getMealComment(), meal.getDateCooked(), meal.getLastModified(), meal.getCookTime(),
                     meal.getNotes(), meal.getIngredients(), meal.getRating(), meal.getMealId());
             if (rowsAffected == 0) {
                 throw new DaoException("Something went wrong, no rows affected");
@@ -218,7 +219,9 @@ public class JdbcMealDao implements MealDao {
         meal.setMealName(rs.getString("meal_name"));
         meal.setRecipeId(rs.getInt("recipe_id"));
         meal.setMealComment(rs.getString("meal_comment"));
-        meal.setDate(rs.getDate("date_created").toLocalDate());
+        meal.setDateCooked(rs.getDate("date_created").toLocalDate());
+        meal.setDateCreated(rs.getTimestamp("date_created").toLocalDateTime());
+        meal.setLastModified(rs.getTimestamp("last_modified").toLocalDateTime());
         meal.setCookTime(rs.getInt("cook_time"));
         meal.setNotes(rs.getString("notes"));
         meal.setIngredients(rs.getString("ingredients"));

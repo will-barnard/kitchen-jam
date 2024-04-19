@@ -16,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -91,6 +92,8 @@ public class MealController {
     public Meal createMeal(@RequestBody Meal meal, Principal principal) {
         int userId = userDao.getUserByUsername(principal.getName()).getId();
         meal.setUserId(userId);
+        meal.setDateCreated(LocalDateTime.now());
+        meal.setLastModified(LocalDateTime.now());
         Meal newMeal = null;
         try {
             newMeal = mealDao.createMeal(meal);
@@ -102,9 +105,12 @@ public class MealController {
 
     @PutMapping(path = "/update")
     public Meal updateMeal(@RequestBody Meal meal, Principal principal) {
+
         if (meal.getRecipeId() == 0) {
             meal.setRecipeId(null);
         }
+
+        meal.setLastModified(LocalDateTime.now());
         Meal updatedMeal = null;
         int userId = userDao.getUserByUsername(principal.getName()).getId();
         try {

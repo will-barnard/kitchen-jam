@@ -2,7 +2,6 @@ meal {
 date cooked
 date created
 last modified
-rating 5
 }
 
 user_attributes {
@@ -30,6 +29,8 @@ sql = "SELECT * from
     "WHERE user_id = ?;"
 }
 
+token rememberme
+
 meal if (recipe_id != null) then pull recipe from the database too, store as recipe object?
 
 change meal controller /user function so that it only pulls a number of meal_ids and then as you
@@ -39,3 +40,7 @@ then load more meals
 end of meals display a graphic
 
 have "more about recipes and meals" pages
+
+roles are insecure, privileges can be customized with a post req
+
+dates make sure to add if not null catch

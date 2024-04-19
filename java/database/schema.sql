@@ -23,9 +23,10 @@ CREATE TABLE users (
 	CONSTRAINT UQ_username UNIQUE (username)
 );
 
-CREATE TABLE user_email (
+CREATE TABLE user_attributes (
     user_id int REFERENCES users(user_id),
-    email varchar(100) NOT NULL
+    email varchar(100) NOT NULL,
+    nurture_state int NOT NULL
 );
 
 CREATE SEQUENCE seq_recipe_id
@@ -55,11 +56,13 @@ CREATE TABLE meal (
 	recipe_id int REFERENCES recipe(recipe_id),
 	meal_name varchar(50),
 	meal_comment varchar(200),
+	date_cooked date,
 	date_created date,
+	last_modified date,
 	cook_time int,
 	notes varchar(200),
 	ingredients varchar(200),
-	rating int check(rating <= 10 and rating > 0),
+	rating int check(rating <= 10 and rating >= 1),
 	image_id int REFERENCES image(image_id),
 	is_public boolean,
 	CONSTRAINT PK_meal PRIMARY KEY (meal_id)

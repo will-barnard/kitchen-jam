@@ -1,9 +1,10 @@
 <template>
+
   <div id="login">
     <form v-on:submit.prevent="login">
-      <h1 >Please Sign In</h1>
+      <h1>Sign In</h1>
       <div role="alert" v-if="invalidCredentials">
-        Invalid username and password!
+        Invalid login credentials
       </div>
       <div role="alert" v-if="this.$route.query.registration">
         Thank you for registering, please sign in.
@@ -21,6 +22,7 @@
       <router-link v-bind:to="{ name: 'register' }">Need an account? Sign up.</router-link></p>
     </form>
   </div>
+
 </template>
 
 <script>
