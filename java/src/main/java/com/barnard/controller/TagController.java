@@ -56,6 +56,7 @@ public class TagController {
     public Tag createTag(@RequestBody Tag tag, Principal principal) {
         Tag newTag = null;
         int userId = userDao.getUserByUsername(principal.getName()).getId();
+        tag.setUserId(userId);
         try {
             tag = tagsDao.createTag(tag, userId);
         } catch(Exception e) {

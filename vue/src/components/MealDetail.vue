@@ -38,9 +38,9 @@
 
                     <p>{{ staticMeal.mealComment }}</p>
 
-                    <div>
-                        div tag
-                        <Tag v-for="tag in meal.tags" :key="tag.tagId" :tag="tag" />
+                    <div class="tags">
+                        <p v-if="!staticMeal.tags">no tags</p>
+                        <Tag class="tag" v-for="tag in staticMeal.tags" :key="tag.tagId" :tag="tag" edit="false"/>
                     </div>
 
                     <div>
@@ -76,6 +76,17 @@
                     </div>
                     <div>
                         <label>Comment</label><input type="text" v-model="newMeal.mealComment"/>
+                    </div>
+                    <div class="edit-tags">
+                        <div>
+                            <label>Tags</label><input type="text" v-model="newTag.tagName"/>
+                            <button>Add</button>
+                        </div>
+                        <div class="tag-list">
+                            <p v-if="!newMeal.tags">no tags</p>
+                            <Tag class="tag" v-for="tag in staticMeal.tags" :key="tag.tagId" :tag="tag" />
+                        </div>
+
                     </div>
                     <div>
                         <label>Cook time (min)</label><input type="number" v-model="newMeal.cookTime"/>
@@ -114,7 +125,8 @@ export default {
             editing: false,
             newMeal: {},
             staticMeal: {},
-            deleting: false
+            deleting: false,
+            newTag: {}
         }
     },
     created() {
@@ -215,4 +227,24 @@ export default {
     .spacer {
         flex-grow: 1;
     }
+    .tags {
+        display: flex;
+        flex-direction: row;
+    }
+    .edit-tags {
+        display: flex;
+        flex-direction: column;
+    }
+    .tag {
+        border: 1px solid black;
+        padding: 3px;
+        padding-left: 15px;
+        padding-right: 15px;
+        border-radius: 50px;
+    }
+    .tag-list {
+        display: flex;
+        flex-direction: row;
+    }
+
 </style>

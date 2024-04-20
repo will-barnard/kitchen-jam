@@ -16,7 +16,7 @@
                     </div>
 
                     <div id="tags" v-if="meal.tags">
-                        <Tag v-for="tag in meal.tags" :key="tag.tagId" :tag="tag" />
+                        <Tag v-for="tag in meal.tags" :key="tag.tagId" :tag="tag" edit="false"/>
                     </div>
 
                     <p>{{ meal.mealComment }}</p>
@@ -161,6 +161,6 @@ export default {
     #tags {
         display: flex;
         flex-direction: row;
-        justify-content: center;
+        justify-content: start;
     }
 </style>
