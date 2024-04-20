@@ -104,7 +104,7 @@ public class MealController {
         return newMeal;
     }
 
-    @PutMapping(path = "/update")
+    @PutMapping(path = "")
     public Meal updateMeal(@RequestBody Meal meal, Principal principal) {
 
         if (meal.getRecipeId() == 0) {

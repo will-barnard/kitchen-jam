@@ -9,6 +9,8 @@ import MealView from '../views/MealView.vue';
 import RecipeBookView from '../views/RecipeBookView.vue';
 import CreateMealView from '../views/CreateMealView.vue';
 import MealDetailView from '../views/MealDetailView.vue';
+import CreateRecipeView from '../views/CreateRecipeView.vue';
+import RecipeDetailView from '../views/RecipeDetailView.vue'
 
 
 const routes = [
@@ -72,6 +74,22 @@ const routes = [
     path: "/cookbook",
     name: "cookbook",
     component: RecipeBookView,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: "/cookbook/new",
+    name: "new-recipe",
+    component: CreateRecipeView,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: "/cookbook/:recipeId",
+    name: "recipe-detail",
+    component: RecipeDetailView,
     meta: {
       requiresAuth: true
     }

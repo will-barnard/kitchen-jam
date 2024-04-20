@@ -18,3 +18,6 @@ ingredients {
 
 still issue with create tag returns user_id is null
 move mealget in mealdetailview to mealdetail.vue
+
+make (meal && recipe).create router.push() go to detail view not logs
+avg cook time can be computed frontend not stored in db

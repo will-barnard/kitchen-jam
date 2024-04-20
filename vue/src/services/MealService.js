@@ -12,7 +12,7 @@ export default {
     return axios.post('/meal', meal)
   },
   updateMeal(meal) {
-    return axios.put('/meal/update', meal)
+    return axios.put('/meal', meal)
   },
   deleteMeal(mealId) {
     return axios.delete('/meal/' + mealId)

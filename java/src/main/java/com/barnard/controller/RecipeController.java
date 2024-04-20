@@ -98,6 +98,10 @@ public class RecipeController {
     @PostMapping(path = "")
     @ResponseStatus(HttpStatus.CREATED)
     public Recipe createRecipe(@RequestBody Recipe recipe, Principal principal) {
+
+        // todo add public option on frontend
+        recipe.setPublic(true);
+
         int userId = userDao.getUserByUsername(principal.getName()).getId();
         recipe.setUserId(userId);
         try {
@@ -110,6 +114,10 @@ public class RecipeController {
 
     @PutMapping(path = "")
     public Recipe updateRecipe(@RequestBody Recipe recipe, Principal principal) {
+
+        // todo add public option on frontend
+        recipe.setPublic(true);
+
         int userId = userDao.getUserByUsername(principal.getName()).getId();
         recipe.setUserId(userId);
         try {
@@ -129,6 +137,7 @@ public class RecipeController {
     @ResponseStatus(HttpStatus.ACCEPTED)
     @DeleteMapping(path = "/{recipeId}")
     public void deleteRecipe(@PathVariable int recipeId, Principal principal) {
+
         int userId = userDao.getUserByUsername(principal.getName()).getId();
         try {
             Recipe recipe = recipeDao.getRecipe(recipeId);

@@ -8,6 +8,7 @@ public class Recipe {
     private Integer avgCookTime;
     private String description;
     private Integer image_id;
+    private boolean isPublic;
 
     public Integer getRecipeId() {
         return recipeId;
@@ -55,5 +56,13 @@ public class Recipe {
 
     public void setImage_id(Integer image_id) {
         this.image_id = image_id;
+    }
+
+    public boolean isPublic() {
+        return isPublic;
+    }
+
+    public void setPublic(boolean aPublic) {
+        isPublic = aPublic;
     }
 }

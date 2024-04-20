@@ -8,6 +8,7 @@ export function createStore(currentToken, currentUser) {
       token: currentToken || '',
       user: currentUser || {},
       userMeals: [],
+      userRecipes: [],
       subMenu: {}
     },
     mutations: {
@@ -27,8 +28,11 @@ export function createStore(currentToken, currentUser) {
         state.user = {};
         axios.defaults.headers.common = {};
       },
-      GET_USER_MEALS(state, meals) {
-        state.userMeals = meals;
+      GET_USER_MEALS(state, payload) {
+        state.userMeals = payload;
+      },
+      GET_USER_RECIPES(state, payload) {
+        state.userRecipes = payload;
       }
     },
   });
