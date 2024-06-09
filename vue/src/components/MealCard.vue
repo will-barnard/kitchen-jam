@@ -106,7 +106,6 @@ export default {
         flex-direction: row;
         padding: 5px;
         border: 1px solid black;
-        height: 25vh;
     }
     p {
         text-align: left;
@@ -135,7 +134,7 @@ export default {
     }
     .meal-img img {
         object-fit: cover;
-        height: 25vh;
+        height: 100%;
     }
     .content {
         flex-grow: 1;
@@ -162,5 +161,6 @@ export default {
         display: flex;
         flex-direction: row;
         justify-content: start;
+        flex-wrap: wrap;
     }
 </style>

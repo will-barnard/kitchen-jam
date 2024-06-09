@@ -8,6 +8,7 @@ import com.barnard.exception.AuthException;
 import com.barnard.model.Meal;
 import com.barnard.model.Recipe;
 import com.barnard.model.Tag;
+import com.barnard.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -35,6 +36,13 @@ public class MealController {
     private UserDao userDao;
     @Autowired
     private ImageDao imageDao;
+    @Autowired
+    private EmailService emailService;
+
+    @GetMapping(path="/test")
+    public void test() {
+//        emailService.sendEmail("barnardwill@gmail.com", "test", "test");
+    }
 
     @GetMapping(path = "/{mealId}")
     public Meal getMealById(@PathVariable int mealId) {

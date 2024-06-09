@@ -8,6 +8,7 @@ import com.barnard.exception.DaoException;
 import com.barnard.model.LoginDto;
 import com.barnard.model.RegisterUserDto;
 import com.barnard.model.UserAttributes;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -20,11 +21,8 @@ import com.barnard.model.User;
 @Component
 public class JdbcUserDao implements UserDao {
 
-    private final JdbcTemplate jdbcTemplate;
-
-    public JdbcUserDao(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     @Override
     public User getUserById(int userId) {

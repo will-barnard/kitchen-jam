@@ -5,6 +5,9 @@ target/
 !**/src/test/**
 src/main/resources/application.properties
 
+.env
+src/main/java/com/barnard/service/EmailSecret.java
+
 ### STS ###
 .apt_generated
 .classpath

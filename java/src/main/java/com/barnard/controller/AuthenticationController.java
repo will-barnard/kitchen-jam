@@ -7,6 +7,8 @@ import com.barnard.model.*;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -17,6 +19,8 @@ import org.springframework.web.server.ResponseStatusException;
 import com.barnard.dao.UserDao;
 import com.barnard.security.jwt.JWTFilter;
 import com.barnard.security.jwt.TokenProvider;
+
+import java.security.Principal;
 
 @RestController
 @CrossOrigin
@@ -67,6 +71,19 @@ public class AuthenticationController {
         } catch (DaoException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "User registration failed.");
         }
+    }
+
+    @GetMapping(path = "requestPasswordUpdate")
+    public void requestPasswordUpdate(Principal principal) {
+        JavaMailSender javaMailSender = new JavaMailSenderImpl() {};
+    }
+
+    @PutMapping(path = "/updatePassword")
+    public void updatePassword() {
+
+
+
+
     }
 
 }

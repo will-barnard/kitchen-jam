@@ -1,8 +1,7 @@
 <template>
   <div class="home">
-    <h1>Home</h1>
-    <p>You are currently authenticated</p>
-    <p>username is {{ $store.state.user.username }}</p>
+    <h1>Kitchen Jam</h1>
+        
   </div>
 </template>
 
@@ -12,5 +11,11 @@ export default {
 </script>
 
 <style>
-    
+    .home h1 {
+      text-align: center;
+      
+    }
+    @media (min-width: 1024px) {
+
+    }
 </style>
