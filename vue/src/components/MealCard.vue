@@ -15,10 +15,6 @@
                         <h3>{{ meal.date }}</h3>
                     </div>
 
-                    <div id="tags" v-if="meal.tags">
-                        <Tag v-for="tag in meal.tags" :key="tag.tagId" :tag="tag" edit="false"/>
-                    </div>
-
                     <p>{{ meal.mealComment }}</p>
 
 
@@ -32,6 +28,9 @@
                     </div>
 
                     <div class="info" v-show="showMore">
+                        <div id="tags" v-if="meal.tags">
+                            <Tag v-for="tag in meal.tags" :key="tag.tagId" :tag="tag" edit="false"/>
+                        </div>
                         <p >{{ meal.ingredients }}</p>
                         <p id="notes">{{ meal.notes }}</p>
                     </div>
@@ -88,8 +87,9 @@ export default {
     .control {
         width: 50px;
         margin: 10px;
-        padding: 10px;
-        border: 1px solid black;
+        padding: 5px;
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
         font-size: 3em;
     }
     .control:hover {
@@ -98,14 +98,15 @@ export default {
     #spacer {
         flex-grow: 1;
     }
-    footer {
-        border: 1px solid black;
-    }
     #details {
         display: flex;
         flex-direction: row;
-        padding: 5px;
-        border: 1px solid black;
+        padding: 10px;
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        background-color: var(--light-2);
+        margin-bottom: 10px;
+
     }
     p {
         text-align: left;
@@ -116,6 +117,7 @@ export default {
     }
     h2, h3 {
         display: inline;
+        text-align: center;
         margin: 5px;
     }
     p:hover {
@@ -130,7 +132,7 @@ export default {
     }
     .meal-img {
         width: 40%;
-        border: 1px solid black;
+        border: 1px solid var(--border-color);
     }
     .meal-img img {
         object-fit: cover;
@@ -141,15 +143,25 @@ export default {
         margin-left: 10px;
     }
     .title {
+        text-align: center;
         display: flex;
         flex-direction: row;
-        justify-content: space-between;
+        justify-content: center;
         align-items: end;
-        border: 1px solid black;
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
     }
     .info {
-        border: 1px solid black;
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
         flex-grow: 1;
+        padding: 5px;
+    }
+    .info p {
+        background-color: var(--light-1);
+        border-radius: 10px;
+        padding: 5px;
+        margin: 3px;
     }
     #notes {
         flex-grow: 1;

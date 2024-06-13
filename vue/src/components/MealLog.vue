@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="log">
         <p v-if="!mealList">you have not logged any meals</p>  
         <MealCard class="meal-card" v-for="meal in $store.state.userMeals" :key="meal.mealId" :meal="meal" :selected="select == meal.mealId" v-on:click="selectCard()"/>
     </div>
@@ -36,6 +36,8 @@ export default {
     }
 }
 </script>
-<style>
-    
+<style scoped>
+    .log {
+        margin-bottom: 80px;
+    }
 </style>

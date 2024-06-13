@@ -79,7 +79,7 @@ export default {
         width: 50px;
         margin: 10px;
         padding: 10px;
-        border: 1px solid black;
+        border: 1px solid var(--border-color);
         font-size: 3em;
     }
     .control:hover {
@@ -89,7 +89,7 @@ export default {
         display: flex;
         flex-direction: row;
         padding: 5px;
-        border: 1px solid black;
+        border: 1px solid var(--border-color);
         height: 25vh;
     }
     p {
@@ -112,7 +112,7 @@ export default {
     }
     .recipe-img {
         width: 40%;
-        border: 1px solid black;
+        border: 1px solid var(--border-color);
     }
     .recipe-img img {
         object-fit: cover;
@@ -127,10 +127,10 @@ export default {
         flex-direction: row;
         justify-content: space-between;
         align-items: end;
-        border: 1px solid black;
+        border: 1px solid var(--border-color);
     }
     .info {
-        border: 1px solid black;
+        border: 1px solid var(--border-color);
         flex-grow: 1;
     }
     #notes {

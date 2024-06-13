@@ -1,6 +1,24 @@
 :root {
-   background-color: #ffd0c0;
-}
-body {
+
+   --bg-color: #ffd0c0;
+   --text-color: #40001b;
+   --border-color: #330217;
+   --dark-1: #b53122;
+   --light-orange: #ff8019;
+   --light-1: #eacee4;
+   --light-2: #f2e4f1;
+   
+
+
+   background-color: var(--bg-color);
+   color: var(--text-color);
+
    font-family: sans-serif;
+
+   
+}
+
+html {
+   margin: 0px;
+   padding: 0px;
 }
