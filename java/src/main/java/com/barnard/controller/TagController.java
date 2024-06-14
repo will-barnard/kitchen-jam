@@ -3,6 +3,7 @@ package com.barnard.controller;
 import com.barnard.dao.MealDao;
 import com.barnard.dao.TagsDao;
 import com.barnard.dao.UserDao;
+import com.barnard.exception.AuthException;
 import com.barnard.model.Meal;
 import com.barnard.model.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +21,6 @@ import java.util.List;
 @RequestMapping(path = "/tag")
 public class TagController {
 
-    // todo add authentication and security when doing GET
-
     @Autowired
     private MealDao mealDao;
     @Autowired
@@ -30,10 +29,16 @@ public class TagController {
     private UserDao userDao;
 
     @GetMapping(path = "/{tagId}")
-    public Tag getTag(@PathVariable int tagId) {
+    public Tag getTag(@PathVariable int tagId, Principal principal) {
         Tag tag = null;
+        int userId = userDao.getUserByUsername(principal.getName()).getId();
         try {
             tag = tagsDao.getTag(tagId);
+            if (userId != tag.getUserId()) {
+                throw new AuthException("Unauthorized");
+            }
+        } catch(AuthException e) {
+            System.out.println(e.getMessage());
         } catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
         }
@@ -41,10 +46,16 @@ public class TagController {
     }
 
     @GetMapping(path = "/meal/{mealId}")
-    public List<Tag> getTagsByMealId(@PathVariable int mealId) {
+    public List<Tag> getTagsByMealId(@PathVariable int mealId, Principal principal) {
         List<Tag> tags = null;
+        int userId = userDao.getUserByUsername(principal.getName()).getId();
         try {
+            if (!mealDao.verifyMealOwner(userId, mealId)) {
+                throw new AuthException("Unauthorized");
+            }
             tags = tagsDao.getTagsByMealId(mealId);
+        } catch(AuthException e) {
+            System.out.println(e.getMessage());
         } catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
         }
@@ -66,10 +77,15 @@ public class TagController {
     }
 
     @PutMapping(path="")
-    public Tag updateTag(@RequestBody Tag tag) {
+    public Tag updateTag(@RequestBody Tag tag, Principal principal) {
         Tag newTag = null;
+        int userId = userDao.getUserByUsername(principal.getName()).getId();
         try {
-            newTag = tagsDao.updateTag(tag);
+            if (userId != tagsDao.getTag(tag.getTagId()).getUserId()) {
+                throw new AuthException("Unauthorized");
+            } else {
+                newTag = tagsDao.updateTag(tag);
+            }
         } catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
         }
@@ -77,10 +93,15 @@ public class TagController {
     }
 
     @PostMapping(path = "/meal/{mealId}/{tagId}")
-    public List<Tag> addTagToMeal(@PathVariable int mealId, @PathVariable int tagId) {
+    public List<Tag> addTagToMeal(@PathVariable int mealId, @PathVariable int tagId, Principal principal) {
         List<Tag> tags = null;
+        int userId = userDao.getUserByUsername(principal.getName()).getId();
         try {
-            tags = tagsDao.addTagToMeal(tagId, mealId);
+            if (!mealDao.verifyMealOwner(userId, mealId)) {
+                throw new AuthException("Unauthorized");
+            } else {
+                tags = tagsDao.addTagToMeal(tagId, mealId);
+            }
         } catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
         }
@@ -88,10 +109,15 @@ public class TagController {
     }
 
     @DeleteMapping(path = "/meal/{mealId}/{tagId}")
-    public List<Tag> deleteTagFromMeal(@PathVariable int mealId, @PathVariable int tagId) {
+    public List<Tag> deleteTagFromMeal(@PathVariable int mealId, @PathVariable int tagId, Principal principal) {
         List<Tag> tags = null;
+        int userId = userDao.getUserByUsername(principal.getName()).getId();
         try {
-            tags = tagsDao.deleteTagFromMeal(tagId, mealId);
+            if (!mealDao.verifyMealOwner(userId, mealId)) {
+                throw new AuthException("Unauthorized");
+            } else {
+                tags = tagsDao.deleteTagFromMeal(tagId, mealId);
+            }
         } catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
         }
@@ -100,9 +126,15 @@ public class TagController {
 
     @ResponseStatus(HttpStatus.ACCEPTED)
     @DeleteMapping(path = "/{tagId}")
-    public void deleteTag(@PathVariable int tagId) {
+    public void deleteTag(@PathVariable int tagId, Principal principal) {
+        int userId = userDao.getUserByUsername(principal.getName()).getId();
         try {
-            tagsDao.deleteTag(tagId);
+            if (userId != tagsDao.getTag(tagId).getUserId()) {
+                throw new AuthException("Unauthorized");
+            } else {
+                tagsDao.deleteTag(tagId);
+            }
+
         } catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
         }

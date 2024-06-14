@@ -212,6 +212,28 @@ public class JdbcRecipeDao implements RecipeDao {
 
     }
 
+    @Override
+    public boolean verifyRecipeOwner(int userId, int recipeId) {
+
+        String sql = "SELECT user_id FROM recipe " +
+                "WHERE recipe_id = ?;";
+
+        try {
+
+            int result = jdbcTemplate.queryForObject(sql, int.class, recipeId);
+            if (result != userId) {
+                return false;
+            } else {
+                return true;
+            }
+
+        } catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Unable to connect to server or database", e);
+        } catch (DataIntegrityViolationException e) {
+            throw new DaoException("Data integrity violation", e);
+        }
+    }
+
     private Recipe mapRowToRecipe(SqlRowSet rs) {
         Recipe recipe = new Recipe();
 

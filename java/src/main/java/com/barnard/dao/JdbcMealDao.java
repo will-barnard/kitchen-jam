@@ -211,6 +211,27 @@ public class JdbcMealDao implements MealDao {
         }
     }
 
+    @Override
+    public boolean verifyMealOwner(int userId, int mealId) {
+        String sql = "SELECT user_id FROM meal " +
+                "WHERE meal_id = ?;";
+
+        try {
+
+            int result = jdbcTemplate.queryForObject(sql, int.class, mealId);
+            if (result != userId) {
+                return false;
+            } else {
+                return true;
+            }
+
+        } catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Unable to connect to server or database", e);
+        } catch (DataIntegrityViolationException e) {
+            throw new DaoException("Data integrity violation", e);
+        }
+    }
+
     private Meal mapRowToMeal(SqlRowSet rs) {
         Meal meal = new Meal();
 

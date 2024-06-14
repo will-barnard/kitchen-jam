@@ -3,7 +3,7 @@
             <div :class="menu">
                 <img src="/img/burger-bar-tinted.png" @click="toggle = !toggle"/>
                 <p @click="push({ name: 'home' })" >Home</p>
-                <p @click="push({ name: 'meal-log' })" v-if="$store.state.token != ''">Log</p>
+                <p @click="push({ name: 'meal-log' })" v-if="$store.state.token != ''">Meal Log</p>
                 <p @click="push({ name: 'cookbook' })" v-if="$store.state.token != ''">Cookbook</p>
                 <p @click="push({ name: 'logout' })" v-if="$store.state.token != ''">Logout</p>
             </div>

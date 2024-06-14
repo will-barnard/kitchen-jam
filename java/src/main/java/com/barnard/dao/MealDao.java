@@ -15,5 +15,6 @@ public interface MealDao {
     Meal createMeal(Meal meal);
     Meal updateMeal(Meal meal);
     void deleteMealById(int mealId);
+    boolean verifyMealOwner(int userId, int mealId);
 
 }

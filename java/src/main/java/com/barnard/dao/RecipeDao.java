@@ -15,5 +15,6 @@ public interface RecipeDao {
     Recipe createRecipe(Recipe recipe);
     Recipe updateRecipe(Recipe recipe);
     void deleteRecipeById(int recipeId);
+    boolean verifyRecipeOwner(int userId, int recipeId);
 
 }
