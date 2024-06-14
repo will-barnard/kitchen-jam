@@ -35,8 +35,12 @@ public class CategoryController {
     @GetMapping(path = "/{categoryId}")
     public Category getCategory(@PathVariable int categoryId, Principal principal) {
         Category category = null;
+        int userId = userDao.getUserByUsername(principal.getName()).getId();
         try {
             category = categoryDao.getCategoryById(categoryId);
+            if (category.getUserId() != userId) {
+                throw new AuthException("Unauthorized");
+            }
         } catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
         }
@@ -69,10 +73,15 @@ public class CategoryController {
     }
 
     @PutMapping(path="")
-    public Category updateCategory(@RequestBody Category category) {
+    public Category updateCategory(@RequestBody Category category, Principal principal) {
         Category newCategory = null;
+        int userId = userDao.getUserByUsername(principal.getName()).getId();
         try {
-            newCategory = categoryDao.updateCategory(category);
+            if (userId != categoryDao.getCategoryById(category.getCategoryId()).getUserId()) {
+                throw new AuthException("Unauthorized");
+            } else {
+                newCategory = categoryDao.updateCategory(category);
+            }
         } catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
         }
@@ -80,10 +89,15 @@ public class CategoryController {
     }
 
     @PostMapping(path = "/{recipeId}/{categoryId}")
-    public Category addCategoryToRecipe(@PathVariable int recipeId, @PathVariable int categoryId) {
+    public Category addCategoryToRecipe(@PathVariable int recipeId, @PathVariable int categoryId, Principal principal) {
         Category category = null;
+        int userId = userDao.getUserByUsername(principal.getName()).getId();
         try {
-            category = categoryDao.addCategoryToRecipe(categoryId, recipeId);
+            if (!recipeDao.verifyRecipeOwner(userId, recipeId)) {
+                throw new AuthException("Unauthorized");
+            } else {
+                category = categoryDao.addCategoryToRecipe(categoryId, recipeId);
+            }
         } catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
         }
@@ -92,9 +106,14 @@ public class CategoryController {
 
     @ResponseStatus(HttpStatus.ACCEPTED)
     @DeleteMapping(path = "/{recipeId}/{categoryId}")
-    public void deleteCategoryFromRecipe(@PathVariable int recipeId, @PathVariable int categoryId) {
+    public void deleteCategoryFromRecipe(@PathVariable int recipeId, @PathVariable int categoryId, Principal principal) {
+        int userId = userDao.getUserByUsername(principal.getName()).getId();
         try {
-            categoryDao.deleteCategoryFromRecipe(categoryId, recipeId);
+            if (!recipeDao.verifyRecipeOwner(userId, recipeId)) {
+                throw new AuthException("Unauthorized");
+            } else {
+                categoryDao.deleteCategoryFromRecipe(categoryId, recipeId);
+            }
         } catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
         }
@@ -102,22 +121,16 @@ public class CategoryController {
 
     @ResponseStatus(HttpStatus.ACCEPTED)
     @DeleteMapping(path = "/{categoryId}")
-    public void deleteCategory(@PathVariable int categoryId) {
+    public void deleteCategory(@PathVariable int categoryId, Principal principal) {
+        int userId = userDao.getUserByUsername(principal.getName()).getId();
         try {
-            categoryDao.deleteCategory(categoryId);
+            if (userId != categoryDao.getCategoryById(categoryId).getUserId()) {
+                throw new AuthException("Unauthorized");
+            } else {
+                categoryDao.deleteCategory(categoryId);
+            }
         } catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
         }
     }
-
-//    private boolean verifyAuth(Principal principal, Category category) {
-//        int userId = userDao.getUserByUsername(principal.getName()).getId();
-//        try {
-//            categories = categoryDao.getCategoriesByUser(userId);
-//        } catch(Exception e) {
-//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
-//        }
-//    }
-
-
 }
