@@ -27,6 +27,7 @@ import java.util.List;
 public class MealController {
 
     // todo add authentication and security when doing GET
+    // todo add tags when getting single meal
 
     @Autowired
     private MealDao mealDao;

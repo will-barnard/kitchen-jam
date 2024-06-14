@@ -248,6 +248,7 @@ public class JdbcMealDao implements MealDao {
         meal.setIngredients(rs.getString("ingredients"));
         meal.setRating(rs.getInt("rating"));
         meal.setImageId(rs.getInt("image_id"));
+        meal.setPublic(rs.getBoolean("is_public"));
 
         return meal;
     }

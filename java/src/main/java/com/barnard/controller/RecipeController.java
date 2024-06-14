@@ -20,6 +20,7 @@ import java.security.Principal;
 public class RecipeController {
 
     // todo add authentication and security when doing GET
+    // todo add category to gets
 
     @Autowired
     private MealDao mealDao;

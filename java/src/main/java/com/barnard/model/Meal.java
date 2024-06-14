@@ -21,6 +21,7 @@ public class Meal {
     private String ingredients;
     private Integer rating;
     private Integer imageId;
+    private boolean isPublic;
     private List<Tag> tags;
 
     public int getMealId() {
@@ -133,5 +134,13 @@ public class Meal {
 
     public void setTags(List<Tag> tags) {
         this.tags = tags;
+    }
+
+    public boolean isPublic() {
+        return isPublic;
+    }
+
+    public void setPublic(boolean aPublic) {
+        isPublic = aPublic;
     }
 }

@@ -1,5 +1,7 @@
 package com.barnard.model;
 
+import java.util.List;
+
 public class Recipe {
 
     private Integer recipeId;
@@ -9,13 +11,11 @@ public class Recipe {
     private String description;
     private Integer image_id;
     private boolean isPublic;
+    private Category category;
+    private List<Meal> mealList;
 
     public Integer getRecipeId() {
         return recipeId;
-    }
-
-    public void setRecipeId(int recipeId) {
-        this.recipeId = recipeId;
     }
 
     public int getUserId() {
@@ -36,10 +36,6 @@ public class Recipe {
 
     public Integer getAvgCookTime() {
         return avgCookTime;
-    }
-
-    public void setAvgCookTime(int avgCookTime) {
-        this.avgCookTime = avgCookTime;
     }
 
     public String getDescription() {
@@ -64,5 +60,29 @@ public class Recipe {
 
     public void setPublic(boolean aPublic) {
         isPublic = aPublic;
+    }
+
+    public void setRecipeId(Integer recipeId) {
+        this.recipeId = recipeId;
+    }
+
+    public void setAvgCookTime(Integer avgCookTime) {
+        this.avgCookTime = avgCookTime;
+    }
+
+    public List<Meal> getMealList() {
+        return mealList;
+    }
+
+    public void setMealList(List<Meal> mealList) {
+        this.mealList = mealList;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
     }
 }

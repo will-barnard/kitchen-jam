@@ -21,8 +21,6 @@ import java.util.List;
 @RequestMapping(path = "/category")
 public class CategoryController {
 
-    // todo add auth
-
     @Autowired
     private CategoryDao categoryDao;
     @Autowired
