@@ -1,0 +1,6 @@
+FROM openjdk:latest
+ADD kitchen-jam-1.0.jar app.jar
+
+ENTRYPOINT ["java", "-jar", "/app.jar"]
+
+VOLUME /volume1/docker/kitchen-jam-volume

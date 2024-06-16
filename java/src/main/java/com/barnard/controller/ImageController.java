@@ -24,7 +24,7 @@ public class ImageController {
     private ImageService imageService;
     @Autowired
     private ImageDao imageDao;
-    private final String imageDirectory = "/Users/will/Desktop";
+    private final String imageDirectory = "/volume1/docker/kitchen-jam-volume/";
 
     @PostMapping(path = "/create")
     public int createImage(@RequestParam("image") MultipartFile[] image) {
