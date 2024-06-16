@@ -24,7 +24,7 @@ public class ImageController {
     private ImageService imageService;
     @Autowired
     private ImageDao imageDao;
-    private final String imageDirectory = "/volume1/docker/kitchen-jam-volume/";
+    private final String imageDirectory = "/volume/";
 
     @PostMapping(path = "/create")
     public int createImage(@RequestParam("image") MultipartFile[] image) {
@@ -34,14 +34,14 @@ public class ImageController {
             try {
                 imageString = imageService.saveImageToStorage(imageDirectory, imageFile);
             } catch (Exception e) {
-                System.out.println("Something went wrong");
+                System.out.println("Something went wrong saving the image");
             }
         }
         int imageId = 0;
         try {
             imageId = imageDao.createImage(imageString);
         } catch (Exception e) {
-            System.out.println("Something went wrong");
+            System.out.println("Something went wrong creating the image in db");
         }
 
         return imageId;

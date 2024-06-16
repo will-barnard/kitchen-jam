@@ -37,7 +37,5 @@ export default {
 }
 </script>
 <style scoped>
-    .log {
-        margin-bottom: 80px;
-    }
+    
 </style>

@@ -17,11 +17,11 @@ public class JdbcImageDao implements ImageDao {
     @Override
     public int createImage(String imagePath) {
         int imageId;
-        String sql = "INSERT INTO image (image_path) " +
+        String sql = "INSERT into image (image_path) " +
                 "VALUES (?) " +
                 "RETURNING image_id;";
         try {
-            imageId = jdbcTemplate.update(sql, int.class, imagePath);
+            imageId = jdbcTemplate.queryForObject(sql, int.class, imagePath);
         } catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database", e);
         } catch (DataIntegrityViolationException e) {

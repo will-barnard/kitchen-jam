@@ -27,13 +27,13 @@
         <div v-show="!editing">
             <div>
                 <div class="meal-img">
-                <img src="../img/placeholder.jpeg" />
-                <!-- img goes here -->
-                </div>
+                <img :src="imgPath" />
+            </div>
+        
                 <div class="details">
                     <div>
                         <h2>{{ staticMeal.mealName }}</h2>
-                        <h3>{{ staticMeal.date }}</h3>
+                        <h3>{{ formatDate(staticMeal.dateCooked) }}</h3>
                     </div>
 
                     <p>{{ staticMeal.mealComment }}</p>
@@ -48,12 +48,14 @@
                             <p>{{ staticMeal.cookTime }} min</p>
                         </div>
                         <div class="widget">
-                            <p>{{ staticMeal.rating }} / 5 Rating</p>
+                            <p>{{ staticMeal.rating }} / 10 Rating</p>
                         </div>
                     </div>
 
                     <div>
+                        <h3>Ingredients:</h3>
                         <p>{{ staticMeal.ingredients }}</p>
+                        <h3>Notes:</h3>
                         <p>{{ staticMeal.notes }}</p>
                     </div>
                 </div>            
@@ -61,18 +63,20 @@
         </div>
 
         <div v-show="editing">
-            <form>
-                <div class="meal-img">
-                    <img src="../img/placeholder.jpeg" />
-                    <!-- img goes here -->
+            <div class="meal-img">
+                    <img :src="imgPath" />
                 </div>
-            
+                <div>
+                <h2>Edit image</h2>
+                <input type="file" name="file" accept="image/*" @change="uploadImage">
+            </div>
+            <form>
                 <div class="edit-form">
                     <div>
                         <label>Name</label><input type="text" v-model="newMeal.mealName">
                     </div>
                     <div>
-                        <label>Date cooked</label><input type="date" v-model="newMeal.date"/>
+                        <label>Date cooked</label><input type="date" v-model="newMeal.dateCreated"/>
                     </div>
                     <div>
                         <label>Comment</label><input type="text" v-model="newMeal.mealComment"/>
@@ -109,13 +113,15 @@
                     </div>
                 </div>
             </form>
-        </div>        
+        </div>
     </body>
 </template>
 
 <script>
 import MealService from '../services/MealService.js'
 import Tag from './Tag.vue';
+import ImageService from '../services/ImageService.js';
+import UtilityService from '../services/UtilityService.js';
 
 export default {
     props: ['meal', 'loading'],
@@ -124,6 +130,7 @@ export default {
         return {
             editing: false,
             newMeal: {},
+            imgPath: "",
             staticMeal: {},
             deleting: false,
             newTag: {}
@@ -132,7 +139,21 @@ export default {
     created() {
         this.staticMeal = this.cloneMeal(this.meal);
         this.newMeal = this.cloneMeal(this.staticMeal);
-        console.log(this.meal.tags);
+        if (this.meal.imageId == 0 || this.meal.imageId == null) {
+            this.imgPath = "../img/placeholder.jpeg";
+        } else {
+            ImageService.getImage(this.meal.imageId).then(
+                (res) => {
+                    const base64 = btoa(
+                    new Uint8Array(res.data).reduce(
+                    (data, byte) => data + String.fromCharCode(byte),
+                    ''
+                    )
+                );
+                this.imgPath = "data:image/png;base64," + base64;
+                }
+            )
+        }
     },
     methods: {
         cancelEdit() {
@@ -168,7 +189,9 @@ export default {
                 newMeal.recipeId = meal.recipeId;
                 newMeal.mealName = meal.mealName;
                 newMeal.mealComment = meal.mealComment;
-                newMeal.date = meal.date;
+                newMeal.dateCreated = meal.dateCreated;
+                newMeal.dateCooked = meal.dateCooked;
+                newMeal.lastModified = meal.lastModified;
                 newMeal.cookTime = meal.cookTime;
                 newMeal.notes = meal.notes;
                 newMeal.ingredients = meal.ingredients;
@@ -177,6 +200,19 @@ export default {
                 newMeal.tags = meal.tags;
             }
             return newMeal;
+        },
+        uploadImage(event){
+            ImageService.createImage(event.target.files[0]).then(
+                (response) => {
+                    ImageService.addImageToMeal(this.meal.mealId, response.data).then(
+                        (response) => {
+                            this.imgPath = "data:image/jpeg;base64," + response.data;
+                        });
+                }
+            ) 
+        },
+        formatDate(date) {
+            return UtilityService.formatDate(date);
         }
     }
 }
@@ -184,9 +220,12 @@ export default {
 
 <style scoped>
     .meal-img {
-        height: 20vh;
+        height: 30vh;
         overflow: hidden;
-        object-fit: cover;
+        text-align: center;
+    }
+    .meal-img img {
+        height: 100%;
     }
     .controls {
         text-align: center;

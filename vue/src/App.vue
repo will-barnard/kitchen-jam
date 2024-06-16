@@ -6,6 +6,9 @@
       <router-view />
     </div>
 
+    <div class="footspace"></div>        
+
+
     <div>
       <NavComp />
     </div>
@@ -29,6 +32,9 @@ export default {
     position: fixed;
     width: 100%;
     text-align: center;
+  }
+  .footspace {
+    height: 80px;
   }
 </style>
 

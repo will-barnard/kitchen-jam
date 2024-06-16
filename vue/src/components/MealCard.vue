@@ -4,18 +4,20 @@
 
             <div id="details" class="body-card">
                 <div class="meal-img" >
-                    <img src="src/img/placeholder.jpeg" />
-                    <!-- img goes here -->
+                    <img src="../img/placeholder.jpeg" v-if="showImg = false">
+                    <img :src="imgPath" v-if="showImg = true"/>
                 </div>
 
                 <div class="content">
 
                     <div class="title">
                         <h2 class="name">{{ meal.mealName }}</h2>
-                        <h3>{{ meal.date }}</h3>
                     </div>
-
-                    <p>{{ meal.mealComment }}</p>
+                    <div class="subheader">
+                        <p>{{ meal.mealComment }}</p>
+                        <p>{{ formatDate(meal.dateCooked) }}</p>
+                    </div>
+                    
 
 
                     <div class="row">
@@ -26,12 +28,13 @@
                             <p>{{ meal.rating }} / 5 Rating</p>
                         </div>
                     </div>
-
-                    <div class="info" v-show="showMore">
-                        <div id="tags" v-if="meal.tags">
+                    <div id="tags" v-if="meal.tags">
                             <Tag v-for="tag in meal.tags" :key="tag.tagId" :tag="tag" edit="false"/>
                         </div>
+                    <div class="info" v-show="showMore">
+                        <h3>Ingredients:</h3>
                         <p >{{ meal.ingredients }}</p>
+                        <h3>Notes:</h3>
                         <p id="notes">{{ meal.notes }}</p>
                     </div>
                 </div>
@@ -46,6 +49,8 @@
     </div>
 </template>
 <script>
+import UtilityService from '../services/UtilityService.js';
+import ImageService from '../services/ImageService.js';
 import Tag from './Tag.vue';
 
 export default {
@@ -53,7 +58,9 @@ export default {
     props: ['meal'],
     data() {
         return {
-            showMore: false
+            showMore: false,
+            showImg: false,
+            imgPath: "../img/placeholder.jpeg"
         }
     },
     methods: {
@@ -62,9 +69,29 @@ export default {
         },
         switch() {
             this.showMore = !this.showMore;
+        },
+        formatDate(date) {
+            return UtilityService.formatDate(date);
         }
     },
     created() {
+        this.imgPath = "../img/placeholder.jpeg";
+        if (this.meal.imageId == 0 || this.meal.imageId == null) {
+            this.imgPath = "../img/placeholder.jpeg";
+        } else {
+            ImageService.getImage(this.meal.imageId).then(
+                (res) => {
+                    const base64 = btoa(
+                    new Uint8Array(res.data).reduce(
+                    (data, byte) => data + String.fromCharCode(byte),
+                    ''
+                    )
+                );
+                this.imgPath = "data:image/png;base64," + base64;
+                this.showImg = true;
+                }
+            )
+        }
     }
 }
 </script>
@@ -150,6 +177,8 @@ export default {
         align-items: end;
         border: 1px solid var(--border-color);
         border-radius: 10px;
+        background-color: var(--light-1);
+
     }
     .info {
         border: 1px solid var(--border-color);
@@ -163,6 +192,9 @@ export default {
         padding: 5px;
         margin: 3px;
     }
+    .info h3 {
+        text-align: left;
+    }
     #notes {
         flex-grow: 1;
     }
@@ -174,5 +206,10 @@ export default {
         flex-direction: row;
         justify-content: start;
         flex-wrap: wrap;
+    }
+    .subheader {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
     }
 </style>
