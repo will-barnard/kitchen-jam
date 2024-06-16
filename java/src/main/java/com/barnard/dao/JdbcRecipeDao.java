@@ -190,16 +190,13 @@ public class JdbcRecipeDao implements RecipeDao {
 
         String sql = "DELETE FROM recipe_category " +
                 "WHERE recipe_id = ?;";
-        String sql2 = "DELETE FROM recipe_image " +
-                "WHERE recipe_id = ?;";
-        String sql3 = "DELETE FROM recipe " +
+        String sql2 = "DELETE FROM recipe " +
                 "WHERE recipe_id = ?;";
 
         try {
 
             jdbcTemplate.update(sql, recipeId);
-            jdbcTemplate.update(sql2, recipeId);
-            int rowsAffected = jdbcTemplate.update(sql3, recipeId);
+            int rowsAffected = jdbcTemplate.update(sql2, recipeId);
             if (rowsAffected != 1) {
                 throw new DaoException();
             }

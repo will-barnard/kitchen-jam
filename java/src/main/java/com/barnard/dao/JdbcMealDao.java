@@ -190,16 +190,13 @@ public class JdbcMealDao implements MealDao {
 
         String sql = "DELETE FROM tags_meal " +
                 "WHERE meal_id  = ?;";
-        String sql2 = "DELETE FROM meal_image " +
-                "WHERE meal_id = ?;";
-        String sql3 = "DELETE FROM meal " +
+        String sql2 = "DELETE FROM meal " +
                 "WHERE meal_id = ?;";
 
         try {
 
             jdbcTemplate.update(sql, mealId);
-            jdbcTemplate.update(sql2, mealId);
-            int rowsAffected = jdbcTemplate.update(sql3, mealId);
+            int rowsAffected = jdbcTemplate.update(sql2, mealId);
             if (rowsAffected != 1) {
                 throw new DaoException();
             }
