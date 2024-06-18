@@ -13,7 +13,8 @@ import java.util.UUID;
 public class ImageService {
 
     public String saveImageToStorage(String uploadDirectory, MultipartFile imageFile) throws IOException {
-        String uniqueFileName = UUID.randomUUID() + "_" + imageFile.getOriginalFilename();
+        String ext = imageFile.getOriginalFilename().split("\\.")[imageFile.getOriginalFilename().split("\\.").length - 1];
+        String uniqueFileName = UUID.randomUUID() + "." + ext;
 
         Path uploadPath = Path.of(uploadDirectory);
         Path filePath = uploadPath.resolve(uniqueFileName);

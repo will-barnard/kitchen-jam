@@ -237,9 +237,15 @@ public class JdbcMealDao implements MealDao {
         meal.setMealName(rs.getString("meal_name"));
         meal.setRecipeId(rs.getInt("recipe_id"));
         meal.setMealComment(rs.getString("meal_comment"));
-        meal.setDateCooked(rs.getDate("date_created").toLocalDate());
-        meal.setDateCreated(rs.getTimestamp("date_created").toLocalDateTime());
-        meal.setLastModified(rs.getTimestamp("last_modified").toLocalDateTime());
+        if (rs.getDate("date_cooked") != null) {
+            meal.setDateCooked(rs.getDate("date_cooked").toLocalDate());
+        }
+        if (rs.getTimestamp("date_created") != null) {
+            meal.setDateCreated(rs.getTimestamp("date_created").toLocalDateTime());
+        }
+        if (rs.getTimestamp("last_modified") != null) {
+            meal.setLastModified(rs.getTimestamp("last_modified").toLocalDateTime());
+        }
         meal.setCookTime(rs.getInt("cook_time"));
         meal.setNotes(rs.getString("notes"));
         meal.setIngredients(rs.getString("ingredients"));

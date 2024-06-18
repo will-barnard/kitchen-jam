@@ -15,6 +15,7 @@ export default {
         display: inline;
         white-space: nowrap;
         padding: 0px;
+        margin: 0px;
     }
     .x {
         margin-left: 5px;

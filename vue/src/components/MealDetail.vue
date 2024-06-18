@@ -27,23 +27,22 @@
         <div v-show="!editing">
             <div>
                 <div class="meal-img">
-                <img :src="imgPath" />
+                <img :src="imgPath" v-if="showImage"/>
             </div>
         
                 <div class="details">
+
                     <div>
                         <h2>{{ staticMeal.mealName }}</h2>
                         <h3>{{ formatDate(staticMeal.dateCooked) }}</h3>
-                    </div>
-
-                    <p>{{ staticMeal.mealComment }}</p>
-
-                    <div class="tags">
-                        <p v-if="!staticMeal.tags">no tags</p>
-                        <Tag class="tag" v-for="tag in staticMeal.tags" :key="tag.tagId" :tag="tag" edit="false"/>
+                        <div class="tags">
+                            <p v-if="staticMeal.tags.length < 1 ">No tags yet</p>
+                            <Tag class="tag" v-for="tag in staticMeal.tags" :key="tag.tagId" :tag="tag" edit="false"/>
+                        </div>
                     </div>
 
                     <div>
+                        <p>{{ staticMeal.mealComment }}</p>
                         <div class="widget">
                             <p>{{ staticMeal.cookTime }} min</p>
                         </div>
@@ -58,13 +57,14 @@
                         <h3>Notes:</h3>
                         <p>{{ staticMeal.notes }}</p>
                     </div>
+                    
                 </div>            
             </div>
         </div>
 
         <div v-show="editing">
             <div class="meal-img">
-                    <img :src="imgPath" />
+                    <img :src="imgPath" v-if="showImage"/>
                 </div>
                 <div>
                 <h2>Edit image</h2>
@@ -76,7 +76,7 @@
                         <label>Name</label><input type="text" v-model="newMeal.mealName">
                     </div>
                     <div>
-                        <label>Date cooked</label><input type="date" v-model="newMeal.dateCreated"/>
+                        <label>Date cooked</label><input type="date" v-model="newMeal.dateCooked"/>
                     </div>
                     <div>
                         <label>Comment</label><input type="text" v-model="newMeal.mealComment"/>
@@ -133,7 +133,8 @@ export default {
             imgPath: "",
             staticMeal: {},
             deleting: false,
-            newTag: {}
+            newTag: {},
+            showImage: true
         }
     },
     created() {
@@ -145,9 +146,9 @@ export default {
             ImageService.getImage(this.meal.imageId).then(
                 (res) => {
                     const base64 = btoa(
-                    new Uint8Array(res.data).reduce(
-                    (data, byte) => data + String.fromCharCode(byte),
-                    ''
+                        new Uint8Array(res.data).reduce(
+                        (data, byte) => data + String.fromCharCode(byte),
+                        ''
                     )
                 );
                 this.imgPath = "data:image/png;base64," + base64;
@@ -202,14 +203,41 @@ export default {
             return newMeal;
         },
         uploadImage(event){
-            ImageService.createImage(event.target.files[0]).then(
+            this.showImage = false;
+            
+            if (this.meal.imageId == 0 || this.meal.imageId == null) {
+                ImageService.createImage(event.target.files[0]).then(
                 (response) => {
                     ImageService.addImageToMeal(this.meal.mealId, response.data).then(
-                        (response) => {
-                            this.imgPath = "data:image/jpeg;base64," + response.data;
+                        (res) => {
+                            const base64 = btoa(
+                                new Uint8Array(res.data).reduce(
+                                (data, byte) => data + String.fromCharCode(byte),
+                                ''
+                                )
+                            );
+                            this.imgPath = "data:image/png;base64," + base64;
+                            this.showImage = true;
                         });
                 }
             ) 
+            } else {
+                ImageService.createImage(event.target.files[0]).then(
+                (response) => {
+                    ImageService.updateMealImage(this.meal.mealId, response.data).then(
+                        (res) => {
+                            const base64 = btoa(
+                                new Uint8Array(res.data).reduce(
+                                (data, byte) => data + String.fromCharCode(byte),
+                                ''
+                                )
+                            );
+                            this.imgPath = "data:image/png;base64," + base64;
+                            this.showImage = true;
+                        });
+                    }
+                ) 
+                }
         },
         formatDate(date) {
             return UtilityService.formatDate(date);
@@ -226,6 +254,7 @@ export default {
     }
     .meal-img img {
         height: 100%;
+        border-radius: 15px;
     }
     .controls {
         text-align: center;
@@ -279,11 +308,19 @@ export default {
         padding: 3px;
         padding-left: 15px;
         padding-right: 15px;
+        padding-top: 3px;
+        padding-bottom: 3px;
         border-radius: 50px;
     }
     .tag-list {
         display: flex;
         flex-direction: row;
+    }
+    .details {
+        background-color: var(--light-2);
+        padding: 5px;
+        margin: 5px;
+        border-radius: 10px;
     }
 
 </style>

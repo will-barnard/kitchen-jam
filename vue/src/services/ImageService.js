@@ -21,16 +21,24 @@ export default {
     return axios.delete('/image/delete/' + imageId)
   },
   addImageToMeal(mealId, imageId) {
-    return axios.post('/image/meal/' + mealId + '/' + imageId)
+    return axios.post('/image/meal/' + mealId + '/' + imageId, {
+      responseType: 'arraybuffer'
+    })
   },
   addImageToRecipe(recipeId, imageId) {
-    return axios.post('/image/recipe/' + recipeId + '/' + imageId)
+    return axios.post('/image/recipe/' + recipeId + '/' + imageId, {
+      responseType: 'arraybuffer'
+    })
   },
   updateMealImage(mealId, imageId) {
-    return axios.put('/image/meal/' + mealId + '/' + imageId)
+    return axios.put('/image/meal/' + mealId + '/' + imageId, {
+      responseType: 'arraybuffer'
+    })
   },
   updateRecipeImage(recipeId, imageId) {
-    return axios.put('/image/recipe/' + recipeId + '/' + imageId)
+    return axios.put('/image/recipe/' + recipeId + '/' + imageId, {
+      responseType: 'arraybuffer'
+    })
   },
   removeMealImage(mealId, imageId) {
     return axios.delete('/image/meal/' + mealId + '/' + imageId)
@@ -38,8 +46,14 @@ export default {
   removeRecipeImage(recipeId, imageId) {
     return axios.delete('/image/recipe/' + recipeId + '/' + imageId)
   },
-  parseImg(img) {
-    return 
+  parseImg(res) {
+    const base64 = btoa(
+      new Uint8Array(res.data).reduce(
+        (data, byte) => data + String.fromCharCode(byte),
+        ''
+      )
+    );
+    return base64;
   }
 
 }

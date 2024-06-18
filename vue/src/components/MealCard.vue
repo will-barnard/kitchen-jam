@@ -15,7 +15,7 @@
                     </div>
                     <div class="subheader">
                         <p>{{ meal.mealComment }}</p>
-                        <p>{{ formatDate(meal.dateCooked) }}</p>
+                        <p class="date">{{ formatDate(meal.dateCooked) }}</p>
                     </div>
                     
 
@@ -25,7 +25,7 @@
                             <p>{{ meal.cookTime }} min</p>
                         </div>
                         <div class="widget">
-                            <p>{{ meal.rating }} / 5 Rating</p>
+                            <p>{{ meal.rating }} / 10 Rating</p>
                         </div>
                     </div>
                     <div id="tags" v-if="meal.tags">
@@ -81,14 +81,9 @@ export default {
         } else {
             ImageService.getImage(this.meal.imageId).then(
                 (res) => {
-                    const base64 = btoa(
-                    new Uint8Array(res.data).reduce(
-                    (data, byte) => data + String.fromCharCode(byte),
-                    ''
-                    )
-                );
-                this.imgPath = "data:image/png;base64," + base64;
-                this.showImg = true;
+                    const base64 = ImageService.parseImg(res);
+                    this.imgPath = "data:image/png;base64," + base64;
+                    this.showImg = true;
                 }
             )
         }
@@ -211,5 +206,8 @@ export default {
         display: flex;
         flex-direction: row;
         justify-content: space-between;
+    }
+    .date {
+        text-align: right;
     }
 </style>
