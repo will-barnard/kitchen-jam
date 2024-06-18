@@ -62,12 +62,12 @@ public class TagController {
         return tags;
     }
 
-    @GetMapping(path="/search")
-    public List<Tag> searchLikeTags(@RequestBody String search, Principal principal) {
+    @PostMapping(path="/search")
+    public List<Tag> searchLikeTags(@RequestBody Tag tag, Principal principal) {
         List<Tag> tags = null;
         int userId = userDao.getUserByUsername(principal.getName()).getId();
         try {
-            tags = tagsDao.searchLikeTags(userId, search);
+            tags = tagsDao.searchLikeTags(userId, tag.getTagName());
         } catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
         }

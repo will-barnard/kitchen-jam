@@ -5,6 +5,9 @@ export default {
   getTag(tagId) {
     return axios.get('/tag/' + tagId)
   },
+  searchTags(search) {
+    return axios.post('/tag/search', search)
+  },
   createTag(tag) {
     return axios.post('/tag', tag)
   },

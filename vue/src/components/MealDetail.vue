@@ -80,8 +80,14 @@
                 </div>
 
                 <div>
-                    <label>Tags</label><input type="text" v-model="newTag.tagName"/>
+                    <label>Search Tags</label><input type="text" v-model="newTag.tagName" @change="search()"/>
                     <button>Create New Tag</button>
+                </div>
+
+                <div>
+                    <div v-for="tag in searchTags">
+                        <p>{{ tag.tagName }}</p>
+                    </div>
                 </div>
                 
             </div>
@@ -278,13 +284,33 @@ export default {
             return UtilityService.formatDate(date);
         },
         removeTag(id) {
-            return TagService.removeTagFromMeal(this.meal.mealId, id)
+            TagService.removeTagFromMeal(this.meal.mealId, id).then(
+                this.staticMeal.tags.filter(
+                    (tag) => {
+                        return tag.tagId != id;
+                    }
+                )
+            )
         },
         createTag() {
-
+            TagService.createTag(this.newTag).then(
+                (response) => {
+                    this.staticMeal.push(result.data);
+                    TagService.addTagToMeal(this.mealId, result.data.tagId)
+                }
+            )
         },
-        addTag() {
-
+        addTag(tag) {
+            this.staticMeal.push(tag);
+            TagService.addTagToMeal(tag);
+        },
+        search() {
+            TagService.searchTags(this.newTag).then(
+                (response) => {
+                    this.searchTags = response.data;
+                    console.log(response.data);
+                }
+            );
         }
     }
 }
