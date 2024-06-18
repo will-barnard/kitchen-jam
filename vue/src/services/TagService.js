@@ -13,6 +13,9 @@ export default {
   },
   addTagToMeal(mealId, tagId) {
     return axios.post('/tag/meal/' + mealId + '/' + tagId)
+  },
+  removeTagFromMeal(mealId, tagId) {
+    return axios.delete('/tag/meal/' + mealId + '/' + tagId)
   }
 
 }

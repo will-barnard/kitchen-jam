@@ -4,16 +4,21 @@
    --text-color: #40001b;
    --border-color: #330217;
    --dark-1: #b53122;
+   --dark-2: #c10631;
    --light-orange: #ff8019;
    --light-1: #eacee4;
    --light-2: #f2e4f1;
+   --light-3: #ff3f5a;
+   --light-4: #b8da3d;
+   --edit: #feae59;
    
 
+   --font: sans-serif;
 
    background-color: var(--bg-color);
    color: var(--text-color);
 
-   font-family: sans-serif;
+   font-family: var(--font);
 
    
 }
@@ -21,4 +26,9 @@
 html {
    margin: 0px;
    padding: 0px;
+}
+
+textarea {
+   resize: none;
+   font-family: var(--font);
 }

@@ -1,119 +1,157 @@
 <template>
      <body>
 
-        <div class="controls">
-            <h2 @click="$router.go(-1)">Back</h2>
-            <div class="spacer"></div>
-            <h2 v-if="!editing" v-on:click="editing=true">
-                Edit
-            </h2>
-            <h2 v-if="!editing" v-on:click="deleteButton()">
-                Delete Meal
-            </h2>
-            <h2 v-if="editing" v-on:click="saveEdit()">
-                Save
-            </h2>
-            <h2 v-if="editing" v-on:click="cancelEdit()">
-                Cancel
-            </h2>
-        </div>
-
         <div class="delete" v-if="deleting">
             <h2 id="delete-check">Are you sure you want to delete? This cannot be undone</h2>
             <h2 v-on:click="deleteMeal()">Delete</h2>
             <h2 v-on:click="deleting = false">Cancel</h2>
         </div>
 
-        <div v-show="!editing">
+        <div class="meal-img">
+            <img :src="imgPath" v-if="showImage"/>
+        </div>
+
+        <div class="display" v-show="!editing">
             <div>
-                <div class="meal-img">
-                <img :src="imgPath" v-if="showImage"/>
-            </div>
-        
                 <div class="details">
 
-                    <div>
-                        <h2>{{ staticMeal.mealName }}</h2>
-                        <h3>{{ formatDate(staticMeal.dateCooked) }}</h3>
-                        <div class="tags">
-                            <p v-if="staticMeal.tags.length < 1 ">No tags yet</p>
-                            <Tag class="tag" v-for="tag in staticMeal.tags" :key="tag.tagId" :tag="tag" edit="false"/>
+                    <div class="title">
+                        <h2 >{{ staticMeal.mealName }}</h2>
+                        <div class="subtitle">
+                            <h4 class="comment">{{ staticMeal.mealComment }}</h4>
+                            <h4 class="date">{{ formatDate(staticMeal.dateCooked) }}</h4>
                         </div>
                     </div>
 
-                    <div>
-                        <p>{{ staticMeal.mealComment }}</p>
-                        <div class="widget">
+                    <div class="tags">
+                            <p v-if="!staticMeal.tags">No tags yet</p>
+                            <Tag class="tag" v-for="tag in staticMeal.tags" :key="tag.tagId" :tag="tag" edit="false"/>
+                    </div>
+
+                    <div class="widgets">
+                        <div class="cooktime">
+                            <img src="/img/clock.png" />
                             <p>{{ staticMeal.cookTime }} min</p>
                         </div>
-                        <div class="widget">
+                        <div class="rating">
                             <p>{{ staticMeal.rating }} / 10 Rating</p>
                         </div>
                     </div>
 
-                    <div>
-                        <h3>Ingredients:</h3>
-                        <p>{{ staticMeal.ingredients }}</p>
-                        <h3>Notes:</h3>
-                        <p>{{ staticMeal.notes }}</p>
+                    <div class="foot">
+                        <div class="ingredients">
+                            <h3>Ingredients:</h3>
+                            <p>{{ staticMeal.ingredients }}</p>
+                        </div>
+                        <div class="notes">
+                            <h3>Notes:</h3>
+                            <p>{{ staticMeal.notes }}</p>
+                        </div>
+            
                     </div>
-                    
+
                 </div>            
             </div>
         </div>
 
-        <div v-show="editing">
-            <div class="meal-img">
-                    <img :src="imgPath" v-if="showImage"/>
-                </div>
-                <div>
-                <h2>Edit image</h2>
+        <div class="edit" v-show="editing">
+
+            <div class="edit-image edit-block">
+                <h3>Edit image</h3>
                 <input type="file" name="file" accept="image/*" @change="uploadImage">
             </div>
-            <form>
-                <div class="edit-form">
-                    <div>
-                        <label>Name</label><input type="text" v-model="newMeal.mealName">
-                    </div>
-                    <div>
-                        <label>Date cooked</label><input type="date" v-model="newMeal.dateCooked"/>
-                    </div>
-                    <div>
-                        <label>Comment</label><input type="text" v-model="newMeal.mealComment"/>
-                    </div>
-                    <div class="edit-tags">
-                        <div>
-                            <label>Tags</label><input type="text" v-model="newTag.tagName"/>
-                            <button>Add</button>
+
+            <div class="edit-tags edit-block">
+                <h3>Edit tags</h3>
+               
+                <div>
+                    <p v-if="!newMeal.tags">no tags</p>
+
+                    <div class="tag-list">
+                        <div  v-for="tag in staticMeal.tags">
+                            <div class="tag-item">
+                                <p>{{tag.tagName}}</p>
+                                <div class="tag-spacer"></div>
+                                <img src="/img/trash.png" @click="removeTag(tag.tagId)"/>
+                            </div>    
                         </div>
-                        <div class="tag-list">
-                            <p v-if="!newMeal.tags">no tags</p>
-                            <Tag class="tag" v-for="tag in staticMeal.tags" :key="tag.tagId" :tag="tag" />
+                    </div>    
+
+                </div>
+
+                <div>
+                    <label>Tags</label><input type="text" v-model="newTag.tagName"/>
+                    <button>Create New Tag</button>
+                </div>
+                
+            </div>
+
+            <form>
+                <div class="edit-form edit-block">
+                    
+                    <h3>Edit details</h3>
+
+                    <label>Name</label>
+                    <input type="text" v-model="newMeal.mealName">
+                    
+                    
+                    <label>Date cooked</label>
+                    <input type="date" v-model="newMeal.dateCooked"/>
+                    
+                    
+                    <label>Comment</label>
+                    <input type="text" v-model="newMeal.mealComment"/>
+                    
+                    <label>Ingredient list</label>
+                    <input type="text" v-model="newMeal.ingredients"/>
+                    <label>Notes</label>
+                    <textarea v-model="newMeal.notes"></textarea>
+
+                    <div class="edit-widgets">
+                        
+                        <div class="edit-rating">
+                            <label>Rating</label>
+                            <select v-model="newMeal.rating">
+                                <option disabled="true" >----</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                                <option value="8">8</option>
+                                <option value="9">9</option>
+                                <option value="10">10</option>
+                            </select>
+                        </div> 
+
+                        <div class="">
+                            <label>Cook time (min)</label>
+                            <input type="number" v-model="newMeal.cookTime"/>
                         </div>
 
-                    </div>
-                    <div>
-                        <label>Cook time (min)</label><input type="number" v-model="newMeal.cookTime"/>
-                    </div>
-                    <div>
-                        <label>Rating</label><select v-model="newMeal.rating">
-                        <option disabled="true" >----</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label>Ingredient list</label><input type="text" v-model="newMeal.ingredients"/>
-                    </div>
-                    <div>
-                        <label>Notes</label><textarea v-model="newMeal.notes"></textarea>
-                    </div>
+                    </div> 
+                    
                 </div>
             </form>
         </div>
+
+        <div class="controls">
+            <div class="edit-button button" v-if="!editing" v-on:click="editing=true">
+                <img src="/img/edit.png" />
+            </div>
+            <div class="trash button" v-if="!editing" v-on:click="deleteButton()">
+                <img src="/img/trash.png" />
+            </div>
+            <div class="undo button" v-if="editing" v-on:click="cancelEdit()">
+                <img src="/img/undo.png" />
+            </div>
+            <div class="check button" v-if="editing" v-on:click="saveEdit()">
+                <img src="/img/check.png" />
+            </div>
+        </div>
+
     </body>
 </template>
 
@@ -122,6 +160,7 @@ import MealService from '../services/MealService.js'
 import Tag from './Tag.vue';
 import ImageService from '../services/ImageService.js';
 import UtilityService from '../services/UtilityService.js';
+import TagService from '../services/TagService.js';
 
 export default {
     props: ['meal', 'loading'],
@@ -129,12 +168,13 @@ export default {
     data() {
         return {
             editing: false,
-            newMeal: {},
-            imgPath: "",
-            staticMeal: {},
             deleting: false,
+            showImage: true,
+            imgPath: "",
+            newMeal: {},
+            staticMeal: {},
             newTag: {},
-            showImage: true
+            searchTags: []
         }
     },
     created() {
@@ -145,13 +185,8 @@ export default {
         } else {
             ImageService.getImage(this.meal.imageId).then(
                 (res) => {
-                    const base64 = btoa(
-                        new Uint8Array(res.data).reduce(
-                        (data, byte) => data + String.fromCharCode(byte),
-                        ''
-                    )
-                );
-                this.imgPath = "data:image/png;base64," + base64;
+                    const base64 = ImageService.parseImg(res);
+                    this.imgPath = "data:image/png;base64," + base64;
                 }
             )
         }
@@ -209,31 +244,31 @@ export default {
                 ImageService.createImage(event.target.files[0]).then(
                 (response) => {
                     ImageService.addImageToMeal(this.meal.mealId, response.data).then(
-                        (res) => {
-                            const base64 = btoa(
-                                new Uint8Array(res.data).reduce(
-                                (data, byte) => data + String.fromCharCode(byte),
-                                ''
-                                )
-                            );
-                            this.imgPath = "data:image/png;base64," + base64;
-                            this.showImage = true;
-                        });
+                        () => {
+                            ImageService.getImage(id).then(
+                                (r) => {
+                                    const base64 = ImageService.parseImg(r);
+                                    this.imgPath = "data:image/png;base64," + base64;
+                                    this.showImage = true;
+                                }
+                            )
+                        }
+                    );
                 }
             ) 
             } else {
                 ImageService.createImage(event.target.files[0]).then(
                 (response) => {
+                    let id = response.data;
                     ImageService.updateMealImage(this.meal.mealId, response.data).then(
                         (res) => {
-                            const base64 = btoa(
-                                new Uint8Array(res.data).reduce(
-                                (data, byte) => data + String.fromCharCode(byte),
-                                ''
-                                )
-                            );
-                            this.imgPath = "data:image/png;base64," + base64;
-                            this.showImage = true;
+                            ImageService.getImage(id).then(
+                                (r) => {
+                                    const base64 = ImageService.parseImg(r);
+                                    this.imgPath = "data:image/png;base64," + base64;
+                                    this.showImage = true;
+                                }
+                            )
                         });
                     }
                 ) 
@@ -241,16 +276,30 @@ export default {
         },
         formatDate(date) {
             return UtilityService.formatDate(date);
+        },
+        removeTag(id) {
+            return TagService.removeTagFromMeal(this.meal.mealId, id)
+        },
+        createTag() {
+
+        },
+        addTag() {
+
         }
     }
 }
 </script>
 
 <style scoped>
+    body p, h1, h2, h3, h4 {
+        margin: 0px;
+    }
     .meal-img {
+        margin-top: 15px;
         height: 30vh;
         overflow: hidden;
         text-align: center;
+        margin-bottom: 15px;
     }
     .meal-img img {
         height: 100%;
@@ -260,22 +309,41 @@ export default {
         text-align: center;
         display: flex;
         flex-direction: row;
-        justify-content: center;
+        justify-content: end;
         align-items: center;
-        margin: 0px;
+        margin-right: 5px;
+        margin-top: 10px;
+    }
+    .controls img {
+        height: 5vh;
     }
     .controls:hover {
         cursor: pointer;
     }
-    .controls h2 {
-        border: 1px solid black;
+    .button {
+        width: 15vw;
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
         padding: 5px;
-        margin: 0px;
+        margin-right: 5px;
+    }
+    .edit-button {
+        background-color: var(--edit);
+    }
+    .trash {
+        background-color: var(--light-3);
+    }
+    .check {
+        background-color: var(--light-4);
+    }
+    .undo {
+        background-color: var(--edit);
     }
     .edit-form {
         display: flex;
         flex-direction: column;
     }
+    
     .delete {
         display: flex;
         flex-direction: row;
@@ -295,16 +363,37 @@ export default {
     .spacer {
         flex-grow: 1;
     }
-    .tags {
-        display: flex;
-        flex-direction: row;
+    .edit-block {
+        background-color: var(--light-2);
+        border-radius: 10px;
+        padding: 15px;
+        margin: 5px;
+    }
+    .edit-block h3 {
+        margin-bottom: 5px;
     }
     .edit-tags {
         display: flex;
         flex-direction: column;
     }
+    .tags {
+        display: flex;
+        flex-direction: row;
+    }
+    .edit-form label, input {
+        margin-bottom: 5px;
+    }
+    .edit-widgets {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+    .edit-widget {
+        width: 65%;
+    } 
     .tag {
-        border: 1px solid black;
+        border: 1px solid var(--border-color);
         padding: 3px;
         padding-left: 15px;
         padding-right: 15px;
@@ -315,12 +404,117 @@ export default {
     .tag-list {
         display: flex;
         flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+    .tag-list img {
+        height: .9em;
+    }
+    .tag-item img:hover {
+        filter: opacity(50%);
+    }
+    .tag-spacer {
+        width: 5px;
+    }
+    .tag-item {
+        display: flex;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        align-items: center;
+        padding: 5px;
+        margin-right: 5px;
+        margin-bottom: 5px;
+    }
+    .tag-item:hover {
+        cursor: pointer;
     }
     .details {
         background-color: var(--light-2);
-        padding: 5px;
+        padding: 15px;
         margin: 5px;
         border-radius: 10px;
+    }
+    .title {
+        display: flex;
+        flex-direction: column;
+    }
+    .title h2{
+        text-align: center;
+        background-color: var(--light-3);
+        border-radius: 10px;
+        padding: 10px;
+        margin: 0px;
+    }
+    .title h4{
+        margin-top: 5px;
+        margin-bottom: 0px;
+    }
+    .subtitle {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .comment {
+        margin-left: 0px;
+        padding: 10px;
+        background-color: var(--light-1);
+        border-radius: 10px;
+        flex-grow: 1;
+    }
+    .date {
+        text-align: right;
+        background-color: var(--light-1);
+        border-radius: 10px;
+        padding: 10px;
+        margin-right: 0px;
+        height: 100%;
+        margin-left: 5px;
+    }
+    .widgets p {
+        margin: 0px;
+    }
+    .widgets {
+        display: flex;
+        margin-top: 15px;
+        align-items: center;
+        margin-left: 5px;
+        margin-right: 5px;
+        margin-bottom: 15px;
+    }
+    .cooktime {
+        width: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .cooktime img {
+        height: 80px;
+        margin-right: 5px;
+    }
+    .rating {
+        width: 50%;
+        text-align: center;
+    }
+    .foot {
+        margin-top: 5px;
+        padding: 10px;
+        background-color: var(--light-1);
+        border-radius: 10px;
+    }
+    .foot h3, p {
+        margin-bottom: 5px;
+    }
+    .foot h3 {
+        margin-left: 10px;
+    }
+    .foot p {
+        background-color: var(--light-2);
+        border-radius: 10px;
+        padding: 10px;
+    }
+    .ingredients {
+        margin-bottom: 10px;
     }
 
 </style>

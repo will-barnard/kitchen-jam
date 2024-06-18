@@ -9,6 +9,7 @@ public interface TagsDao {
 
     Tag getTag(int tagId);
     List<Tag> getTagsByMealId(int mealId);
+    List<Tag> searchLikeTags(int userId, String search);
     Tag createTag(Tag tag, int userId);
     Tag updateTag(Tag tag);
     List<Tag> addTagToMeal(int tagId, int mealId);
