@@ -1,9 +1,13 @@
 <template>
-     <body>
+    <Transition>
+     <body v-show="showImage">
 
         <div class="meal-img">
-            <img :src="imgPath" v-if="showImage"/>
+                <div>
+                    <img :src="imgPath" />
+                </div>
         </div>
+        
         <div class="display" v-show="!editing">
             <div>
                 <div class="details">
@@ -170,11 +174,11 @@
 
         <div class="delete" v-if="deleting">
             <p id="delete-check">Are you sure you want to delete? This cannot be undone</p>
-            <h2 v-on:click="deleteMeal()">Delete</h2>
-            <h2 v-on:click="deleting = false">Cancel</h2>
+            <h2 class="yes-delete" v-on:click="deleteMeal()">Delete</h2>
+            <h2 class="cancel-delete" v-on:click="deleting = false">Cancel</h2>
         </div>
 
-        <div class="controls">
+        <div class="controls" v-show="!deleting">
             <div class="edit-button button" v-if="!editing" v-on:click="editing=true">
                 <img src="/img/edit.png" />
             </div>
@@ -190,6 +194,7 @@
         </div>
 
     </body>
+    </Transition>
 </template>
 
 <script>
@@ -207,7 +212,7 @@ export default {
         return {
             editing: false,
             deleting: false,
-            showImage: true,
+            showImage: false,
             imgPath: "",
             newMeal: {},
             staticMeal: {},
@@ -222,11 +227,13 @@ export default {
         this.newMeal = this.cloneMeal(this.staticMeal);
         if (this.meal.imageId == 0 || this.meal.imageId == null) {
             this.imgPath = "../img/placeholder.jpeg";
+            this.showImage = true;
         } else {
             ImageService.getImage(this.meal.imageId).then(
                 (res) => {
                     const base64 = ImageService.parseImg(res);
                     this.imgPath = "data:image/png;base64," + base64;
+                    this.showImage = true;
                 }
             )
         }
@@ -252,7 +259,7 @@ export default {
         },
         deleteMeal() {
             MealService.deleteMeal(this.meal.mealId).then(
-                (response) => {
+                () => {
                     this.$router.push({name: 'meal-log'})
                 }
             )
@@ -435,11 +442,19 @@ export default {
         display: flex;
         flex-direction: row;
         justify-content: center;
+        align-items: center;
+        margin: 10px;
     }
     .delete h2 {
-        border: 1px solid black;
         margin: 5px;
         padding: 5px;
+        border-radius: 10px;
+    }
+    .yes-delete {
+        background-color: var(--light-3);
+    }
+    .cancel-delete {
+        background-color: var(--edit);
     }
     .delete:hover {
         cursor: pointer;
@@ -724,5 +739,17 @@ export default {
     .ingredients {
         margin-bottom: 10px;
     }
+
+
+    .v-enter-active,
+.v-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
+}
+
 
 </style>

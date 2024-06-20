@@ -1,12 +1,11 @@
 <template>
-    <div @click="showMore = !showMore">
+    <Transition>
+    <div @click="showMore = !showMore" v-show="showImg = true">
         <body>
             <div id="details" class="body-card">
                 <div class="meal-img" >
-                    <img src="../img/placeholder.jpeg" v-if="showImg = false">
-                    <Transition>
-                        <img :src="imgPath" v-if="showImg = true"/>
-                    </Transition>
+                    <img src="../img/placeholder.jpeg" v-if="!meal.imageId">
+                    <img :src="imgPath" v-show="showImg = true" v-if="meal.imageId"/>
                 </div>
 
                 <div class="content">
@@ -32,8 +31,9 @@
                             </div>
                     </div>
                     </div>
-
-                    <div class="info" v-show="showMore">
+                    
+                    <Transition name="control">
+                        <div class="info" v-show="showMore">
                         <div class="row">
                         <div class="widget">
                             <p>{{ meal.cookTime }} min</p>
@@ -47,16 +47,20 @@
                         <h3>Notes:</h3>
                         <p id="notes">{{ meal.notes }}</p>
                     </div>
+                    </Transition>
                 </div>
                 
             </div>
 
-
+            <Transition name="control">
             <div id="controls" v-if="showMore">
-                <div class="control" v-on:click="goDetail()">...</div>
+                <div class="control" v-on:click="goDetail()"><img src="/img/detail.png" /></div>
             </div>
+            </Transition>
+            
         </body>
     </div>
+    </Transition>
 </template>
 <script>
 import UtilityService from '../services/UtilityService.js';
@@ -70,7 +74,7 @@ export default {
         return {
             showMore: false,
             showImg: false,
-            imgPath: "../img/placeholder.jpeg"
+            imgPath: ""
         }
     },
     methods: {
@@ -85,15 +89,14 @@ export default {
         }
     },
     created() {
-        this.imgPath = "../img/placeholder.jpeg";
         if (this.meal.imageId == 0 || this.meal.imageId == null) {
-            this.imgPath = "../img/placeholder.jpeg";
         } else {
             ImageService.getImage(this.meal.imageId).then(
                 (res) => {
                     const base64 = ImageService.parseImg(res);
                     this.imgPath = "data:image/png;base64," + base64;
                     this.showImg = true;
+                    
                 }
             )
         }
@@ -120,12 +123,19 @@ export default {
         width: 50px;
         margin: 10px;
         padding: 5px;
-        border: 1px solid var(--border-color);
         border-radius: 10px;
         font-size: 3em;
+        margin-bottom: 10px;
+
     }
     .control:hover {
         cursor: pointer;
+    }
+    .control img {
+        height: 1em;
+    }
+    .control {
+        background-color: var(--edit);
     }
     #spacer {
         flex-grow: 1;
@@ -134,7 +144,6 @@ export default {
         display: flex;
         flex-direction: row;
         padding: 10px;
-        border: 1px solid var(--border-color);
         border-radius: 10px;
         background-color: var(--light-2);
         margin-bottom: 10px;
@@ -246,15 +255,6 @@ export default {
         text-align: right;
     }
 
-    .fade-enter-active,
-    .fade-leave-active {
-        transition: opacity 5s ease;
-    }
-
-    .fade-enter-from,
-    .fade-leave-to {
-        opacity: 0;
-    }
     .v-enter-active,
 .v-leave-active {
   transition: opacity 0.5s ease;
@@ -264,5 +264,15 @@ export default {
 .v-leave-to {
   opacity: 0;
   transition: opacity 0.5s ease;
+}
+.control-enter-active,
+.control-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.control-enter-from,
+.control-leave-to {
+  opacity: 0;
+  transition: opacity 0s ease;
 }
 </style>

@@ -30,7 +30,7 @@ public class JdbcMealDao implements MealDao {
         try {
             SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, mealId);
             if (rowSet.next()) {
-                meal = mapRowToMeal(rowSet);
+                meal = mapRowToMeal(rowSet, true);
             }
         } catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database", e);
@@ -55,7 +55,7 @@ public class JdbcMealDao implements MealDao {
         try {
             SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, search, userId);
             while (rowSet.next()) {
-                meals.add(mapRowToMeal(rowSet));
+                meals.add(mapRowToMeal(rowSet, true));
             }
         } catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database", e);
@@ -81,7 +81,7 @@ public class JdbcMealDao implements MealDao {
         try {
             SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, tagId, userId);
             while (rowSet.next()) {
-                meals.add(mapRowToMeal(rowSet));
+                meals.add(mapRowToMeal(rowSet, true));
             }
         } catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database", e);
@@ -105,7 +105,7 @@ public class JdbcMealDao implements MealDao {
         try {
             SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, userId);
             while (rowSet.next()) {
-                meals.add(mapRowToMeal(rowSet));
+                meals.add(mapRowToMeal(rowSet, true));
             }
         } catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database", e);
@@ -120,15 +120,14 @@ public class JdbcMealDao implements MealDao {
     public List<Meal> getMealsByRecipeId(int recipeId) {
 
         List<Meal> meals = new ArrayList<Meal>();
-        String sql = "SELECT meal.*, recipe.recipe_name " +
+        String sql = "SELECT * " +
                 "FROM meal " +
-                "LEFT JOIN recipe ON meal.recipe_id = recipe.recipe_id " +
                 "WHERE recipe_id = ?;";
 
         try {
             SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, recipeId);
             while (rowSet.next()) {
-                meals.add(mapRowToMeal(rowSet));
+                meals.add(mapRowToMeal(rowSet, false));
             }
         } catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database", e);
@@ -234,14 +233,16 @@ public class JdbcMealDao implements MealDao {
         }
     }
 
-    private Meal mapRowToMeal(SqlRowSet rs) {
+    private Meal mapRowToMeal(SqlRowSet rs, boolean isRecipeName) {
         Meal meal = new Meal();
 
         meal.setMealId(rs.getInt("meal_id"));
         meal.setUserId(rs.getInt("user_id"));
         meal.setMealName(rs.getString("meal_name"));
         meal.setRecipeId(rs.getInt("recipe_id"));
-        meal.setRecipeName(rs.getString("recipe_name"));
+        if (isRecipeName) {
+            meal.setRecipeName(rs.getString("recipe_name"));
+        }
         meal.setMealComment(rs.getString("meal_comment"));
         if (rs.getDate("date_cooked") != null) {
             meal.setDateCooked(rs.getDate("date_cooked").toLocalDate());
@@ -261,5 +262,6 @@ public class JdbcMealDao implements MealDao {
 
         return meal;
     }
+
 
 }

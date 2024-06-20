@@ -1,54 +1,36 @@
 <template>
     <body>
-
-       <div class="controls">
-           <h2 @click="$router.go(-1)">Back</h2>
-           <div class="spacer"></div>
-           <h2 v-if="!editing" v-on:click="editing=true">
-               Edit
-           </h2>
-           <h2 v-if="!editing" v-on:click="deleteButton()">
-               Delete Recipe
-           </h2>
-           <h2 v-if="editing" v-on:click="saveEdit()">
-               Save
-           </h2>
-           <h2 v-if="editing" v-on:click="cancelEdit()">
-               Cancel
-           </h2>
-       </div>
-
-       <div class="delete" v-if="deleting">
-           <h2 id="delete-check">Are you sure you want to delete? This cannot be undone</h2>
-           <h2 v-on:click="deleteRecipe()">Delete</h2>
-           <h2 v-on:click="deleting = false">Cancel</h2>
-       </div>
+       
+        <div class="recipe-img">
+                   <img src="../img/placeholder.jpeg" />
+                   <!-- img goes here -->
+        </div>
 
        <div v-show="!editing">
            <div>
-               <div class="recipe-img">
-               <img src="../img/placeholder.jpeg" />
-               <!-- img goes here -->
-               </div>
                <div class="details">
-                   <div>
-                       <h2>{{ staticRecipe.recipeName }}</h2>
-                       <p>{{ staticRecipe.description }}</p>   
+                   <div class="title">
+                       <h2 >{{ staticRecipe.recipeName }}</h2>
                    </div>
-
+                   <div class="subtitle">
+                    <p>{{ staticRecipe.description }}</p>   
+                   </div>
                    <!-- <h3>Last made here?</h3> -->
 
                    <!-- <div class="category">
                    </div> -->
 
-                   <!-- <div>
-                       <div class="widget">
-                           <p>{{ staticRecipe.avgCookTime }} min</p>
+                    <div class="widgets">
+                        <div class="widgets">
+                            <div class="cooktime">
+                                <img src="/img/clock.png" />
+                                <p>{{ staticRecipe.avgCookTime }} min</p>
+                            </div>
+                        </div>
+                        <div class="rating">
+                           <p>rating / 5 Rating</p>
                        </div>
-                       <div class="widget">
-                           <p>{{ staticRecipe.rating }} / 5 Rating</p>
-                       </div>
-                   </div> -->
+                   </div>
 
                    
                </div>            
@@ -57,55 +39,93 @@
 
        <div v-show="editing">
            <form>
-               <div class="recipe-img">
-                   <img src="../img/placeholder.jpeg" />
-                   <!-- img goes here -->
-               </div>
-           
                <div class="edit-form">
-                   <div>
-                       <label>Name</label><input type="text" v-model="newRecipe.recipeName">
-                   </div>
-                   <div>
-                       <label>Description</label><input type="text" v-model="newRecipe.description"/>
-                   </div>
-                   <!-- <div class="edit-tags">
-                       <div>
-                           <label>Tags</label><input type="text" v-model="newTag.tagName"/>
-                           <button>Add</button>
-                       </div>
-                       <div class="tag-list">
-                           <p v-if="!newRecipe.tags">no tags</p>
-                           <Tag class="tag" v-for="tag in staticRecipe.tags" :key="tag.tagId" :tag="tag" />
-                       </div>
+                    <h3>Edit details</h3>
 
-                   </div> -->
+                   <div class="input-area">
+                       <label>Name</label>
+                       <input type="text" v-model="newRecipe.recipeName">
+                   </div>
+                   <div class="input-area">
+                       <label>Description</label>
+                       <textarea v-model="newRecipe.description"></textarea>
+                   </div>
+            
                </div>
            </form>
-       </div>        
+           <div class="edit-form">
+                <h3>Edit Category</h3>
+                <div>
+                    <div v-if="newRecipe.categoryId" class="current-category">
+                        <img src="/img/minus.png" class="minus mini-button" @click="removeCategory()">
+                        <div class="tag-spacer"></div>
+                        <h4>{{ newRecipe.categoryName }}</h4>
+                    </div>
+                    <div class="category-search">
+                        <input type="text" v-model="newCategory.recipeName" @keyup="searchForCategory()"/>
+                        <button @click="createRecipe()">Create New Category</button>
+                    </div>
+                    <div class="category-search-results" v-if="searchCategory">
+                        <div v-for="category in searchCategory" class="recipe">
+                            <img src="/img/plus.png" class="plus mini-button" @click="addCategory(recipe)"/>
+                            <div class="tag-spacer"></div>
+                            <p>{{ recipe.recipeName }}</p>
+                        </div>
+                    </div>
+                </div>
+           </div>
+       </div>
+
+
+
+       <div class="delete" v-if="deleting">
+           <p id="delete-check">Are you sure you want to delete? This cannot be undone</p>
+           <h2 class="yes-delete" v-on:click="deleteRecipe()">Delete</h2>
+           <h2 class="cancel-delete" v-on:click="deleting = false">Cancel</h2>
+       </div>
+       <div class="controls" v-show="!deleting">
+           <div class="edit-button button" v-if="!editing" v-on:click="editing=true">
+                <img src="/img/edit.png" />
+            </div>
+            <div class="trash button" v-if="!editing" v-on:click="deleteButton()">
+                <img src="/img/trash.png" />
+            </div>
+            <div class="undo button" v-if="editing" v-on:click="cancelEdit()">
+                <img src="/img/undo.png" />
+            </div>
+            <div class="check button" v-if="editing" v-on:click="saveEdit()">
+                <img src="/img/check.png" />
+            </div>
+       </div>       
+       <div class="meals" v-if="recipe.mealList && !editing">
+            <h2>Meals</h2>
+            <MealCard v-for="meal in recipe.mealList" :key="meal.mealId" :meal="meal"></MealCard>
+       </div>
    </body>
 </template>
 
 <script>
 import RecipeService from '../services/RecipeService.js'
 import Tag from './Tag.vue';
+import MealCard from '../components/MealCard.vue';
 
 export default {
     props: ['recipe', 'loading'],
-    components: {Tag},
+    components: {Tag, MealCard},
     data() {
         return {
             editing: false,
             newRecipe: {},
             staticRecipe: {},
             deleting: false,
-            newTag: {}
+            newTag: {},
+            newCategory: {},
+            searchCategory: []
         }
     },
     created() {
         this.staticRecipe = this.cloneRecipe(this.recipe);
         this.newRecipe = this.cloneRecipe(this.staticRecipe);
-        console.log(this.recipe.tags);
     },
     methods: {
         cancelEdit() {
@@ -128,7 +148,7 @@ export default {
         },
         deleteRecipe() {
             RecipeService.deleteRecipe(this.recipe.recipeId).then(
-                (response) => {
+                () => {
                     this.$router.push({name: 'cookbook'})
                 }
             )
@@ -143,6 +163,8 @@ export default {
                 newRecipe.avgCookTime = recipe.avgCookTime;
                 newRecipe.imageId = recipe.imageId;
                 newRecipe.isPublic = recipe.isPublic;
+                newRecipe.categoryId = recipe.categoryId;
+                newRecipe.mealList = recipe.mealList;
 
                 newRecipe.categories = recipe.categories;
 
@@ -154,10 +176,20 @@ export default {
 </script>
 
 <style scoped>
+    body p, h1, h2, h3, h4 {
+        margin: 0px;
+    }
     .recipe-img {
-        height: 20vh;
+        margin-top: 15px;
         overflow: hidden;
-        object-fit: cover;
+        text-align: center;
+        margin-bottom: 15px;
+        margin-left: 5px;
+        margin-right: 5px;
+    }
+    .recipe-img img {
+        width: 100%;
+        border-radius: 15px;
     }
     .controls {
         text-align: center;
@@ -175,10 +207,6 @@ export default {
         padding: 5px;
         margin: 0px;
     }
-    .edit-form {
-        display: flex;
-        flex-direction: column;
-    }
     .delete {
         display: flex;
         flex-direction: row;
@@ -189,6 +217,24 @@ export default {
         margin: 5px;
         padding: 5px;
     }
+    .delete {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        margin: 10px;
+    }
+    .delete h2 {
+        margin: 5px;
+        padding: 5px;
+        border-radius: 10px;
+    }
+    .yes-delete {
+        background-color: var(--light-3);
+    }
+    .cancel-delete {
+        background-color: var(--edit);
+    }
     .delete:hover {
         cursor: pointer;
     }
@@ -198,24 +244,126 @@ export default {
     .spacer {
         flex-grow: 1;
     }
-    .tags {
+    .controls {
+        text-align: center;
         display: flex;
         flex-direction: row;
+        justify-content: end;
+        align-items: center;
+        margin-right: 5px;
+        margin-top: 10px;
     }
-    .edit-tags {
+    .controls img {
+        height: 5vh;
+    }
+    .controls:hover {
+        cursor: pointer;
+    }
+    .button {
+        width: 15vw;
+        /* border: 1px solid var(--border-color); */
+        border-radius: 10px;
+        padding: 5px;
+        margin-right: 5px;
+    }
+    .edit-button {
+        background-color: var(--edit);
+    }
+    .trash {
+        background-color: var(--light-3);
+    }
+    .check {
+        background-color: var(--light-4);
+    }
+    .undo {
+        background-color: var(--edit);
+    }
+    .details {
+        background-color: var(--light-2);
+        padding: 15px;
+        margin: 5px;
+        border-radius: 10px;
+    }
+    .title {
         display: flex;
         flex-direction: column;
     }
-    .tag {
-        border: 1px solid black;
-        padding: 3px;
-        padding-left: 15px;
-        padding-right: 15px;
-        border-radius: 50px;
+    .title h2{
+        text-align: center;
+        background-color: var(--light-5);
+        border-radius: 10px;
+        padding: 10px;
+        margin: 0px;
+        margin-bottom: 5px;
     }
-    .tag-list {
-        display: flex;
-        flex-direction: row;
-    }
+    .title h3 {
+        text-align: center;
+        background-color: var(--light-5);
+        border-radius: 10px;
+        padding: 10px;
+        margin: 0px;
+        margin-top: 5px;
 
+    }
+    .title h4{
+        margin-top: 5px;
+        margin-bottom: 0px;
+    }
+    .subtitle {
+        margin-left: 0px;
+        padding: 10px;
+        background-color: var(--light-1);
+        border-radius: 10px;
+        flex-grow: 1;
+    }
+    .widgets {
+        display: flex;
+        margin-top: 15px;
+        justify-content: center;
+        align-items: center;
+        margin-left: 5px;
+        margin-right: 5px;
+        margin-bottom: 15px;
+    }
+    .cooktime {
+        width: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .cooktime img {
+        height: 80px;
+        margin-right: 5px;
+    }
+    .rating {
+        width: 50%;
+        text-align: center;
+    }
+    .meals h2 {
+        margin: 10px;
+    }
+    .input-area {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 5px;
+    }
+    .edit-form {
+        display: flex;
+        flex-direction: column;
+        background-color: var(--light-2);
+        margin: 5px;
+        padding: 10px;
+        border-radius: 10px;
+    }
+    .edit-form h3 {
+        margin-bottom: 5px;
+    }
+    .category-search {
+        display: flex;
+        margin-bottom: 5px;
+    }
+    .category-search input {
+        margin: 0px;
+        flex-grow: 1;
+    }
 </style>

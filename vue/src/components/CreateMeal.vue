@@ -10,32 +10,34 @@
                 <input type="file" name="file" accept="image/*" @change="uploadImage">
             </div>
         </div>
-        
-        <form v-on:submit.prevent="createMeal()">
-            <div class="form">
-                <label>Name</label><input type="text" v-model="meal.mealName">
-                <label>Date cooked</label><input type="date" v-model="meal.dateCooked" @click="console.log(meal.date)"/>
-                <label>Comment</label><input type="text" v-model="meal.mealComment"/>
-                <label>Cook time (min)</label><input type="number" v-model="meal.cookTime"/>
-                <label>Rating</label><select v-model="meal.rating">
-                    <option disabled="true" >----</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                    <option value="6">6</option>
-                    <option value="7">7</option>
-                    <option value="8">8</option>
-                    <option value="9">9</option>
-                    <option value="10">10</option>
-                </select>
-                <label>Ingredient list</label><input type="text" v-model="meal.ingredients"/>
-                <label>Notes</label><textarea v-model="meal.notes"></textarea>
-            </div>
+        <div class="details">
+            <form v-on:submit.prevent="createMeal()">
+                <div class="form">
+                    <label>Meal Name</label><input type="text" v-model="meal.mealName">
+                    <label>Date cooked</label><input type="date" v-model="meal.dateCooked" @click="console.log(meal.date)"/>
+                    <label>Comment</label><input type="text" v-model="meal.mealComment"/>
+                    <label>Cook time (min)</label><input type="number" v-model="meal.cookTime"/>
+                    <label>Rating</label><select v-model="meal.rating">
+                        <option disabled="true" >----</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                    </select>
+                    <label>Ingredient list</label><input type="text" v-model="meal.ingredients"/>
+                    <label>Notes</label><textarea v-model="meal.notes"></textarea>
+                </div>
 
-            <input class="submit" type="submit" value="Submit" />
-        </form> 
+                <input class="submit" type="submit" value="Log Meal" />
+            </form> 
+        </div>
+        
     </body>
 
 </template>
@@ -134,5 +136,11 @@ export default {
     .image-block h3 {
         margin: 0px;
         margin-bottom: 5px;
+    }
+    .details {
+        background-color: var(--light-1);
+        padding: 10px;
+        border-radius: 10px;
+        margin-top: 10px;;
     }
 </style>

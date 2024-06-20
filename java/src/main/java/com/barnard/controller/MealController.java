@@ -114,6 +114,9 @@ public class MealController {
         Meal newMeal = null;
         try {
             newMeal = mealDao.createMeal(meal);
+            if (meal.getRecipeId() != null || meal.getRecipeId() != 0) {
+                recipeDao.aggregateRecipeData(meal.getRecipeId());
+            }
         } catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
         }
@@ -134,8 +137,15 @@ public class MealController {
             if (mealDao.getMeal(meal.getMealId()).getUserId() != userId) {
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
             }
+            Integer oldRecipeId = mealDao.getMeal(meal.getMealId()).getRecipeId();
             mealDao.updateMeal(meal);
             updatedMeal = mealDao.getMeal(meal.getMealId());
+            if (meal.getRecipeId() != null) {
+                recipeDao.aggregateRecipeData(meal.getRecipeId());
+            }
+            if (!updatedMeal.getRecipeId().equals(oldRecipeId)) {
+                recipeDao.aggregateRecipeData(oldRecipeId);
+            }
         } catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
         }
@@ -150,7 +160,11 @@ public class MealController {
             if (mealDao.getMeal(mealId).getUserId() != userId) {
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
             }
+            Integer recipeId = mealDao.getMeal(mealId).getRecipeId();
             mealDao.deleteMealById(mealId);
+            if (recipeId != 0) {
+                recipeDao.aggregateRecipeData(recipeId);
+            }
         } catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
         }

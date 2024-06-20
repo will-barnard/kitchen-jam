@@ -32,10 +32,12 @@
                 
             </div>
 
-
-            <div id="controls" v-if="showMore">
-                <div class="control" v-on:click="goDetail()">...</div>
-            </div>
+            <Transition>
+              <div id="controls" v-if="showMore">
+                <div class="control" v-on:click="goDetail()"><img src="/img/detail.png" /></div>
+            </div>  
+            </Transition>
+            
         </body>
     </div>
 </template>
@@ -51,7 +53,6 @@ export default {
     },
     methods: {
         goDetail() {
-            console.log("test");
             this.$router.push( {name: 'recipe-detail', params: {recipeId: this.recipe.recipeId} })
         },
         switch() {
@@ -70,22 +71,7 @@ export default {
     .body-card:hover {
         cursor: pointer;
     }
-    #controls {
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-    }
-    .control {
-        width: 50px;
-        margin: 10px;
-        padding: 10px;
-        border: 1px solid var(--border-color);
-        border-radius: 10px;
-        font-size: 3em;
-    }
-    .control:hover {
-        cursor: pointer;
-    }
+    
     #details {
         display: flex;
         flex-direction: row;
@@ -116,11 +102,11 @@ export default {
     }
     .recipe-img {
         width: 40%;
-        border: 1px solid var(--border-color);
     }
     .recipe-img img {
         object-fit: cover;
         height: 100%;
+        border-radius: 10px;
     }
     .content {
         flex-grow: 1;
@@ -132,21 +118,18 @@ export default {
         flex-direction: row;
         justify-content: center;
         align-items: end;
-        border: 1px solid var(--border-color);
         border-radius: 10px;
         background-color: var(--light-1);
     }
     .info {
-        border: 1px solid var(--border-color);
         border-radius: 10px;
         flex-grow: 1;
-        padding: 5px;
     }
     .info p {
         background-color: var(--light-1);
         border-radius: 10px;
         padding: 5px;
-        margin: 3px;
+        margin: 0px;
     }
     .info h3 {
         text-align: left;
@@ -168,4 +151,36 @@ export default {
     .widget {
         flex-grow: 1;
     }
+    #controls {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+    }
+    .control {
+        width: 50px;
+        padding: 10px;
+        border-radius: 10px;
+        font-size: 3em;
+        margin-bottom: 10px;
+    }
+    .control:hover {
+        cursor: pointer;
+    }
+    .control img {
+        height: 1em;
+    }
+    .control {
+        background-color: var(--edit);
+    }
+    .v-enter-active,
+.v-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
+  transition: opacity 0s ease;
+
+}
 </style>

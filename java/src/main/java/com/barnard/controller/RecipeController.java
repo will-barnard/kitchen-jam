@@ -2,6 +2,7 @@ package com.barnard.controller;
 
 import com.barnard.dao.*;
 import com.barnard.exception.AuthException;
+import com.barnard.model.Meal;
 import com.barnard.model.Recipe;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,6 +28,8 @@ public class RecipeController {
     @Autowired
     private RecipeDao recipeDao;
     @Autowired
+    private TagsDao tagsDao;
+    @Autowired
     private UserDao userDao;
     @Autowired
     private ImageDao imageDao;
@@ -36,6 +39,11 @@ public class RecipeController {
         Recipe recipe = null;
         try {
             recipe = recipeDao.getRecipe(recipeId);
+            recipe.setMealList(mealDao.getMealsByRecipeId(recipeId));
+            for (Meal meal : recipe.getMealList()) {
+                meal.setRecipeName(recipe.getRecipeName());
+                meal.setTags(tagsDao.getTagsByMealId(meal.getMealId()));
+            }
         } catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
         }
@@ -101,7 +109,7 @@ public class RecipeController {
     public Recipe createRecipe(@RequestBody Recipe recipe, Principal principal) {
 
         // todo add public option on frontend
-        recipe.setPublic(true);
+        recipe.setPublic(false);
 
         int userId = userDao.getUserByUsername(principal.getName()).getId();
         recipe.setUserId(userId);

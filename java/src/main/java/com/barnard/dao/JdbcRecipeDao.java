@@ -23,15 +23,16 @@ public class JdbcRecipeDao implements RecipeDao {
     public Recipe getRecipe(int recipeId) {
 
         Recipe recipe = null;
-        String sql = "SELECT * " +
+        String sql = "SELECT recipe.*, category.category_name " +
                 "FROM recipe " +
+                "LEFT JOIN category ON recipe.category_id = category.category_id " +
                 "WHERE recipe_id = ?;";
 
         try {
             SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, recipeId);
 
             if (rowSet.next()) {
-                recipe = mapRowToRecipe(rowSet);
+                recipe = mapRowToRecipe(rowSet, true);
             }
         }  catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database", e);
@@ -47,8 +48,9 @@ public class JdbcRecipeDao implements RecipeDao {
 
         search = "%" + search + "%";
         List<Recipe> recipes = new ArrayList<>();
-        String sql = "SELECT * " +
+        String sql = "SELECT recipe.*, category.category_name " +
                 "FROM recipe " +
+                "LEFT JOIN category ON recipe.category_id = category.category_id " +
                 "WHERE recipe_name LIKE ? " +
                 "AND user_id = ?;";
 
@@ -56,7 +58,7 @@ public class JdbcRecipeDao implements RecipeDao {
             SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, search, userId);
 
             while (rowSet.next()) {
-                recipes.add(mapRowToRecipe(rowSet));
+                recipes.add(mapRowToRecipe(rowSet, true));
             }
         }  catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database", e);
@@ -71,15 +73,16 @@ public class JdbcRecipeDao implements RecipeDao {
     public List<Recipe> getRecipesByUserId(int userId) {
 
         List<Recipe> recipes = new ArrayList<>();
-        String sql = "SELECT * " +
+        String sql = "SELECT recipe.*, category.category_name " +
                 "FROM recipe " +
+                "LEFT JOIN category ON recipe.category_id = category.category_id " +
                 "WHERE user_id = ?;";
 
         try {
             SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, userId);
 
             while (rowSet.next()) {
-                recipes.add(mapRowToRecipe(rowSet));
+                recipes.add(mapRowToRecipe(rowSet, true));
             }
         }  catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database", e);
@@ -94,17 +97,17 @@ public class JdbcRecipeDao implements RecipeDao {
     public List<Recipe> getRecipesByCategoryId(int categoryId, int userId) {
 
         List<Recipe> recipes = new ArrayList<>();
-        String sql = "SELECT * " +
+        String sql = "SELECT recipe.*, category.category_name " +
                 "FROM recipe " +
-                "JOIN recipe_category on recipe.recipe_id = recipe_category.recipe_id " +
-                "WHERE recipe_category.category_id = ? " +
+                "LEFT JOIN category on recipe.category_id = category.category_id " +
+                "WHERE recipe.category_id = ? " +
                 "AND recipe.user_id = ?;";
 
         try {
             SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, categoryId, userId);
 
             while (rowSet.next()) {
-                recipes.add(mapRowToRecipe(rowSet));
+                recipes.add(mapRowToRecipe(rowSet, true));
             }
         }  catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database", e);
@@ -120,16 +123,17 @@ public class JdbcRecipeDao implements RecipeDao {
     public Recipe getRecipeByMealId(int mealId) {
 
         Recipe recipe = null;
-        String sql = "SELECT * " +
+        String sql = "SELECT recipe.*, category.category_name " +
                 "FROM recipe " +
                 "JOIN meal on recipe.recipe_id = meal.recipe_id " +
+                "LEFT JOIN category on recipe.category_id = category.category_id " +
                 "WHERE meal.meal_id = ?;";
 
         try {
             SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, mealId);
 
             if (rowSet.next()) {
-                recipe = mapRowToRecipe(rowSet);
+                recipe = mapRowToRecipe(rowSet, true);
             }
         }  catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database", e);
@@ -143,12 +147,12 @@ public class JdbcRecipeDao implements RecipeDao {
     @Override
     public Recipe createRecipe(Recipe recipe) {
 
-        String sql = "INSERT INTO recipe (user_id, recipe_name, description, is_public) " +
+        String sql = "INSERT INTO recipe (user_id, recipe_name, description, category_id, is_public) " +
                 "VALUES (?, ?, ?, ?, ?) " +
                 "RETURNING recipe_id;";
 
         try {
-            int recipeId = jdbcTemplate.queryForObject(sql, int.class, recipe.getUserId(), recipe.getRecipeName(), recipe.getDescription(), recipe.isPublic());
+            int recipeId = jdbcTemplate.queryForObject(sql, int.class, recipe.getUserId(), recipe.getRecipeName(), recipe.getDescription(), recipe.getCategoryId(), recipe.isPublic());
             recipe.setRecipeId(recipeId);
         } catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database", e);
@@ -165,12 +169,12 @@ public class JdbcRecipeDao implements RecipeDao {
         Recipe newRecipe = null;
 
         String sql = "UPDATE recipe SET " +
-                "recipe_name = ?, description = ?, is_public =? " +
+                "recipe_name = ?, description = ?, is_public = ?, category_id = ? " +
                 "WHERE recipe_id = ?;";
 
         try {
 
-            int rowsAffected = jdbcTemplate.update(sql, recipe.getRecipeName(), recipe.getDescription(), recipe.isPublic(), recipe.getRecipeId());
+            int rowsAffected = jdbcTemplate.update(sql, recipe.getRecipeName(), recipe.getDescription(), recipe.isPublic(), recipe.getCategoryId(), recipe.getRecipeId());
             if (rowsAffected == 0) {
                 throw new DaoException();
             }
@@ -188,7 +192,7 @@ public class JdbcRecipeDao implements RecipeDao {
     @Override
     public void deleteRecipeById(int recipeId) {
 
-        String sql = "DELETE FROM recipe_category " +
+        String sql = "UPDATE meal SET recipe_id = NULL " +
                 "WHERE recipe_id = ?;";
         String sql2 = "DELETE FROM recipe " +
                 "WHERE recipe_id = ?;";
@@ -239,13 +243,17 @@ public class JdbcRecipeDao implements RecipeDao {
                 "WHERE recipe_id = ?;";
         int count = 0;
         int cookTime = 0;
+        int avgTime = 0;
         try {
             SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, recipeId);
             while(rowSet.next()) {
                 cookTime += rowSet.getInt("cook_time");
                 count++;
             }
-            jdbcTemplate.update(sql2, cookTime/count, recipeId);
+            if (count != 0) {
+                avgTime = cookTime / count;
+            }
+            jdbcTemplate.update(sql2, avgTime, recipeId);
         } catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database", e);
         } catch (DataIntegrityViolationException e) {
@@ -253,7 +261,7 @@ public class JdbcRecipeDao implements RecipeDao {
         }
     }
 
-    private Recipe mapRowToRecipe(SqlRowSet rs) {
+    private Recipe mapRowToRecipe(SqlRowSet rs, boolean isCategory) {
         Recipe recipe = new Recipe();
 
         recipe.setRecipeId(rs.getInt("recipe_id"));
@@ -263,6 +271,10 @@ public class JdbcRecipeDao implements RecipeDao {
         recipe.setDescription(rs.getString("description"));
         recipe.setImageId(rs.getInt("image_id"));
         recipe.setPublic(rs.getBoolean("is_public"));
+        recipe.setCategoryId(rs.getInt("category_id"));
+        if (isCategory) {
+            recipe.setCategoryName(rs.getString("category_name"));
+        }
 
         return recipe;
     }

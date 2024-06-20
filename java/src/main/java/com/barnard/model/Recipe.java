@@ -11,6 +11,8 @@ public class Recipe {
     private String description;
     private Integer imageId;
     private boolean isPublic;
+    private Integer categoryId;
+    private String categoryName;
     private Category category;
     private List<Meal> mealList;
 
@@ -84,5 +86,21 @@ public class Recipe {
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    public Integer getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Integer categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
     }
 }

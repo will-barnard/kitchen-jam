@@ -1,8 +1,13 @@
 <template>
+    <Transition>
+
     <div class="log">
         <p v-if="!mealList">you have not logged any meals</p>  
-        <MealCard class="meal-card" v-for="meal in $store.state.userMeals" :key="meal.mealId" :meal="meal" :selected="select == meal.mealId" v-on:click="selectCard()"/>
+        <TransitionGroup>
+            <MealCard class="meal-card" v-for="meal in $store.state.userMeals" :key="meal.mealId" :meal="meal" :selected="select == meal.mealId" v-on:click="selectCard()"/>
+        </TransitionGroup>
     </div>
+</Transition>
 </template>
 
 <script>
@@ -37,5 +42,14 @@ export default {
 }
 </script>
 <style scoped>
-    
+    .v-enter-active,
+.v-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
 </style>

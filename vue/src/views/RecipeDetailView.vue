@@ -23,7 +23,6 @@ export default {
             (response) => {
                 this.getRecipe = response.data;
                 this.loading = false;
-                console.log(response.data);
             }
         )
     }
