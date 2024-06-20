@@ -1,11 +1,12 @@
 <template>
     <div @click="showMore = !showMore">
         <body>
-
             <div id="details" class="body-card">
                 <div class="meal-img" >
                     <img src="../img/placeholder.jpeg" v-if="showImg = false">
-                    <img :src="imgPath" v-if="showImg = true"/>
+                    <Transition name="fade">
+                        <img :src="imgPath" v-if="showImg = true"/>
+                    </Transition>
                 </div>
 
                 <div class="content">
@@ -13,14 +14,27 @@
                     <div class="title">
                         <h2 class="name">{{ meal.mealName }}</h2>
                     </div>
+                    <div class="recipe" v-if="meal.recipeId">
+                        <h3>{{ meal.recipeName }}</h3>
+                    </div>
                     <div class="subheader">
                         <p>{{ meal.mealComment }}</p>
                         <p class="date">{{ formatDate(meal.dateCooked) }}</p>
                     </div>
                     
 
+                    <div class="tags" v-if="meal.tags.length">
+                        <div class="tag-list">
+                            <div  v-for="tag in meal.tags">
+                                <div class="tag-item">
+                                    <p>{{tag.tagName}}</p>
+                                </div>    
+                            </div>
+                    </div>
+                    </div>
 
-                    <div class="row">
+                    <div class="info" v-show="showMore">
+                        <div class="row">
                         <div class="widget">
                             <p>{{ meal.cookTime }} min</p>
                         </div>
@@ -28,10 +42,6 @@
                             <p>{{ meal.rating }} / 10 Rating</p>
                         </div>
                     </div>
-                    <div id="tags" v-if="meal.tags">
-                            <Tag v-for="tag in meal.tags" :key="tag.tagId" :tag="tag" edit="false"/>
-                        </div>
-                    <div class="info" v-show="showMore">
                         <h3>Ingredients:</h3>
                         <p >{{ meal.ingredients }}</p>
                         <h3>Notes:</h3>
@@ -154,11 +164,11 @@ export default {
     }
     .meal-img {
         width: 40%;
-        border: 1px solid var(--border-color);
     }
     .meal-img img {
         object-fit: cover;
         height: 100%;
+        border-radius: 10px;
     }
     .content {
         flex-grow: 1;
@@ -170,10 +180,19 @@ export default {
         flex-direction: row;
         justify-content: center;
         align-items: end;
-        border: 1px solid var(--border-color);
         border-radius: 10px;
         background-color: var(--light-1);
 
+    }
+    .recipe {
+        text-align: center;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: end;
+        border-radius: 10px;
+        margin-top: 5px;
+        background-color: var(--light-5);
     }
     .info {
         border: 1px solid var(--border-color);
@@ -196,11 +215,27 @@ export default {
     .widget {
         flex-grow: 1;
     }
-    #tags {
+    .tags {
+        margin-bottom: 5px;
+    }
+    .tag-list {
         display: flex;
         flex-direction: row;
         justify-content: start;
         flex-wrap: wrap;
+        background-color: var(--light-1);
+        padding: 5px;
+        border-radius: 10px;
+    }
+    .tag-item {
+        padding: 5px;
+        background-color: var(--light-2);
+        border-radius: 10px;
+        margin-right: 5px;
+        margin-bottom: 5px;
+    }
+    .tag-item p {
+        margin: 0px;
     }
     .subheader {
         display: flex;
@@ -209,5 +244,15 @@ export default {
     }
     .date {
         text-align: right;
+    }
+
+    .fade-enter-active,
+    .fade-leave-active {
+        transition: opacity 5s ease;
+    }
+
+    .fade-enter-from,
+    .fade-leave-to {
+        opacity: 0;
     }
 </style>

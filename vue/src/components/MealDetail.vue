@@ -4,14 +4,13 @@
         <div class="meal-img">
             <img :src="imgPath" v-if="showImage"/>
         </div>
-
         <div class="display" v-show="!editing">
             <div>
                 <div class="details">
 
                     <div class="title">
                         <h2 >{{ staticMeal.mealName }}</h2>
-                        <h3 v-if="meal.recipeId">recipe{{ meal.recipeId }}</h3>
+                        <h3 v-if="staticMeal.recipeId">{{ staticMeal.recipeName }}</h3>
                         <div class="subtitle">
                             <h4 class="comment">{{ staticMeal.mealComment }}</h4>
                             <h4 class="date">{{ formatDate(staticMeal.dateCooked) }}</h4>
@@ -64,9 +63,21 @@
 
             <div class="edit-recipe edit-block">
                 <h3>Edit recipe</h3>
+                <div v-if="newMeal.recipeId" class="current-recipe">
+                    <img src="/img/minus.png" class="minus mini-button" @click="removeRecipe()">
+                    <div class="tag-spacer"></div>
+                    <h4>{{ newMeal.recipeName }}</h4>
+                </div>
                 <div class="recipe-search">
                     <input type="text" v-model="newRecipe.recipeName" @keyup="searchForRecipes()"/>
                     <button @click="createRecipe()">Create New Recipe</button>
+                </div>
+                <div class="recipe-search-results">
+                    <div v-for="recipe in searchRecipe" class="recipe">
+                        <img src="/img/plus.png" class="plus mini-button" @click="addRecipe(recipe)"/>
+                        <div class="tag-spacer"></div>
+                        <p>{{ recipe.recipeName }}</p>
+                    </div>
                 </div>
             </div>
 
@@ -252,6 +263,7 @@ export default {
                 newMeal.mealId = meal.mealId;
                 newMeal.userId = meal.userId;
                 newMeal.recipeId = meal.recipeId;
+                newMeal.recipeName = meal.recipeName;
                 newMeal.mealName = meal.mealName;
                 newMeal.mealComment = meal.mealComment;
                 newMeal.dateCreated = meal.dateCreated;
@@ -337,7 +349,28 @@ export default {
             );
         },
         searchForRecipes() {
-            RecipeService.searchRecipes()
+            RecipeService.searchRecipes(this.newRecipe).then(
+                (response) => {
+                    this.searchRecipe = response.data;
+                }
+            )
+        },
+        addRecipe(recipe) {
+            this.newMeal.recipeId = recipe.recipeId;
+            this.newMeal.recipeName = recipe.recipeName;
+            this.searchRecipe = null;
+            this.newRecipe = "";
+        },
+        removeRecipe() {
+            this.newMeal.recipeId = 0;
+            this.newMeal.recipe = null;
+        },
+        createRecipe() {
+            RecipeService.createRecipe(this.newRecipe).then(
+                (response) => {
+                    this.addRecipe(response.data);
+                }
+            )
         }
     }
 }
@@ -349,13 +382,14 @@ export default {
     }
     .meal-img {
         margin-top: 15px;
-        height: 30vh;
         overflow: hidden;
         text-align: center;
         margin-bottom: 15px;
+        margin-left: 5px;
+        margin-right: 5px;
     }
     .meal-img img {
-        height: 100%;
+        width: 100%;
         border-radius: 15px;
     }
     .controls {
@@ -432,7 +466,7 @@ export default {
     .tags {
         margin-top: 5px;
         padding: 10px;
-        background-color: var(--light-1);
+        background-color: var(--tag);
         border-radius: 10px;
         display: flex;
         flex-direction: row;
@@ -487,7 +521,6 @@ export default {
     }
     .tag-list img {
         height: .9em;
-        border: 1px solid var(--border-color)
     }
     .tag-item img:hover {
         filter: opacity(50%);
@@ -561,7 +594,36 @@ export default {
     }
     .mini-button {
         border-radius: 5px;
-        padding: 3px;
+        padding: 4px;
+    }
+
+    .recipe {
+        background-color: var(--light-1);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        padding: 5px;
+        margin-top: 5px;
+    }
+
+    .recipe img {
+        height: .9em;
+    }
+    .current-recipe {
+        display: flex;
+        background-color: var(--light-1);
+        margin-bottom: 5px;
+        padding: 5px;
+        border-radius: 10px;
+    }
+    .current-recipe img {
+        height: .9em;
+    }
+    .plus {
+        background-color: var(--light-4);
+    }
+    .minus {
+        background-color: var(--light-3);
     }
 
 

@@ -43,11 +43,11 @@ public class RecipeController {
     }
 
     @PostMapping(path = "/search")
-    public List<Recipe> searchRecipes(@RequestBody String search, Principal principal) {
+    public List<Recipe> searchRecipes(@RequestBody Recipe recipe, Principal principal) {
         List<Recipe> recipes = null;
         int userId = userDao.getUserByUsername(principal.getName()).getId();
         try {
-            recipes = recipeDao.searchLikeRecipes(search, userId);
+            recipes = recipeDao.searchLikeRecipes(recipe.getRecipeName(), userId);
         } catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
         }
