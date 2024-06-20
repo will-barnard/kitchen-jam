@@ -1,9 +1,6 @@
 package com.barnard.controller;
 
-import com.barnard.dao.ImageDao;
-import com.barnard.dao.MealDao;
-import com.barnard.dao.TagsDao;
-import com.barnard.dao.UserDao;
+import com.barnard.dao.*;
 import com.barnard.exception.AuthException;
 import com.barnard.model.Meal;
 import com.barnard.model.Recipe;
@@ -34,6 +31,8 @@ public class MealController {
     @Autowired
     private TagsDao tagsDao;
     @Autowired
+    private RecipeDao recipeDao;
+    @Autowired
     private UserDao userDao;
     @Autowired
     private ImageDao imageDao;
@@ -46,9 +45,17 @@ public class MealController {
     }
 
     @GetMapping(path = "/{mealId}")
-    public Meal getMealById(@PathVariable int mealId) {
-        Meal meal = mealDao.getMeal(mealId);
-        meal.setTags(tagsDao.getTagsByMealId(mealId));
+    public Meal getMealById(@PathVariable int mealId, Principal principal) {
+        Meal meal = null;
+        int userId = userDao.getUserByUsername(principal.getName()).getId();
+        try {
+            if (mealDao.verifyMealOwner(userId, mealId)) {
+                meal = mealDao.getMeal(mealId);
+                meal.setTags(tagsDao.getTagsByMealId(mealId));
+            }
+        } catch(Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
+        }
         return meal;
     }
 

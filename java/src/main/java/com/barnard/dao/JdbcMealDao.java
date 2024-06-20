@@ -23,8 +23,9 @@ public class JdbcMealDao implements MealDao {
 
         Meal meal = null;
         String sql = "SELECT * " +
-                "from meal " +
-                "where meal_id = ?;";
+                "FROM meal " +
+                "JOIN recipe ON meal.recipe_id = recipe.recipe_id" +
+                "WHERE meal_id = ?;";
 
         try {
             SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, mealId);
@@ -46,8 +47,9 @@ public class JdbcMealDao implements MealDao {
         List<Meal> meals = new ArrayList<Meal>();
         search = "%" + search + "%";
         String sql = "SELECT * " +
-                "from meal " +
-                "where meal_name LIKE ? " +
+                "FROM meal " +
+                "JOIN recipe ON meal.recipe_id = recipe.recipe_id" +
+                "WHERE meal_name LIKE ? " +
                 "AND user_id = ?;";
 
         try {
@@ -69,10 +71,11 @@ public class JdbcMealDao implements MealDao {
 
         List<Meal> meals = new ArrayList<Meal>();
         String sql = "SELECT * " +
-                "from meal " +
-                "join tags_meal on meal.meal_id = tags_meal.meal_id " +
-                "join tags on tags_meal.tag_id = tags.tag_id " +
-                "where tags.tag_id = ? " +
+                "FROM meal " +
+                "JOIN tags_meal ON meal.meal_id = tags_meal.meal_id " +
+                "JOIN tags ON tags_meal.tag_id = tags.tag_id " +
+                "JOIN recipe ON meal.recipe_id = recipe.recipe_id" +
+                "WHERE tags.tag_id = ? " +
                 "AND meal.user_id = ?;";
 
         try {
@@ -95,6 +98,7 @@ public class JdbcMealDao implements MealDao {
         List<Meal> meals = new ArrayList<Meal>();
         String sql = "SELECT * " +
                 "FROM meal " +
+                "JOIN recipe ON meal.recipe_id = recipe.recipe_id" +
                 "WHERE user_id = ? " +
                 "ORDER BY date_created DESC;";
 
@@ -118,6 +122,7 @@ public class JdbcMealDao implements MealDao {
         List<Meal> meals = new ArrayList<Meal>();
         String sql = "SELECT * " +
                 "FROM meal " +
+                "JOIN recipe ON meal.recipe_id = recipe.recipe_id" +
                 "WHERE recipe_id = ?;";
 
         try {
@@ -236,6 +241,7 @@ public class JdbcMealDao implements MealDao {
         meal.setUserId(rs.getInt("user_id"));
         meal.setMealName(rs.getString("meal_name"));
         meal.setRecipeId(rs.getInt("recipe_id"));
+        meal.setRecipeName(rs.getString("recipe_name"));
         meal.setMealComment(rs.getString("meal_comment"));
         if (rs.getDate("date_cooked") != null) {
             meal.setDateCooked(rs.getDate("date_cooked").toLocalDate());

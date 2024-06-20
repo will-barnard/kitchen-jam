@@ -1,12 +1,6 @@
 <template>
      <body>
 
-        <div class="delete" v-if="deleting">
-            <h2 id="delete-check">Are you sure you want to delete? This cannot be undone</h2>
-            <h2 v-on:click="deleteMeal()">Delete</h2>
-            <h2 v-on:click="deleting = false">Cancel</h2>
-        </div>
-
         <div class="meal-img">
             <img :src="imgPath" v-if="showImage"/>
         </div>
@@ -17,6 +11,7 @@
 
                     <div class="title">
                         <h2 >{{ staticMeal.mealName }}</h2>
+                        <h3 v-if="meal.recipeId">recipe{{ meal.recipeId }}</h3>
                         <div class="subtitle">
                             <h4 class="comment">{{ staticMeal.mealComment }}</h4>
                             <h4 class="date">{{ formatDate(staticMeal.dateCooked) }}</h4>
@@ -24,8 +19,14 @@
                     </div>
 
                     <div class="tags">
-                            <p v-if="!staticMeal.tags">No tags yet</p>
-                            <Tag class="tag" v-for="tag in staticMeal.tags" :key="tag.tagId" :tag="tag" edit="false"/>
+                        <p v-if="!staticMeal.tags">No tags yet</p>
+                        <div class="tag-list">
+                            <div  v-for="tag in staticMeal.tags">
+                                <div class="tag-item-2">
+                                    <p>{{tag.tagName}}</p>
+                                </div>    
+                            </div>
+                        </div>
                     </div>
 
                     <div class="widgets">
@@ -61,6 +62,14 @@
                 <input type="file" name="file" accept="image/*" @change="uploadImage">
             </div>
 
+            <div class="edit-recipe edit-block">
+                <h3>Edit recipe</h3>
+                <div class="recipe-search">
+                    <input type="text" v-model="newRecipe.recipeName" @keyup="searchForRecipes()"/>
+                    <button @click="createRecipe()">Create New Recipe</button>
+                </div>
+            </div>
+
             <div class="edit-tags edit-block">
                 <h3>Edit tags</h3>
                
@@ -72,21 +81,26 @@
                             <div class="tag-item">
                                 <p>{{tag.tagName}}</p>
                                 <div class="tag-spacer"></div>
-                                <img src="/img/trash.png" @click="removeTag(tag.tagId)"/>
+                                <img class="delete-tag mini-button" src="/img/trash.png" @click="removeTag(tag.tagId)"/>
                             </div>    
                         </div>
                     </div>    
 
                 </div>
 
-                <div>
-                    <label>Search Tags</label><input type="text" v-model="newTag.tagName" @change="search()"/>
-                    <button>Create New Tag</button>
+                <div class="tag-search">
+                    <input type="text" v-model="newTag.tagName" @keyup="searchForTags()"/>
+                    <button @click="createTag()">Create New Tag</button>
                 </div>
 
-                <div>
-                    <div v-for="tag in searchTags">
+                <div class="search-tags">
+                    <div class="tag-search-item" v-for="tag in searchTags">
                         <p>{{ tag.tagName }}</p>
+                        
+                        <div class="tag-spacer"></div>
+                        <img class="add-tag mini-button" src="/img/check.png" @click="addTag(tag)"/>
+                        <div class="tag-spacer"></div>
+                        <img class="edit-tag mini-button" src="/img/edit.png" />
                     </div>
                 </div>
                 
@@ -143,6 +157,12 @@
             </form>
         </div>
 
+        <div class="delete" v-if="deleting">
+            <p id="delete-check">Are you sure you want to delete? This cannot be undone</p>
+            <h2 v-on:click="deleteMeal()">Delete</h2>
+            <h2 v-on:click="deleting = false">Cancel</h2>
+        </div>
+
         <div class="controls">
             <div class="edit-button button" v-if="!editing" v-on:click="editing=true">
                 <img src="/img/edit.png" />
@@ -167,6 +187,7 @@ import Tag from './Tag.vue';
 import ImageService from '../services/ImageService.js';
 import UtilityService from '../services/UtilityService.js';
 import TagService from '../services/TagService.js';
+import RecipeService from '../services/RecipeService.js';
 
 export default {
     props: ['meal', 'loading'],
@@ -180,7 +201,9 @@ export default {
             newMeal: {},
             staticMeal: {},
             newTag: {},
-            searchTags: []
+            searchTags: [],
+            newRecipe: {},
+            searchRecipe: []
         }
     },
     created() {
@@ -285,32 +308,36 @@ export default {
         },
         removeTag(id) {
             TagService.removeTagFromMeal(this.meal.mealId, id).then(
-                this.staticMeal.tags.filter(
-                    (tag) => {
-                        return tag.tagId != id;
-                    }
-                )
+                () => {
+                    this.staticMeal.tags = this.staticMeal.tags.filter(
+                        (tag) => {
+                            return tag.tagId != id;
+                        }
+                    );
+                }
             )
         },
         createTag() {
             TagService.createTag(this.newTag).then(
                 (response) => {
-                    this.staticMeal.push(result.data);
-                    TagService.addTagToMeal(this.mealId, result.data.tagId)
+                    this.staticMeal.tags.push(response.data)
+                    TagService.addTagToMeal(this.meal.mealId, response.data.tagId)
                 }
             )
         },
         addTag(tag) {
-            this.staticMeal.push(tag);
-            TagService.addTagToMeal(tag);
+            this.staticMeal.tags.push(tag);
+            TagService.addTagToMeal(this.meal.mealId, tag.tagId);
         },
-        search() {
+        searchForTags() {
             TagService.searchTags(this.newTag).then(
                 (response) => {
                     this.searchTags = response.data;
-                    console.log(response.data);
                 }
             );
+        },
+        searchForRecipes() {
+            RecipeService.searchRecipes()
         }
     }
 }
@@ -348,7 +375,7 @@ export default {
     }
     .button {
         width: 15vw;
-        border: 1px solid var(--border-color);
+        /* border: 1px solid var(--border-color); */
         border-radius: 10px;
         padding: 5px;
         margin-right: 5px;
@@ -403,6 +430,10 @@ export default {
         flex-direction: column;
     }
     .tags {
+        margin-top: 5px;
+        padding: 10px;
+        background-color: var(--light-1);
+        border-radius: 10px;
         display: flex;
         flex-direction: row;
     }
@@ -418,6 +449,25 @@ export default {
     .edit-widget {
         width: 65%;
     } 
+    .tag-search {
+        display: flex;
+    }
+    .tag-search input {
+        flex-grow: 1;
+    }
+    .recipe-search {
+        display: flex;
+    }
+    .edit-block input {
+        margin: 0px;
+        flex-grow: 1;
+    }
+    .edit-block button {
+
+    }
+
+    
+
     .tag {
         border: 1px solid var(--border-color);
         padding: 3px;
@@ -428,16 +478,27 @@ export default {
         border-radius: 50px;
     }
     .tag-list {
+        background-color: var(light-2);
         display: flex;
         flex-direction: row;
         flex-wrap: wrap;
         align-items: center;
+        justify-content: center;
     }
     .tag-list img {
         height: .9em;
+        border: 1px solid var(--border-color)
     }
     .tag-item img:hover {
         filter: opacity(50%);
+    }
+    .search-tags {
+        display: flex;
+        white-space: nowrap;
+        flex-wrap: wrap;
+    }
+    .search-tags img {
+        height: .9em;
     }
     .tag-spacer {
         width: 5px;
@@ -445,15 +506,67 @@ export default {
     .tag-item {
         display: flex;
         border: 1px solid var(--border-color);
+        background-color: var(--light-1);
         border-radius: 8px;
         align-items: center;
         padding: 5px;
         margin-right: 5px;
         margin-bottom: 5px;
     }
+    .tag-item-2 {
+        display: flex;
+        background-color: var(--light-2);
+        border-radius: 8px;
+        justify-content: center;
+        align-items: center;
+        padding: 5px;
+        margin-right: 5px;
+        margin-bottom: 5px;
+        user-select: none;
+    }
     .tag-item:hover {
         cursor: pointer;
     }
+    .tag-search-item {
+        display: flex;
+        border: 1px solid var(--border-color);
+        background-color: var(--light-1);
+        border-radius: 8px;
+        align-items: center;
+        padding: 5px;
+        margin-right: 5px;
+        margin-bottom: 5px;
+    }
+    .tag-search-item:hover {
+        cursor: pointer;
+    }
+    .tag-search-item img:hover {
+        filter: opacity(50%);
+    }
+    .tag-search-item img {
+        border: 1px solid var(--border-color);
+    }
+    .add-tag {
+        background-color: var(--light-4);
+    }
+    .add-tag:hover {
+        background-color: opacity(50%);
+
+    }
+    .delete-tag {
+        background-color: var(--light-3);
+    }
+    .edit-tag {
+        background-color: var(--edit);
+    }
+    .mini-button {
+        border-radius: 5px;
+        padding: 3px;
+    }
+
+
+
+
     .details {
         background-color: var(--light-2);
         padding: 15px;
@@ -470,6 +583,15 @@ export default {
         border-radius: 10px;
         padding: 10px;
         margin: 0px;
+    }
+    .title h3 {
+        text-align: center;
+        background-color: var(--light-5);
+        border-radius: 10px;
+        padding: 10px;
+        margin: 0px;
+        margin-top: 5px;
+
     }
     .title h4{
         margin-top: 5px;

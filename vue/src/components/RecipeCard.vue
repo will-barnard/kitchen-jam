@@ -15,11 +15,11 @@
                         <h2 class="name">{{ recipe.recipeName }}</h2>
                     </div>
 
-<!-- 
-                    <div id="tags" v-if="meal.tags">
-                        <Tag v-for="tag in meal.tags" :key="tag.tagId" :tag="tag" edit="false"/>
+
+                    <div id="category" v-if="!recipe.category">
+                        <h3>Category</h3>
                     </div> 
--->
+
 
                     <div class="widget">
                         <p>{{ recipe.avgCookTime }} min</p>
@@ -80,6 +80,7 @@ export default {
         margin: 10px;
         padding: 10px;
         border: 1px solid var(--border-color);
+        border-radius: 10px;
         font-size: 3em;
     }
     .control:hover {
@@ -88,9 +89,11 @@ export default {
     #details {
         display: flex;
         flex-direction: row;
-        padding: 5px;
+        padding: 10px;
         border: 1px solid var(--border-color);
-        height: 25vh;
+        border-radius: 10px;
+        background-color: var(--light-2);
+        margin-bottom: 10px;
     }
     p {
         text-align: left;
@@ -101,6 +104,7 @@ export default {
     }
     h2, h3 {
         display: inline;
+        text-align: center;
         margin: 5px;
     }
     p:hover {
@@ -116,22 +120,36 @@ export default {
     }
     .recipe-img img {
         object-fit: cover;
-        height: 25vh;
+        height: 100%;
     }
     .content {
         flex-grow: 1;
         margin-left: 10px;
     }
     .title {
+        text-align: center;
         display: flex;
         flex-direction: row;
-        justify-content: space-between;
+        justify-content: center;
         align-items: end;
         border: 1px solid var(--border-color);
+        border-radius: 10px;
+        background-color: var(--light-1);
     }
     .info {
         border: 1px solid var(--border-color);
+        border-radius: 10px;
         flex-grow: 1;
+        padding: 5px;
+    }
+    .info p {
+        background-color: var(--light-1);
+        border-radius: 10px;
+        padding: 5px;
+        margin: 3px;
+    }
+    .info h3 {
+        text-align: left;
     }
     #notes {
         flex-grow: 1;
@@ -140,5 +158,14 @@ export default {
         display: flex;
         flex-direction: row;
         justify-content: start;
+        flex-wrap: wrap;
+    }
+    .subheader {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+    .widget {
+        flex-grow: 1;
     }
 </style>

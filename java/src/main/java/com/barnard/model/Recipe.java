@@ -9,7 +9,7 @@ public class Recipe {
     private String recipeName;
     private Integer avgCookTime;
     private String description;
-    private Integer image_id;
+    private Integer imageId;
     private boolean isPublic;
     private Category category;
     private List<Meal> mealList;
@@ -46,12 +46,12 @@ public class Recipe {
         this.description = description;
     }
 
-    public Integer getImage_id() {
-        return image_id;
+    public Integer getImageId() {
+        return imageId;
     }
 
-    public void setImage_id(Integer image_id) {
-        this.image_id = image_id;
+    public void setImageId(Integer imageId) {
+        this.imageId = imageId;
     }
 
     public boolean isPublic() {

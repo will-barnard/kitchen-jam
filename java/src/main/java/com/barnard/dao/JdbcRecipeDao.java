@@ -239,7 +239,7 @@ public class JdbcRecipeDao implements RecipeDao {
         recipe.setRecipeName(rs.getString("recipe_name"));
         recipe.setAvgCookTime(rs.getInt("avg_cook_time"));
         recipe.setDescription(rs.getString("description"));
-        recipe.setImage_id(rs.getInt("image_id"));
+        recipe.setImageId(rs.getInt("image_id"));
         recipe.setPublic(rs.getBoolean("is_public"));
 
         return recipe;

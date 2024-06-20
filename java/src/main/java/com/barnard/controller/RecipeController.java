@@ -42,7 +42,7 @@ public class RecipeController {
         return recipe;
     }
 
-    @GetMapping(path = "/search")
+    @PostMapping(path = "/search")
     public List<Recipe> searchRecipes(@RequestBody String search, Principal principal) {
         List<Recipe> recipes = null;
         int userId = userDao.getUserByUsername(principal.getName()).getId();

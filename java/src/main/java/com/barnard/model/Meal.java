@@ -11,6 +11,8 @@ public class Meal {
     private int mealId;
     private int userId;
     private Integer recipeId;
+    private String recipeName;
+    private Recipe recipe;
     private String mealName;
     private String mealComment;
     private LocalDate dateCooked;
@@ -23,6 +25,14 @@ public class Meal {
     private Integer imageId;
     private boolean isPublic;
     private List<Tag> tags;
+
+    public Recipe getRecipe() {
+        return recipe;
+    }
+
+    public void setRecipe(Recipe recipe) {
+        this.recipe = recipe;
+    }
 
     public int getMealId() {
         return mealId;
@@ -142,5 +152,13 @@ public class Meal {
 
     public void setPublic(boolean aPublic) {
         isPublic = aPublic;
+    }
+
+    public String getRecipeName() {
+        return recipeName;
+    }
+
+    public void setRecipeName(String recipeName) {
+        this.recipeName = recipeName;
     }
 }
