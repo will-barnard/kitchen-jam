@@ -143,12 +143,12 @@ public class JdbcRecipeDao implements RecipeDao {
     @Override
     public Recipe createRecipe(Recipe recipe) {
 
-        String sql = "INSERT INTO recipe (user_id, recipe_name, avg_cook_time, description, is_public) " +
+        String sql = "INSERT INTO recipe (user_id, recipe_name, description, is_public) " +
                 "VALUES (?, ?, ?, ?, ?) " +
                 "RETURNING recipe_id;";
 
         try {
-            int recipeId = jdbcTemplate.queryForObject(sql, int.class, recipe.getUserId(), recipe.getRecipeName(), recipe.getAvgCookTime(), recipe.getDescription(), recipe.isPublic());
+            int recipeId = jdbcTemplate.queryForObject(sql, int.class, recipe.getUserId(), recipe.getRecipeName(), recipe.getDescription(), recipe.isPublic());
             recipe.setRecipeId(recipeId);
         } catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database", e);
@@ -165,12 +165,12 @@ public class JdbcRecipeDao implements RecipeDao {
         Recipe newRecipe = null;
 
         String sql = "UPDATE recipe SET " +
-                "recipe_name = ?, avg_cook_time = ?, description = ?, is_public =? " +
+                "recipe_name = ?, description = ?, is_public =? " +
                 "WHERE recipe_id = ?;";
 
         try {
 
-            int rowsAffected = jdbcTemplate.update(sql, recipe.getRecipeName(), recipe.getAvgCookTime(), recipe.getDescription(), recipe.isPublic(), recipe.getRecipeId());
+            int rowsAffected = jdbcTemplate.update(sql, recipe.getRecipeName(), recipe.getDescription(), recipe.isPublic(), recipe.getRecipeId());
             if (rowsAffected == 0) {
                 throw new DaoException();
             }
@@ -224,6 +224,28 @@ public class JdbcRecipeDao implements RecipeDao {
                 return true;
             }
 
+        } catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Unable to connect to server or database", e);
+        } catch (DataIntegrityViolationException e) {
+            throw new DaoException("Data integrity violation", e);
+        }
+    }
+
+    @Override
+    public void aggregateRecipeData(int recipeId) {
+        String sql = "SELECT cook_time FROM meal " +
+                "WHERE recipe_id = ?;";
+        String sql2 = "UPDATE recipe SET avg_cook_time = ? " +
+                "WHERE recipe_id = ?;";
+        int count = 0;
+        int cookTime = 0;
+        try {
+            SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, recipeId);
+            while(rowSet.next()) {
+                cookTime += rowSet.getInt("cook_time");
+                count++;
+            }
+            jdbcTemplate.update(sql2, cookTime/count, recipeId);
         } catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database", e);
         } catch (DataIntegrityViolationException e) {

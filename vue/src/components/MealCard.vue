@@ -4,7 +4,7 @@
             <div id="details" class="body-card">
                 <div class="meal-img" >
                     <img src="../img/placeholder.jpeg" v-if="showImg = false">
-                    <Transition name="fade">
+                    <Transition>
                         <img :src="imgPath" v-if="showImg = true"/>
                     </Transition>
                 </div>
@@ -255,4 +255,14 @@ export default {
     .fade-leave-to {
         opacity: 0;
     }
+    .v-enter-active,
+.v-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
 </style>

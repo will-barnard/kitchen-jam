@@ -143,7 +143,7 @@
                         <div class="edit-rating">
                             <label>Rating</label>
                             <select v-model="newMeal.rating">
-                                <option disabled="true" >----</option>
+                                <option value="0">0</option>
                                 <option value="1">1</option>
                                 <option value="2">2</option>
                                 <option value="3">3</option>
@@ -496,9 +496,7 @@ export default {
         margin: 0px;
         flex-grow: 1;
     }
-    .edit-block button {
-
-    }
+    
 
     
 

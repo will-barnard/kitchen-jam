@@ -62,7 +62,7 @@ CREATE TABLE meal (
 	cook_time int,
 	notes varchar(200),
 	ingredients varchar(200),
-	rating int check(rating <= 10 and rating >= 1),
+	rating int check(rating <= 10 and rating >= 0),
 	image_id int REFERENCES image(image_id),
 	is_public boolean,
 	CONSTRAINT PK_meal PRIMARY KEY (meal_id)
