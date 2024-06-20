@@ -24,7 +24,7 @@ public class JdbcMealDao implements MealDao {
         Meal meal = null;
         String sql = "SELECT * " +
                 "FROM meal " +
-                "JOIN recipe ON meal.recipe_id = recipe.recipe_id" +
+                "JOIN recipe ON meal.recipe_id = recipe.recipe_id " +
                 "WHERE meal_id = ?;";
 
         try {
@@ -48,7 +48,7 @@ public class JdbcMealDao implements MealDao {
         search = "%" + search + "%";
         String sql = "SELECT * " +
                 "FROM meal " +
-                "JOIN recipe ON meal.recipe_id = recipe.recipe_id" +
+                "JOIN recipe ON meal.recipe_id = recipe.recipe_id " +
                 "WHERE meal_name LIKE ? " +
                 "AND user_id = ?;";
 
@@ -74,7 +74,7 @@ public class JdbcMealDao implements MealDao {
                 "FROM meal " +
                 "JOIN tags_meal ON meal.meal_id = tags_meal.meal_id " +
                 "JOIN tags ON tags_meal.tag_id = tags.tag_id " +
-                "JOIN recipe ON meal.recipe_id = recipe.recipe_id" +
+                "JOIN recipe ON meal.recipe_id = recipe.recipe_id " +
                 "WHERE tags.tag_id = ? " +
                 "AND meal.user_id = ?;";
 
@@ -98,7 +98,7 @@ public class JdbcMealDao implements MealDao {
         List<Meal> meals = new ArrayList<Meal>();
         String sql = "SELECT * " +
                 "FROM meal " +
-                "JOIN recipe ON meal.recipe_id = recipe.recipe_id" +
+                "JOIN recipe ON meal.recipe_id = recipe.recipe_id " +
                 "WHERE user_id = ? " +
                 "ORDER BY date_created DESC;";
 
@@ -122,7 +122,7 @@ public class JdbcMealDao implements MealDao {
         List<Meal> meals = new ArrayList<Meal>();
         String sql = "SELECT * " +
                 "FROM meal " +
-                "JOIN recipe ON meal.recipe_id = recipe.recipe_id" +
+                "JOIN recipe ON meal.recipe_id = recipe.recipe_id " +
                 "WHERE recipe_id = ?;";
 
         try {
