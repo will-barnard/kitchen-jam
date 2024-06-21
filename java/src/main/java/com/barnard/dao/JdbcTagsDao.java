@@ -67,10 +67,10 @@ public class JdbcTagsDao implements TagsDao{
 
     @Override
     public List<Tag> searchLikeTags(int userId, String search) {
-        search = "%" + search + "%";
+        search = "%" + search.toLowerCase() + "%";
         List<Tag> taglist = new ArrayList<>();
         String sql = "SELECT * FROM tags " +
-                "WHERE tag_name LIKE ? " +
+                "WHERE LOWER (tag_name) LIKE ? " +
                 "AND user_id = ?";
         try {
             SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, search, userId);

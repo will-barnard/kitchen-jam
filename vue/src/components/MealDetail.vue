@@ -246,6 +246,7 @@ export default {
         saveEdit() {
             MealService.updateMeal(this.newMeal).then(
                 (response) => {
+                    let tags = this.
                     this.staticMeal = response.data;
                     this.newMeal = this.staticMeal;
                     this.editing = false;
@@ -349,18 +350,28 @@ export default {
             TagService.addTagToMeal(this.meal.mealId, tag.tagId);
         },
         searchForTags() {
-            TagService.searchTags(this.newTag).then(
-                (response) => {
-                    this.searchTags = response.data;
-                }
-            );
+            if (this.newTag.tagName) {
+                TagService.searchTags(this.newTag).then(
+                    (response) => {
+                        this.searchTags = response.data;
+                    }
+                );
+            } else {
+                this.searchTags = [];
+                console.log(this.searchTags);
+            }
         },
         searchForRecipes() {
-            RecipeService.searchRecipes(this.newRecipe).then(
-                (response) => {
-                    this.searchRecipe = response.data;
-                }
-            )
+            if (this.newRecipe.recipeName) {
+                RecipeService.searchRecipes(this.newRecipe).then(
+                    (response) => {
+                        this.searchRecipe = response.data;
+                    }
+                )
+            } else {
+                this.searchRecipe = [];
+            }
+            
         },
         addRecipe(recipe) {
             this.newMeal.recipeId = recipe.recipeId;

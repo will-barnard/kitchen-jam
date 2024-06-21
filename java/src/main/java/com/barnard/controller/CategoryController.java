@@ -57,6 +57,18 @@ public class CategoryController {
         return categories;
     }
 
+    @PostMapping(path = "/search")
+    public List<Category> searchCategory(@RequestBody Category category, Principal principal) {
+        List<Category> categories = null;
+        int userId = userDao.getUserByUsername(principal.getName()).getId();
+        try {
+            categories = categoryDao.searchLikeCategory(category.getCategoryName(), userId);
+        } catch(Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
+        }
+        return categories;
+    }
+
     @PostMapping(path="")
     @ResponseStatus(HttpStatus.CREATED)
     public Category createCategory(@RequestBody Category category, Principal principal) {

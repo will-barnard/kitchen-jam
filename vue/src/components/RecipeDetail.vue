@@ -12,13 +12,15 @@
                    <div class="title">
                        <h2 >{{ staticRecipe.recipeName }}</h2>
                    </div>
+                   <div class="category" v-if="recipe.categoryId">
+                    <h3>{{ staticRecipe.categoryName }}</h3>
+                   </div>
                    <div class="subtitle">
                     <p>{{ staticRecipe.description }}</p>   
                    </div>
                    <!-- <h3>Last made here?</h3> -->
 
-                   <!-- <div class="category">
-                   </div> -->
+                   
 
                     <div class="widgets">
                         <div class="widgets">
@@ -53,7 +55,7 @@
             
                </div>
            </form>
-           <div class="edit-form">
+           <div class="edit-form edit-category">
                 <h3>Edit Category</h3>
                 <div>
                     <div v-if="newRecipe.categoryId" class="current-category">
@@ -62,14 +64,14 @@
                         <h4>{{ newRecipe.categoryName }}</h4>
                     </div>
                     <div class="category-search">
-                        <input type="text" v-model="newCategory.recipeName" @keyup="searchForCategory()"/>
-                        <button @click="createRecipe()">Create New Category</button>
+                        <input type="text" v-model="newCategory.categoryName" @keyup="searchForCategory()"/>
+                        <button @click="createCategory()">Create New Category</button>
                     </div>
                     <div class="category-search-results" v-if="searchCategory">
-                        <div v-for="category in searchCategory" class="recipe">
-                            <img src="/img/plus.png" class="plus mini-button" @click="addCategory(recipe)"/>
+                        <div v-for="category in searchCategory" class="category-item">
+                            <img src="/img/plus.png" class="plus mini-button" @click="addCategory(category)"/>
                             <div class="tag-spacer"></div>
-                            <p>{{ recipe.recipeName }}</p>
+                            <p>{{ category.categoryName }}</p>
                         </div>
                     </div>
                 </div>
@@ -108,6 +110,7 @@
 import RecipeService from '../services/RecipeService.js'
 import Tag from './Tag.vue';
 import MealCard from '../components/MealCard.vue';
+import CategoryService from '../services/CategoryService.js';
 
 export default {
     props: ['recipe', 'loading'],
@@ -164,12 +167,43 @@ export default {
                 newRecipe.imageId = recipe.imageId;
                 newRecipe.isPublic = recipe.isPublic;
                 newRecipe.categoryId = recipe.categoryId;
+                newRecipe.categoryName = recipe.categoryName;
                 newRecipe.mealList = recipe.mealList;
 
                 newRecipe.categories = recipe.categories;
 
             }
             return newRecipe;
+        },
+        searchForCategory() {
+            if (this.newCategory.categoryName) {
+                CategoryService.searchCategory(this.newCategory).then(
+                    (response) => {
+                        this.searchCategory = response.data;
+                    }
+                )
+            } else {
+                this.searchCategory = [];
+            }
+            
+        },
+        addCategory(category) {
+            this.newRecipe.categoryId = response.data.categoryId;
+            this.newRecipe.categoryName = response.data.categoryName;
+            this.newCategory.categoryName = "";
+            this.searchCategory = [];
+        },
+        removeCategory() {
+            this.newRecipe.categoryId = 0;
+            this.newRecipe.categoryName = "";
+        },
+        createCategory() {
+            CategoryService.createCategory(this.newCategory).then(
+                (response) => {
+                    this.newRecipe.categoryId = response.data.categoryId;
+                    this.newRecipe.categoryName = response.data.categoryName;
+                }
+            )
         }
     }
 }
@@ -366,4 +400,45 @@ export default {
         margin: 0px;
         flex-grow: 1;
     }
+    .mini-button {
+        border-radius: 5px;
+        padding: 4px;
+    }
+    .current-category img {
+        height: .9em;
+    }
+    .current-category {
+        display: flex;
+        background-color: var(--light-1);
+        margin-bottom: 5px;
+        padding: 5px;
+        border-radius: 10px;
+    }
+    .plus {
+        background-color: var(--light-4);
+    }
+    .minus {
+        background-color: var(--light-3);
+    }
+    .tag-spacer {
+        width: 5px;
+    }
+    .category {
+        text-align: center;
+        background-color: var(--light-6);
+        margin-bottom: 5px;
+        padding: 5px;
+        border-radius: 10px;
+    }
+    .category-item {
+        display: flex;
+        margin-bottom: 5px;
+        background-color: var(--light-1);
+        padding: 5px;
+        border-radius: 10px;
+    }
+    .category-item img {
+        height: .9em;
+    }
+
 </style>

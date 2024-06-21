@@ -26,7 +26,7 @@ public class JdbcRecipeDao implements RecipeDao {
         String sql = "SELECT recipe.*, category.category_name " +
                 "FROM recipe " +
                 "LEFT JOIN category ON recipe.category_id = category.category_id " +
-                "WHERE recipe_id = ?;";
+                "WHERE recipe.recipe_id = ?;";
 
         try {
             SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, recipeId);
@@ -46,13 +46,13 @@ public class JdbcRecipeDao implements RecipeDao {
     @Override
     public List<Recipe> searchLikeRecipes(String search, int userId) {
 
-        search = "%" + search + "%";
+        search = "%" + search.toLowerCase() + "%";
         List<Recipe> recipes = new ArrayList<>();
         String sql = "SELECT recipe.*, category.category_name " +
                 "FROM recipe " +
                 "LEFT JOIN category ON recipe.category_id = category.category_id " +
-                "WHERE recipe_name LIKE ? " +
-                "AND user_id = ?;";
+                "WHERE LOWER (recipe.recipe_name) LIKE ? " +
+                "AND recipe.user_id = ?;";
 
         try {
             SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, search, userId);
@@ -76,7 +76,7 @@ public class JdbcRecipeDao implements RecipeDao {
         String sql = "SELECT recipe.*, category.category_name " +
                 "FROM recipe " +
                 "LEFT JOIN category ON recipe.category_id = category.category_id " +
-                "WHERE user_id = ?;";
+                "WHERE recipe.user_id = ?;";
 
         try {
             SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, userId);

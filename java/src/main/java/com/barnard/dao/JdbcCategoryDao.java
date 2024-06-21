@@ -68,6 +68,27 @@ public class JdbcCategoryDao implements CategoryDao{
     }
 
     @Override
+    public List<Category> searchLikeCategory(String search, int userId) {
+        List<Category> categories = new ArrayList<>();
+        search = "%" + search.toLowerCase() + "%";
+        String sql = "SELECT * " +
+                "FROM category " +
+                "WHERE LOWER (category_name) LIKE ? " +
+                "AND user_id = ?;";
+        try {
+            SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, search, userId);
+            while (rowSet.next()) {
+                categories.add(mapRowToCategory(rowSet));
+            }
+        } catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Unable to connect to server or database", e);
+        } catch (DataIntegrityViolationException e) {
+            throw new DaoException("Data integrity violation", e);
+        }
+        return categories;
+    }
+
+    @Override
     public Category createCategory(Category category, int userId) {
 
         Category newCategory = null;

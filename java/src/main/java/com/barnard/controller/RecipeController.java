@@ -126,6 +126,9 @@ public class RecipeController {
 
         // todo add public option on frontend
         recipe.setPublic(true);
+        if (recipe.getCategoryId() == 0) {
+            recipe.setCategoryId(null);
+        }
 
         int userId = userDao.getUserByUsername(principal.getName()).getId();
         recipe.setUserId(userId);
