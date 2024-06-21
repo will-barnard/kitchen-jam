@@ -1,9 +1,11 @@
 <template>
+    <Transition>
     <body>
        
         <div class="recipe-img">
-                   <img src="../img/placeholder.jpeg" />
-                   <!-- img goes here -->
+            <div>
+                <img :src="imgPath" />
+            </div>
         </div>
 
        <div v-show="!editing">
@@ -40,6 +42,10 @@
        </div>
 
        <div v-show="editing">
+            <div class="edit-image edit-block">
+                <h3>Edit image</h3>
+                <input type="file" name="file" accept="image/*" @change="uploadImage">
+            </div>
            <form>
                <div class="edit-form">
                     <h3>Edit details</h3>
@@ -98,12 +104,16 @@
             <div class="check button" v-if="editing" v-on:click="saveEdit()">
                 <img src="/img/check.png" />
             </div>
-       </div>       
-       <div class="meals" v-if="recipe.mealList && !editing">
-            <h2>Meals</h2>
+       </div> 
+       <Transition>
+        <div class="meals" v-if="recipe.mealList && !editing">
+            <h3>Meals following this recipe</h3>
             <MealCard v-for="meal in recipe.mealList" :key="meal.mealId" :meal="meal"></MealCard>
        </div>
+       </Transition>      
+       
    </body>
+   </Transition>
 </template>
 
 <script>
@@ -111,6 +121,7 @@ import RecipeService from '../services/RecipeService.js'
 import Tag from './Tag.vue';
 import MealCard from '../components/MealCard.vue';
 import CategoryService from '../services/CategoryService.js';
+import ImageService from '../services/ImageService.js';
 
 export default {
     props: ['recipe', 'loading'],
@@ -118,6 +129,8 @@ export default {
     data() {
         return {
             editing: false,
+            showImage: false,
+            imgPath: "",
             newRecipe: {},
             staticRecipe: {},
             deleting: false,
@@ -129,6 +142,19 @@ export default {
     created() {
         this.staticRecipe = this.cloneRecipe(this.recipe);
         this.newRecipe = this.cloneRecipe(this.staticRecipe);
+        if (this.recipe.imageId == 0 || this.recipe.imageId == null) {
+            this.imgPath = "../img/placeholder.jpeg";
+            this.showImage = true;
+        } else {
+            ImageService.getImage(this.recipe.imageId).then(
+                (res) => {
+                    const base64 = ImageService.parseImg(res);
+                    this.imgPath = "data:image/png;base64," + base64;
+                    this.showImage = true;
+                }
+            )
+        }
+
     },
     methods: {
         cancelEdit() {
@@ -175,6 +201,44 @@ export default {
             }
             return newRecipe;
         },
+        uploadImage(event){
+            this.showImage = false;
+            
+            if (this.recipe.imageId == 0 || this.recipe.imageId == null) {
+                ImageService.createImage(event.target.files[0]).then(
+                (response) => {
+                    ImageService.addImageToRecipe(this.recipe.recipeId, response.data).then(
+                        () => {
+                            ImageService.getImage(response.data).then(
+                                (r) => {
+                                    const base64 = ImageService.parseImg(r);
+                                    this.imgPath = "data:image/png;base64," + base64;
+                                    console.log(1)
+                                    this.showImage = true;
+                                }
+                            )
+                        }
+                    );
+                }
+            ) 
+            } else {
+                ImageService.createImage(event.target.files[0]).then(
+                (response) => {
+                    let id = response.data;
+                    ImageService.updateMealImage(this.recipe.recipeId, response.data).then(
+                        (res) => {
+                            ImageService.getImage(id).then(
+                                (r) => {
+                                    const base64 = ImageService.parseImg(r);
+                                    this.imgPath = "data:image/png;base64," + base64;
+                                    this.showImage = true;
+                                }
+                            )
+                        });
+                    }
+                ) 
+                }
+        },
         searchForCategory() {
             if (this.newCategory.categoryName) {
                 CategoryService.searchCategory(this.newCategory).then(
@@ -214,7 +278,7 @@ export default {
         margin: 0px;
     }
     .recipe-img {
-        margin-top: 15px;
+        margin-top: 10px;
         overflow: hidden;
         text-align: center;
         margin-bottom: 15px;
@@ -440,5 +504,33 @@ export default {
     .category-item img {
         height: .9em;
     }
+    .edit-block {
+        background-color: var(--light-2);
+        border-radius: 10px;
+        padding: 15px;
+        margin: 5px;
+    }
+    .edit-image h3 {
+        margin-bottom: 5px;
+    }
+    .meals h3 {
+        background-color: var(--light-1);
+        border-radius: 10px;
+        margin-top: 30px;
+        margin-bottom: 5px;
+        padding: 10px;
+    }
 
+
+
+    .v-enter-active,
+    .v-leave-active {
+        transition: opacity 5s ease;
+    }
+
+    .v-enter-from,
+    .v-leave-to {
+        opacity: 0%;
+    }
+    
 </style>

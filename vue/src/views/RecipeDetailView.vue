@@ -1,7 +1,10 @@
 <template>
     <div>
         <RecipeMenu />
-        <RecipeDetail v-if="!loading" :recipe="getRecipe"/>
+        <p v-if="loading  && showLoading">Loading...</p>
+        <Transition>
+            <RecipeDetail v-if="!loading" :recipe="getRecipe"/>
+        </Transition>
     </div>
 </template>
 
@@ -15,20 +18,37 @@ export default {
     data() {
         return {
             getRecipe: {},
-            loading: true
+            loading: true,
+            showLoading: false
         }
     },
     created() {
+        this.loadingWait();
         RecipeService.getRecipe(this.$route.params.recipeId).then(
             (response) => {
                 this.getRecipe = response.data;
                 this.loading = false;
             }
-        )
+        );
+    },
+    methods: {
+        loadingWait() {
+            setTimeout( () => {
+                this.showLoading = true;
+            }, 5000)
+        }
     }
 }
 </script>
 
-<style>
-    
+<style scoped>
+    .v-enter-active,
+    .v-leave-active {
+        transition: opacity .5s ease;
+    }
+
+    .v-enter-from,
+    .v-leave-to {
+        opacity: 0%;
+    }
 </style>

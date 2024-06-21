@@ -33,6 +33,13 @@ export default {
                 return "nav";
             }
         }
+    },
+    created() {
+        document.body.addEventListener('click', (e) => {
+            if (!this.$el.contains(e.target)) {
+                this.toggle = false;
+            }
+        });
     }
 }
 </script>

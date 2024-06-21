@@ -36,15 +36,14 @@ export default {
     }
     p {
         margin: 0px;
-        padding: 5px;
         display: inline;
-        border: 1px solid var(--border-color);
         background-color: var(--light-1);
         margin: 5px;
         border-radius: 10px;
-        padding: 6px;
+        padding: 8px;
         margin-bottom: 10px;
         margin-top: 0px;    
+        font-weight: bold;
     }
     p:hover {
         cursor: pointer;

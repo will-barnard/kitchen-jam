@@ -1,12 +1,13 @@
 <template>
+    <Transition>
     <div @click="showMore = !showMore">
         <body>
 
             <div id="details" class="body-card">
                 
                 <div class="recipe-img" >
-                    <img src="src/img/placeholder.jpeg" />
-                    <!-- img goes here -->
+                    <img src="../img/placeholder.jpeg" v-if="!recipe.imageId">
+                    <img :src="imgPath" v-show="showImg = true" v-if="recipe.imageId"/>
                 </div>
 
                 <div class="content">
@@ -16,23 +17,24 @@
                     </div>
 
 
-                    <div id="category" v-if="!recipe.category">
-                        <h3>Category</h3>
+                    <div class="category" v-if="recipe.categoryId">
+                        <h3>{{ recipe.categoryName }}</h3>
                     </div> 
 
+                    <div class="info">
+                        <p >{{ recipe.description }}</p>
+                    </div>
 
                     <div class="widget">
                         <p>{{ recipe.avgCookTime }} min</p>
                     </div>
 
-                    <div class="info">
-                        <p >{{ recipe.description }}</p>
-                    </div>
+                    
                 </div>
                 
             </div>
 
-            <Transition>
+            <Transition name="control">
               <div id="controls" v-if="showMore">
                 <div class="control" v-on:click="goDetail()"><img src="/img/detail.png" /></div>
             </div>  
@@ -40,15 +42,19 @@
             
         </body>
     </div>
+    </Transition>
 </template>
 
 <script>
+import ImageService from '../services/ImageService';
 
 export default {
     props: ['recipe'],
     data() {
         return {
-            showMore: false
+            showMore: false,
+            showImg: false,
+            imgPath: ""
         }
     },
     methods: {
@@ -60,6 +66,16 @@ export default {
         }
     },
     created() {
+        if (this.recipe.imageId == 0 || this.recipe.imageId == null) {
+        } else {
+            ImageService.getImage(this.recipe.imageId).then(
+                (res) => {
+                    const base64 = ImageService.parseImg(res);
+                    this.imgPath = "data:image/png;base64," + base64;
+                    this.showImg = true;
+                }
+            )
+        }
     }
 }
 </script>
@@ -76,7 +92,6 @@ export default {
         display: flex;
         flex-direction: row;
         padding: 10px;
-        border: 1px solid var(--border-color);
         border-radius: 10px;
         background-color: var(--light-2);
         margin-bottom: 10px;
@@ -119,11 +134,12 @@ export default {
         justify-content: center;
         align-items: end;
         border-radius: 10px;
-        background-color: var(--light-1);
+        background-color: var(--light-5);
     }
     .info {
         border-radius: 10px;
         flex-grow: 1;
+        margin-top: 5px;
     }
     .info p {
         background-color: var(--light-1);
@@ -172,6 +188,13 @@ export default {
     .control {
         background-color: var(--edit);
     }
+    .category {
+        background-color: var(--light-6);
+        margin-top: 5px;
+        border-radius: 10px;
+    }
+
+
     .v-enter-active,
 .v-leave-active {
   transition: opacity 0.5s ease;
@@ -182,5 +205,15 @@ export default {
   opacity: 0;
   transition: opacity 0s ease;
 
+}
+.control-enter-active,
+.control-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.control-enter-from,
+.control-leave-to {
+  opacity: 0;
+  transition: opacity 0s ease;
 }
 </style>
