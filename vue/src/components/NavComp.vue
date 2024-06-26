@@ -1,14 +1,21 @@
 <template>
     <div class="global">
+        <div :class="hamburger">
+            <div class="container" :class="toggle?'change':''" @click="toggle = !toggle;">
+                <div class="bar1"></div>
+                <div class="bar2"></div>
+                <div class="bar3"></div>
+            </div>
+        </div>
             <div :class="menu">
-                <img src="/img/burger-bar-tinted.png" @click="toggle = !toggle"/>
+                <div class="spacer"></div>
                 <p @click="push({ name: 'home' })" >Home</p>
                 <p @click="push({ name: 'meal-log' })" v-if="$store.state.token != ''">Meal Log</p>
                 <p @click="push({ name: 'cookbook' })" v-if="$store.state.token != ''">Cookbook</p>
                 <p @click="push({ name: 'logout' })" v-if="$store.state.token != ''">Logout</p>
+            <div :class="white"></div>
             </div>
-            <div class="white">
-            </div>
+
     </div>
 </template>
 
@@ -31,6 +38,20 @@ export default {
                 return "nav-open";
             } else {
                 return "nav";
+            }
+        },
+        hamburger() {
+            if (!this.toggle) {
+                return "hamburger hamburger-closed";
+            } else {
+                return "hamburger hamburger-open";
+            }
+        },
+        white() {
+            if (!this.toggle) {
+                return "white white-closed";
+            } else {
+                return "white white-open";
             }
         }
     },
@@ -96,7 +117,7 @@ export default {
         border-radius: 20px;
 
         height: 300px;
-        bottom: -215px;
+        bottom: -40vh;
         transition: bottom .5s ease;
     }
     .nav img {
@@ -110,12 +131,62 @@ export default {
     }
     .white {
         position: fixed;
-        bottom: 0px;
+        width: 100%;
         height: 30px;
-        width: 100vw;
-        left: 0px;
-        right: 0px;
         background-color: var(--dark-1);
         z-index: -1;
     }
+    .white-closed {
+        bottom: -40px;
+        transition: bottom .5s ease;
+    }
+    .white-open {
+        bottom: 0px;
+        transition: bottom .5s ease;
+    }
+    .hamburger {
+        background-color: var(--dark-1);
+        border-radius: 100%;
+        right: 30px;
+        position: fixed;
+    }
+    .hamburger-closed {
+        bottom: 30px;
+        transition: bottom .5s ease;
+
+    }
+    .hamburger-open {
+        bottom: 250px;
+        transition: bottom .5s ease;
+        z-index: 1;
+
+    }
+    .spacer {
+        height: 50px;
+    }
+    .container {
+        padding: 18px;
+    }
+
+    .bar1, .bar2, .bar3 {
+    width: 42px;
+    height: 6px;
+    background-color: var(--text-color);
+    margin: 6px 0;
+    transition: 0.4s;
+    border-radius: 3px;
+  }
+    /* Rotate first bar */
+  .change .bar1 {
+    transform: translate(0, 11px) rotate(-90deg);
+  }
+  /* Fade out the second bar */
+  .change .bar2 {
+      opacity: 0;
+      transition: 0.1s;
+  }
+  /* Rotate last bar */
+  .change .bar3 {
+    transform: translate(0, -11px) rotate(90deg);
+  }
 </style>

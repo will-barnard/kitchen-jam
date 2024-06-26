@@ -26,7 +26,14 @@ CREATE TABLE users (
 CREATE TABLE user_attributes (
     user_id int REFERENCES users(user_id),
     email varchar(100) NOT NULL,
+    display_name varchar(200),
     nurture_state int NOT NULL
+);
+
+CREATE TABLE password_reset (
+    uuid_value varchar(200) PRIMARY KEY,
+    user_id int REFERENCES users(user_id),
+    time_generated timestamp
 );
 
 CREATE SEQUENCE seq_recipe_id
@@ -78,6 +85,32 @@ CREATE TABLE tags (
 	tag_id serial PRIMARY KEY,
 	user_id int REFERENCES users(user_id),
 	tag_name varchar(50) not null
+);
+
+CREATE TABLE ingredient (
+    ingredient_id serial PRIMARY KEY,
+	user_id int REFERENCES users(user_id),
+    ingredient_name varchar(200)
+);
+
+CREATE TABLE step (
+    step_id serial PRIMARY KEY,
+	user_id int REFERENCES users(user_id),
+	recipe_id REFERENCES recipe(recipe_id),
+    step_description varchar(200),
+    step_order int
+);
+
+CREATE TABLE ingredient_recipe (
+    ingredient_id int REFERENCES ingredient(ingredient_id),
+    recipe_id int REFERENCES recipe(recipe_id),
+    CONSTRAINT PK_ingredient_recipe PRIMARY KEY (ingredient_id, recipe_id)
+);
+
+CREATE TABLE ingredient_meal (
+    ingredient_id int REFERENCES ingredient(ingredient_id),
+	meal_id int REFERENCES meal(meal_id),
+	CONSTRAINT PK_ingredient_meal PRIMARY KEY (ingredient_id, meal_id)
 );
 
 CREATE TABLE recipe_category (

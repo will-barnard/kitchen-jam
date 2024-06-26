@@ -1,7 +1,8 @@
 <template>
+  <h1>Kitchen Jam</h1>
   <div id="register" class="text-center">
     <form v-on:submit.prevent="register">
-      <h1>Create Account</h1>
+      <h2>Create Account</h2>
       <div role="alert" v-if="registrationErrors">
         {{ registrationErrorMsg }}
       </div>
@@ -37,7 +38,6 @@ export default {
         username: '',
         password: '',
         confirmPassword: '',
-        role: 'user',
         email: ''
       },
       registrationErrors: false,
@@ -80,8 +80,29 @@ export default {
 <style scoped>
 .form-input-group {
   margin-bottom: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  margin: 10px;
 }
 label {
   margin-right: 0.5rem;
+  width: 8.5em;
+}
+input {
+  flex-grow: 1;
+}
+button {
+  margin: 10px;
+  width: 8.5em;
+}
+h2 {
+  margin: 10px;
+  margin-bottom: 15px;
+}
+#register {
+  background-color: var(--light-2);
+  border-radius: 10px;
+  margin: 10px;
+  padding: 10px;
 }
 </style>

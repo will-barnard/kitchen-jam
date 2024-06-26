@@ -4,6 +4,7 @@ public class UserAttributes {
 
     private int userId;
     private String email;
+    private String displayName;
     private int nurtureState;
 
     public int getUserId() {
@@ -28,5 +29,13 @@ public class UserAttributes {
 
     public void setNurtureState(int nurtureState) {
         this.nurtureState = nurtureState;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 }

@@ -10,7 +10,7 @@
 
 
     <div>
-      <NavComp />
+      <NavComp class="navcomp" />
     </div>
 
   </div>
@@ -36,6 +36,9 @@ export default {
   .footspace {
     height: 80px;
     background-color: none;
+  }
+  .navcomp {
+    z-index: 1;
   }
 </style>
 

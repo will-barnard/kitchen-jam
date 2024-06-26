@@ -134,14 +134,14 @@ public class JdbcUserDao implements UserDao {
         String insertUserSql = "INSERT INTO users (username, password_hash, role) values (?, ?, ?) RETURNING user_id";
         String password_hash = new BCryptPasswordEncoder().encode(user.getPassword());
         String ssRole = user.getRole().toUpperCase().startsWith("ROLE_") ? user.getRole().toUpperCase() : "ROLE_" + user.getRole().toUpperCase();
-        String sql2 = "INSERT INTO user_attributes (user_id, email, nurture_state) VALUES (?, ?, ?)";
+        String sql2 = "INSERT INTO user_attributes (user_id, email, display_name, nurture_state) VALUES (?, ?, ?, ?)";
 
         int newUserNurtureState = 0;
 
         try {
-            int newUserId = jdbcTemplate.queryForObject(insertUserSql, int.class, user.getUsername(), password_hash, ssRole);
+            int newUserId = jdbcTemplate.queryForObject(insertUserSql, int.class, user.getUsername().toLowerCase(), password_hash, ssRole);
             newUser = getUserById(newUserId);
-            jdbcTemplate.update(sql2, newUserId, user.getEmail(), newUserNurtureState);
+            jdbcTemplate.update(sql2, newUserId, user.getEmail(), user.getUsername(), newUserNurtureState);
         } catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database", e);
         } catch (DataIntegrityViolationException e) {
@@ -169,6 +169,7 @@ public class JdbcUserDao implements UserDao {
 
         userAttributes.setUserId(rs.getInt("user_id"));
         userAttributes.setEmail(rs.getString("email"));
+        userAttributes.setDisplayName(rs.getString("display_name"));
         userAttributes.setNurtureState(rs.getInt("nurture_state"));
 
         return userAttributes;

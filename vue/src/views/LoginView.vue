@@ -1,8 +1,9 @@
 <template>
 
+  <h1>Kitchen Jam</h1>
   <div id="login">
     <form v-on:submit.prevent="login">
-      <h1>Sign In</h1>
+      <h2>Sign In</h2>
       <div role="alert" v-if="invalidCredentials">
         Invalid login credentials
       </div>
@@ -19,7 +20,7 @@
       </div>
       <button type="submit">Sign in</button>
       <p>
-      <router-link v-bind:to="{ name: 'register' }">Need an account? Sign up.</router-link></p>
+      <router-link v-bind:to="{ name: 'register' }">New user? Sign up for a free account</router-link></p>
     </form>
   </div>
 
@@ -65,8 +66,31 @@ export default {
 <style scoped>
 .form-input-group {
   margin-bottom: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  margin: 10px;
 }
 label {
   margin-right: 0.5rem;
+  width: 5em;
 }
+input {
+  flex-grow: 1;
+}
+button {
+  margin: 10px;
+  width: 5em;
+}
+h2 {
+  margin: 10px;
+  margin-bottom: 15px;
+}
+#login {
+  background-color: var(--light-2);
+  border-radius: 10px;
+  margin: 10px;
+  padding: 10px;
+  
+}
+
 </style>
