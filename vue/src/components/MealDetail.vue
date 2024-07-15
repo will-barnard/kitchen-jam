@@ -246,7 +246,7 @@ export default {
         saveEdit() {
             MealService.updateMeal(this.newMeal).then(
                 (response) => {
-                    let tags = this.
+                    this.staticMeal.tags = response.data.tags;
                     this.staticMeal = response.data;
                     this.newMeal = this.staticMeal;
                     this.editing = false;

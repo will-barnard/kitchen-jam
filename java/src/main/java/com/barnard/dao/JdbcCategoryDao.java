@@ -128,46 +128,6 @@ public class JdbcCategoryDao implements CategoryDao{
     }
 
     @Override
-    public Category addCategoryToRecipe(int categoryId, int recipeId) {
-
-        Category category = null;
-        String sql = "INSERT INTO recipe_category (category_id, recipe_id) " +
-                "VALUES (?, ?);";
-
-        try {
-            int rowsAffected = jdbcTemplate.update(sql, categoryId, recipeId);
-            if (rowsAffected != 1) {
-                throw new DaoException();
-            }
-            category = getCategoryById(categoryId);
-        } catch (CannotGetJdbcConnectionException e) {
-            throw new DaoException("Unable to connect to server or database", e);
-        } catch (DataIntegrityViolationException e) {
-            throw new DaoException("Data integrity violation", e);
-        }
-        return category;
-    }
-
-    @Override
-    public void deleteCategoryFromRecipe(int categoryId, int recipeId) {
-
-        String sql = "DELETE FROM recipe_category " +
-                "WHERE category_id = ? " +
-                "AND recipe_id = ?;";
-
-        try {
-            int rowsAffected = jdbcTemplate.update(sql, categoryId, recipeId);
-            if (rowsAffected != 1) {
-                throw new DaoException();
-            }
-        } catch (CannotGetJdbcConnectionException e) {
-            throw new DaoException("Unable to connect to server or database", e);
-        } catch (DataIntegrityViolationException e) {
-            throw new DaoException("Data integrity violation", e);
-        }
-    }
-
-    @Override
     public void deleteCategory(int categoryId) {
 
         String sql = "DELETE FROM recipe_category " +

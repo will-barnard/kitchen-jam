@@ -14,7 +14,7 @@
                    <div class="title">
                        <h2 >{{ staticRecipe.recipeName }}</h2>
                    </div>
-                   <div class="category" v-if="recipe.categoryId">
+                   <div class="category" v-show="staticRecipe.categoryId">
                     <h3>{{ staticRecipe.categoryName }}</h3>
                    </div>
                    <div class="subtitle">
@@ -105,13 +105,10 @@
                 <img src="/img/check.png" />
             </div>
        </div> 
-       <Transition>
         <div class="meals" v-if="recipe.mealList && !editing">
             <h3>Meals following this recipe</h3>
             <MealCard v-for="meal in recipe.mealList" :key="meal.mealId" :meal="meal"></MealCard>
-       </div>
-       </Transition>      
-       
+       </div>       
    </body>
    </Transition>
 </template>
@@ -167,6 +164,7 @@ export default {
                     this.staticRecipe = response.data;
                     this.newRecipe = this.staticRecipe;
                     this.editing = false;
+                    console.log(response.data)
                 }
             )
         },
@@ -252,8 +250,8 @@ export default {
             
         },
         addCategory(category) {
-            this.newRecipe.categoryId = response.data.categoryId;
-            this.newRecipe.categoryName = response.data.categoryName;
+            this.newRecipe.categoryId = category.categoryId;
+            this.newRecipe.categoryName = category.categoryName;
             this.newCategory.categoryName = "";
             this.searchCategory = [];
         },
@@ -520,17 +518,4 @@ export default {
         margin-bottom: 5px;
         padding: 10px;
     }
-
-
-
-    .v-enter-active,
-    .v-leave-active {
-        transition: opacity 5s ease;
-    }
-
-    .v-enter-from,
-    .v-leave-to {
-        opacity: 0%;
-    }
-    
 </style>

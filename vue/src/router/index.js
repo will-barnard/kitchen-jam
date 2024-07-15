@@ -11,6 +11,7 @@ import CreateMealView from '../views/CreateMealView.vue';
 import MealDetailView from '../views/MealDetailView.vue';
 import CreateRecipeView from '../views/CreateRecipeView.vue';
 import RecipeDetailView from '../views/RecipeDetailView.vue'
+import AboutView from '../views/AboutView.vue';
 
 
 const routes = [
@@ -93,6 +94,11 @@ const routes = [
     meta: {
       requiresAuth: true
     }
+  },
+  {
+    path: "/about",
+    name: "about",
+    component: AboutView,
   }
 ];
 

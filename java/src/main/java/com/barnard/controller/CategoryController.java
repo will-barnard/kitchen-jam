@@ -98,37 +98,6 @@ public class CategoryController {
         return newCategory;
     }
 
-    @PostMapping(path = "/{recipeId}/{categoryId}")
-    public Category addCategoryToRecipe(@PathVariable int recipeId, @PathVariable int categoryId, Principal principal) {
-        Category category = null;
-        int userId = userDao.getUserByUsername(principal.getName()).getId();
-        try {
-            if (!recipeDao.verifyRecipeOwner(userId, recipeId)) {
-                throw new AuthException("Unauthorized");
-            } else {
-                category = categoryDao.addCategoryToRecipe(categoryId, recipeId);
-            }
-        } catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
-        }
-        return category;
-    }
-
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    @DeleteMapping(path = "/{recipeId}/{categoryId}")
-    public void deleteCategoryFromRecipe(@PathVariable int recipeId, @PathVariable int categoryId, Principal principal) {
-        int userId = userDao.getUserByUsername(principal.getName()).getId();
-        try {
-            if (!recipeDao.verifyRecipeOwner(userId, recipeId)) {
-                throw new AuthException("Unauthorized");
-            } else {
-                categoryDao.deleteCategoryFromRecipe(categoryId, recipeId);
-            }
-        } catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
-        }
-    }
-
     @ResponseStatus(HttpStatus.ACCEPTED)
     @DeleteMapping(path = "/{categoryId}")
     public void deleteCategory(@PathVariable int categoryId, Principal principal) {

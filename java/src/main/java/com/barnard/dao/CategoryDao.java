@@ -12,8 +12,6 @@ public interface CategoryDao {
     List<Category> searchLikeCategory(String search, int userId);
     Category createCategory(Category category, int userId);
     Category updateCategory(Category category);
-    Category addCategoryToRecipe(int categoryId, int recipeId);
-    void deleteCategoryFromRecipe(int categoryId, int recipeId);
     void deleteCategory(int categoryId);
 
 }

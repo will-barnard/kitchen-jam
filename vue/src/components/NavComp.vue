@@ -117,7 +117,7 @@ export default {
         border-radius: 20px;
 
         height: 300px;
-        bottom: -40vh;
+        bottom: -80vh;
         transition: bottom .5s ease;
     }
     .nav img {
@@ -145,14 +145,14 @@ export default {
         transition: bottom .5s ease;
     }
     .hamburger {
-        background-color: var(--dark-2);
+        background-color: var(--dark-1);
         border-radius: 100%;
-        right: 30px;
+        left: 30px;
         position: fixed;
         user-select: none;
     }
     .hamburger-closed {
-        bottom: 30px;
+        bottom: 20px;
         transition: bottom .5s ease;
 
     }

@@ -204,10 +204,8 @@ export default {
         background-color: var(--light-5);
     }
     .info {
-        border: 1px solid var(--border-color);
         border-radius: 10px;
         flex-grow: 1;
-        padding: 5px;
     }
     .info p {
         background-color: var(--light-1);

@@ -146,6 +146,7 @@ public class MealController {
             if (!updatedMeal.getRecipeId().equals(oldRecipeId)) {
                 recipeDao.aggregateRecipeData(oldRecipeId);
             }
+            updatedMeal.setTags(tagsDao.getTagsByMealId(meal.getMealId()));
         } catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
         }
