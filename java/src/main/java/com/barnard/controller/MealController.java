@@ -114,7 +114,7 @@ public class MealController {
         Meal newMeal = null;
         try {
             newMeal = mealDao.createMeal(meal);
-            if (meal.getRecipeId() != null || meal.getRecipeId() != 0) {
+            if (meal.getRecipeId() != null) {
                 recipeDao.aggregateRecipeData(meal.getRecipeId());
             }
         } catch(Exception e) {

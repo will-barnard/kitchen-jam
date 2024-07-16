@@ -14,7 +14,7 @@
             <form v-on:submit.prevent="createMeal()">
                 <div class="form">
                     <label>Meal Name</label><input type="text" v-model="meal.mealName">
-                    <label>Date cooked</label><input type="date" v-model="meal.dateCooked" @click="console.log(meal.date)"/>
+                    <label>Date cooked</label><input type="date" v-model="meal.dateCooked"/>
                     <label>Comment</label><input type="text" v-model="meal.mealComment"/>
                     <label>Cook time (min)</label><input type="number" v-model="meal.cookTime"/>
                     <label>Rating</label><select v-model="meal.rating">
@@ -56,8 +56,6 @@ export default {
     },
     methods: {
         createMeal() {
-            console.log(this.meal.dateCooked);
-            this.meal.dateCooked = new Date(this.meal.date);
             MealService.createMeal(this.meal).then(
                 (response) => {
                     if (this.newImgId != null) {
