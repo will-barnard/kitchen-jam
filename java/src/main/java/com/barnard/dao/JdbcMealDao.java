@@ -241,8 +241,6 @@ public class JdbcMealDao implements MealDao {
         meal.setMealName(rs.getString("meal_name"));
         if (rs.getObject("recipe_id") != null) {
             meal.setRecipeId(rs.getInt("recipe_id"));
-        }
-        if (isRecipeName) {
             meal.setRecipeName(rs.getString("recipe_name"));
         }
         meal.setMealComment(rs.getString("meal_comment"));

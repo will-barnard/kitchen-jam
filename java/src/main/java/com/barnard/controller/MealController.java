@@ -126,7 +126,7 @@ public class MealController {
     @PutMapping(path = "")
     public Meal updateMeal(@RequestBody Meal meal, Principal principal) {
 
-        if (meal.getRecipeId() == 0) {
+        if (meal.getRecipeId() != null) {
             meal.setRecipeId(null);
         }
 
@@ -134,18 +134,21 @@ public class MealController {
         Meal updatedMeal = null;
         int userId = userDao.getUserByUsername(principal.getName()).getId();
         try {
-            if (mealDao.getMeal(meal.getMealId()).getUserId() != userId) {
+            Meal getMeal = mealDao.getMeal(meal.getMealId());
+            if (getMeal.getUserId() != userId) {
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
             }
-            Integer oldRecipeId = mealDao.getMeal(meal.getMealId()).getRecipeId();
+            Integer oldRecipeId = getMeal.getRecipeId();
             mealDao.updateMeal(meal);
             updatedMeal = mealDao.getMeal(meal.getMealId());
             if (meal.getRecipeId() != null) {
-                recipeDao.aggregateRecipeData(meal.getRecipeId());
+                if (updatedMeal.getRecipeId().intValue() == oldRecipeId) {
+                    recipeDao.aggregateRecipeData(oldRecipeId);
+                } else {
+                    recipeDao.aggregateRecipeData(meal.getRecipeId());
+                }
             }
-            if (!updatedMeal.getRecipeId().equals(oldRecipeId)) {
-                recipeDao.aggregateRecipeData(oldRecipeId);
-            }
+
             updatedMeal.setTags(tagsDao.getTagsByMealId(meal.getMealId()));
         } catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
@@ -163,7 +166,7 @@ public class MealController {
             }
             Integer recipeId = mealDao.getMeal(mealId).getRecipeId();
             mealDao.deleteMealById(mealId);
-            if (recipeId != 0) {
+            if (recipeId != null) {
                 recipeDao.aggregateRecipeData(recipeId);
             }
         } catch(Exception e) {
