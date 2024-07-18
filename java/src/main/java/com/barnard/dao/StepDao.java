@@ -11,4 +11,5 @@ public interface StepDao {
     Step createStep(Step step);
     Step updateStep(Step step);
     void deleteStep(int stepId);
+    void deleteAllStepsFromRecipe(int recipeId);
 }

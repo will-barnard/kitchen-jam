@@ -2,6 +2,7 @@ package com.barnard.dao;
 
 import com.barnard.exception.DaoException;
 import com.barnard.model.Ingredient;
+import com.barnard.model.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.CannotGetJdbcConnectionException;
@@ -132,6 +133,26 @@ public class JdbcIngredientDao implements IngredientDao {
     }
 
     @Override
+    public List<Ingredient> searchLikeIngredients(String search, int userId) {
+        search = "%" + search.toLowerCase() + "%";
+        List<Ingredient> ingredientlist = new ArrayList<>();
+        String sql = "SELECT * FROM ingredient " +
+                "WHERE LOWER (ingredient_name) LIKE ? " +
+                "AND user_id = ?";
+        try {
+            SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, search, userId);
+            while(rowSet.next()) {
+                ingredientlist.add(mapRowToIngredient(rowSet));
+            }
+        } catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Unable to connect to server or database", e);
+        } catch (DataIntegrityViolationException e) {
+            throw new DaoException("Data integrity violation", e);
+        }
+        return ingredientlist;
+    }
+
+    @Override
     public Ingredient createIngredient(Ingredient ingredient) {
         Ingredient newIngredient = null;
         String sql = "INSERT INTO ingredient (user_id, ingredient_name) " +
@@ -212,54 +233,13 @@ public class JdbcIngredientDao implements IngredientDao {
     }
 
     @Override
-    public Ingredient updateIngredientForMeal(Ingredient ingredient) {
-        Ingredient updatedIngredient = null;
-        String sql = "UPDATE ingredient_meal SET quantity = ?, list_order = ? " +
-                "WHERE ingredient_id = ? " +
-                "AND meal_id = ?;";
-
-        try {
-
-            jdbcTemplate.update(sql, ingredient.getIngredientId(), ingredient.getMealId(), ingredient.getQuantity(), ingredient.getListOrder());
-            updatedIngredient = getIngredientFromMeal(ingredient.getIngredientId(), ingredient.getMealId());
-
-        } catch (CannotGetJdbcConnectionException e) {
-            throw new DaoException("Unable to connect to server or database", e);
-        } catch (DataIntegrityViolationException e) {
-            throw new DaoException("Data integrity violation", e);
-        }
-        return updatedIngredient;
-    }
-
-    @Override
-    public Ingredient updateIngredientForRecipe(Ingredient ingredient) {
-        Ingredient updatedIngredient = null;
-        String sql = "UPDATE ingredient_recipe SET quantity = ?, list_order = ? " +
-                "WHERE ingredient_id = ? " +
-                "AND recipe_id = ?;";
-
-        try {
-
-            jdbcTemplate.update(sql, ingredient.getIngredientId(), ingredient.getRecipeId(), ingredient.getQuantity(), ingredient.getListOrder());
-            updatedIngredient = getIngredientFromRecipe(ingredient.getIngredientId(), ingredient.getRecipeId());
-
-        } catch (CannotGetJdbcConnectionException e) {
-            throw new DaoException("Unable to connect to server or database", e);
-        } catch (DataIntegrityViolationException e) {
-            throw new DaoException("Data integrity violation", e);
-        }
-        return updatedIngredient;
-    }
-
-    @Override
-    public void deleteIngredientFromMeal(Ingredient ingredient) {
+    public void deleteAllIngredientsFromMeal(int mealId) {
         String sql = "DELETE FROM ingredient_meal " +
-                "WHERE ingredient_id = ? " +
-                "AND meal_id = ?;";
+                "WHERE meal_id = ?;";
 
         try {
 
-            jdbcTemplate.update(sql, ingredient.getIngredientId(), ingredient.getMealId());
+            jdbcTemplate.update(sql, mealId);
 
         } catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database", e);
@@ -269,14 +249,13 @@ public class JdbcIngredientDao implements IngredientDao {
     }
 
     @Override
-    public void deleteIngredientFromRecipe(Ingredient ingredient) {
+    public void deleteAllIngredientsFromRecipe(int recipeId) {
         String sql = "DELETE FROM ingredient_recipe " +
-                "WHERE ingredient_id = ? " +
-                "AND recipe_id = ?;";
+                "WHERE recipe_id = ?;";
 
         try {
 
-            jdbcTemplate.update(sql, ingredient.getIngredientId(), ingredient.getRecipeId());
+            jdbcTemplate.update(sql, recipeId);
 
         } catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database", e);

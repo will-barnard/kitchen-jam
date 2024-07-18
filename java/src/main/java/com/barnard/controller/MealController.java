@@ -23,8 +23,6 @@ import java.util.List;
 @RequestMapping(path = "/meal")
 public class MealController {
 
-    // todo add authentication and security when doing GET
-    // todo add tags when getting single meal
 
     @Autowired
     private MealDao mealDao;
@@ -126,7 +124,7 @@ public class MealController {
     @PutMapping(path = "")
     public Meal updateMeal(@RequestBody Meal meal, Principal principal) {
 
-        if (meal.getRecipeId() != null) {
+        if (meal.getRecipeId() == 0) {
             meal.setRecipeId(null);
         }
 
@@ -139,16 +137,17 @@ public class MealController {
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
             }
             Integer oldRecipeId = getMeal.getRecipeId();
-            mealDao.updateMeal(meal);
-            updatedMeal = mealDao.getMeal(meal.getMealId());
+            updatedMeal = mealDao.updateMeal(meal);
             if (meal.getRecipeId() != null) {
-                if (updatedMeal.getRecipeId().intValue() == oldRecipeId) {
-                    recipeDao.aggregateRecipeData(oldRecipeId);
+                if (meal.getRecipeId().equals(oldRecipeId)) {
+                    recipeDao.aggregateRecipeData(meal.getRecipeId());
                 } else {
+                    recipeDao.aggregateRecipeData(oldRecipeId);
                     recipeDao.aggregateRecipeData(meal.getRecipeId());
                 }
+            } else if (oldRecipeId != null) {
+                recipeDao.aggregateRecipeData(oldRecipeId);
             }
-
             updatedMeal.setTags(tagsDao.getTagsByMealId(meal.getMealId()));
         } catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");

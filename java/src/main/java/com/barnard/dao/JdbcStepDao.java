@@ -115,6 +115,22 @@ public class JdbcStepDao implements StepDao {
         }
     }
 
+    @Override
+    public void deleteAllStepsFromRecipe(int recipeId) {
+        String sql = "DELETE FROM step " +
+                "WHERE recipe_id = ?;";
+
+        try {
+
+            jdbcTemplate.update(sql, recipeId);
+
+        } catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Unable to connect to server or database", e);
+        } catch (DataIntegrityViolationException e) {
+            throw new DaoException("Data integrity violation", e);
+        }
+    }
+
     private Step mapRowToStep(SqlRowSet rs) {
         Step step = new Step();
 
