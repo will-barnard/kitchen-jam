@@ -80,7 +80,7 @@ public class JdbcStepDao implements StepDao {
         Step updatedStep = null;
         String sql = "UPDATE step " +
                 "SET step_description = ?, step_order = ? " +
-                "WHERE steo_id = ?;";
+                "WHERE step_id = ?;";
 
         try {
             int rowsAffected = 0;
