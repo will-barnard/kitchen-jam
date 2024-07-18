@@ -212,6 +212,46 @@ public class JdbcIngredientDao implements IngredientDao {
     }
 
     @Override
+    public Ingredient updateIngredientForMeal(Ingredient ingredient) {
+        Ingredient updatedIngredient = null;
+        String sql = "UPDATE ingredient_meal SET quantity = ?, list_order = ? " +
+                "WHERE ingredient_id = ? " +
+                "AND meal_id = ?;";
+
+        try {
+
+            jdbcTemplate.update(sql, ingredient.getIngredientId(), ingredient.getMealId(), ingredient.getQuantity(), ingredient.getListOrder());
+            updatedIngredient = getIngredientFromMeal(ingredient.getIngredientId(), ingredient.getMealId());
+
+        } catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Unable to connect to server or database", e);
+        } catch (DataIntegrityViolationException e) {
+            throw new DaoException("Data integrity violation", e);
+        }
+        return updatedIngredient;
+    }
+
+    @Override
+    public Ingredient updateIngredientForRecipe(Ingredient ingredient) {
+        Ingredient updatedIngredient = null;
+        String sql = "UPDATE ingredient_recipe SET quantity = ?, list_order = ? " +
+                "WHERE ingredient_id = ? " +
+                "AND recipe_id = ?;";
+
+        try {
+
+            jdbcTemplate.update(sql, ingredient.getIngredientId(), ingredient.getRecipeId(), ingredient.getQuantity(), ingredient.getListOrder());
+            updatedIngredient = getIngredientFromRecipe(ingredient.getIngredientId(), ingredient.getRecipeId());
+
+        } catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Unable to connect to server or database", e);
+        } catch (DataIntegrityViolationException e) {
+            throw new DaoException("Data integrity violation", e);
+        }
+        return updatedIngredient;
+    }
+
+    @Override
     public void deleteIngredientFromMeal(Ingredient ingredient) {
         String sql = "DELETE FROM ingredient_meal " +
                 "WHERE ingredient_id = ? " +

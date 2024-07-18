@@ -16,6 +16,8 @@ public interface IngredientDao {
     Ingredient updateIngredient(Ingredient ingredient);
     Ingredient addIngredientToMeal(Ingredient ingredient);
     Ingredient addIngredientToRecipe(Ingredient ingredient);
+    Ingredient updateIngredientForMeal(Ingredient ingredient);
+    Ingredient updateIngredientForRecipe(Ingredient ingredient);
     void deleteIngredientFromMeal(Ingredient ingredient);
     void deleteIngredientFromRecipe(Ingredient ingredient);
     void deleteIngredient(int ingredientId);
