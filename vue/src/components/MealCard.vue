@@ -5,7 +5,7 @@
             <div id="details" class="body-card">
                 <div class="meal-img" >
                     <img src="../img/placeholder.jpeg" v-if="!meal.imageId">
-                    <img :src="imgPath" v-show="showImg = true" v-if="meal.imageId"/>
+                    <img :src="meal.img" v-if="meal.imageId"/>
                 </div>
 
                 <div class="content">
@@ -72,10 +72,7 @@ export default {
     props: ['meal'],
     data() {
         return {
-            showMore: false,
-            showImg: false,
-            imgPath: ""
-        }
+            showMore: false        }
     },
     methods: {
         goDetail() {
@@ -86,19 +83,6 @@ export default {
         },
         formatDate(date) {
             return UtilityService.formatDate(date);
-        }
-    },
-    created() {
-        if (this.meal.imageId == 0 || this.meal.imageId == null) {
-        } else {
-            ImageService.getImage(this.meal.imageId).then(
-                (res) => {
-                    const base64 = ImageService.parseImg(res);
-                    this.imgPath = "data:image/png;base64," + base64;
-                    this.showImg = true;
-                    
-                }
-            )
         }
     }
 }
@@ -166,7 +150,8 @@ export default {
     }
     .content {
         display: flex;
-        flex-direction: column;        
+        flex-direction: column;    
+        width: 50%;    
     }
     .row {
         flex-direction: row;

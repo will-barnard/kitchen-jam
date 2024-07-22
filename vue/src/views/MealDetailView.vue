@@ -20,12 +20,21 @@ export default {
         }
     },
     created() {
-        MealService.getMeal(this.$route.params.mealId).then(
-            (response) => {
-                this.getMeal = response.data;
-                this.loading = false;
-            }
-        )
+        if (this.$store.state.userMeals.find((meal) => {return meal.mealId = this.$route.params.mealId;})) {
+            this.getMeal = this.$store.state.userMeals.find(
+                (meal) => {
+                    return meal.mealId = this.$route.params.mealId;
+                }
+            );
+            this.loading = false;
+        } else {
+            MealService.getMeal(this.$route.params.mealId).then(
+                (response) => {
+                    this.getMeal = response.data;
+                    this.loading = false;
+                }
+            )
+        }
     }
 }
 </script>

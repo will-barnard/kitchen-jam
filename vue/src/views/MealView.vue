@@ -2,7 +2,7 @@
     <div>
         <MealMenu />
         <body>
-            <MealLog />
+            <MealLog :mealList="$store.state.userMeals"/>
         </body>
     </div>
 </template>
@@ -31,15 +31,10 @@ export default {
     },
     created() {
         this.tab = 'log';
-        if (!this.$store.state.userMeals) {
+        if (!this.$store.state.userMeals.length < 1) {
             this.mealList = this.$store.state.userMeals;
         } else {
-            MealService.getMealsByUser().then(
-                (response) => {
-                    this.mealList = response.data;
-                    this.$store.commit('GET_USER_MEALS', this.mealList);
-                }
-            )
+            this.$store.commit('GET_USER_MEALS');
         }
     }
 }

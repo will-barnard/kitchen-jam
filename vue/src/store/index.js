@@ -1,6 +1,10 @@
 import { createStore as _createStore } from 'vuex';
 import axios from 'axios';
 
+import MealService from '../services/MealService';
+import RecipeService from '../services/RecipeService';
+import ImageService from '../services/ImageService';
+
 
 export function createStore(currentToken, currentUser) {
   let store = _createStore({
@@ -28,11 +32,92 @@ export function createStore(currentToken, currentUser) {
         state.user = {};
         axios.defaults.headers.common = {};
       },
-      GET_USER_MEALS(state, payload) {
-        state.userMeals = payload;
+      GET_USER_MEALS(state) {
+        MealService.getMealsByUser().then(
+          (response) => {
+            state.userMeals = response.data;
+            for (let meal of state.userMeals) {
+              ImageService.getImage(meal.imageId).then(
+                (res) => {
+                  const base64 = ImageService.parseImg(res);
+                  meal.img = "data:image/png;base64," + base64;
+                }
+              )
+            }
+          }
+        )
       },
       GET_USER_RECIPES(state, payload) {
         state.userRecipes = payload;
+        for (let recipe of state.userRecipes) {
+          ImageService.getImage(recipe.imageId).then(
+            (response) => {
+              state.userRecipes.find(
+                (r) => {
+                  return recipe.recipeId = r.recipeId;
+                }
+              ).img = ImageService.parseImg(response.data);
+            }
+          )
+        }
+      },
+      CREATE_MEAL(state, payload) {
+        MealService.createMeal(payload).then(
+          (response) => {
+            state.userMeals.push(response.data);
+          }
+        )
+      },
+      UPDATE_MEAL(state, payload) {
+        MealService.updateMeal(payload).then(
+          (response) => {
+            state.userMeals.filter(
+              (meal) => {
+                return meal.mealId != response.data.mealId;
+              }
+            ).push(response.data);
+          }
+        )
+      },
+      DELETE_MEAL(state, payload) {
+        MealService.deleteMeal(payload).then(
+          () => {
+            state.userMeals.filter(
+              (meal) => {
+                return meal.mealId != payload;
+              }
+            )
+          }
+        )
+      },
+      CREATE_RECIPE(state, payload) {
+        RecipeService.createRecipe(payload).then(
+          (response) => {
+            state.userRecipes.push(response.data);
+          }
+        )
+      },
+      UPDATE_RECIPE(state, payload) {
+        RecipeService.updateRecipe(payload).then(
+          (response) => {
+            state.userRecipes.filter(
+              (recipe) => {
+                return recipe.recipeId != response.data.recipeId;
+              }
+            ).push(response.data);
+          }
+        )
+      },
+      DELETE_RECIPE(state, payload) {
+        RecipeService.deleteRecipe(payload).then(
+          () => {
+            state.userRecipes.filter(
+              (recipe) => {
+                return recipe.recipeId != payload;
+              }
+            )
+          }
+        )
       }
     },
   });

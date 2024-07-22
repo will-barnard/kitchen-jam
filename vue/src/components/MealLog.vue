@@ -4,7 +4,7 @@
     <div class="log">
         <p v-if="!mealList">you have not logged any meals</p>  
         <TransitionGroup>
-            <MealCard class="meal-card" v-for="meal in $store.state.userMeals" :key="meal.mealId" :meal="meal" :selected="select == meal.mealId" v-on:click="selectCard()"/>
+            <MealCard class="meal-card" v-for="meal in mealList" :key="meal.mealId" :meal="meal" :selected="select == meal.mealId" v-on:click="selectCard()"/>
         </TransitionGroup>
     </div>
 </Transition>
@@ -16,23 +16,13 @@ import MealCard from '../components/MealCard.vue';
 
 export default {
     components: {MealCard},
+    props: ['mealList'],
     data() {
         return {
-            mealList: [],
             select: 0
         }
     },
     created() {
-        if (!this.$store.state.userMeals) {
-            this.mealList = this.$store.state.userMeals;
-        } else {
-            MealService.getMealsByUser().then(
-                (response) => {
-                    this.mealList = response.data;
-                    this.$store.commit('GET_USER_MEALS', this.mealList);
-                }
-            )
-        }
     },
     methods: {
         selectCard() {

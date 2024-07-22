@@ -122,7 +122,8 @@ public class JdbcMealDao implements MealDao {
         List<Meal> meals = new ArrayList<Meal>();
         String sql = "SELECT * " +
                 "FROM meal " +
-                "WHERE recipe_id = ?;";
+                "LEFT JOIN recipe ON meal.recipe_id = recipe.recipe_id " +
+                "WHERE meal.recipe_id = ?;";
 
         try {
             SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, recipeId);

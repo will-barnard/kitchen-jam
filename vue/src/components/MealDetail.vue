@@ -229,13 +229,8 @@ export default {
             this.imgPath = "../img/placeholder.jpeg";
             this.showImage = true;
         } else {
-            ImageService.getImage(this.meal.imageId).then(
-                (res) => {
-                    const base64 = ImageService.parseImg(res);
-                    this.imgPath = "data:image/png;base64," + base64;
-                    this.showImage = true;
-                }
-            )
+            this.imgPath = this.meal.img;
+            this.showImage = true;
         }
     },
     methods: {
@@ -283,6 +278,7 @@ export default {
                 newMeal.rating = meal.rating;
                 newMeal.imageId = meal.imageId;
                 newMeal.tags = meal.tags;
+                newMeal.img = meal.img;
             }
             return newMeal;
         },

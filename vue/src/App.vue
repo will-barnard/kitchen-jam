@@ -20,7 +20,9 @@
 import NavComp from "./components/NavComp.vue";
 
 export default {
-  components: {NavComp}
+  components: {NavComp},
+  created() {
+  }
 }
 </script>
 
