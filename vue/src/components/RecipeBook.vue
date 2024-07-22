@@ -3,7 +3,7 @@
        <div>
             <p v-if="!recipeList">you have not logged any recipes</p>  
             <TransitionGroup>
-                <RecipeCard class="recipe-card" v-if="recipeList" v-for="recipe in $store.state.userRecipes" :key="recipe.recipeId" :recipe="recipe" :selected="select == recipe.recipeId" v-on:click="selectCard()"/>
+                <RecipeCard class="recipe-card" v-if="recipeList" v-for="recipe in recipeList" :key="recipe.recipeId" :recipe="recipe" :selected="select == recipe.recipeId" v-on:click="selectCard()"/>
             </TransitionGroup>
         </div>  
     </Transition>
@@ -16,23 +16,13 @@ import RecipeCard from '../components/RecipeCard.vue';
 
 export default {
     components: {RecipeCard},
+    props: ['recipeList'],
     data() {
         return {
-            recipeList: [],
             select: 0
         }
     },
     created() {
-        if (!this.$store.state.userRecipes) {
-            this.recipeList = this.$store.state.userRecipes;
-        } else {
-            RecipeService.getRecipesByUser().then(
-                (response) => {
-                    this.recipeList = response.data;
-                    this.$store.commit('GET_USER_RECIPES', this.recipeList);
-                }
-            )
-        }
     },
     methods: {
         selectCard() {

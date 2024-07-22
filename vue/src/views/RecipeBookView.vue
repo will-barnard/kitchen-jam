@@ -2,7 +2,7 @@
     <div>
         <RecipeMenu />
         <Transition>
-            <RecipeBook />
+            <RecipeBook :recipeList="$store.state.userRecipes"/>
         </Transition>
     </div>
 </template>
@@ -13,7 +13,16 @@ import RecipeMenu from '../components/RecipeMenu.vue';
 import RecipeBook from '../components/RecipeBook.vue';
 
 export default {
-    components: {RecipeMenu, RecipeBook}
+    components: {RecipeMenu, RecipeBook},
+    data() {
+        return {
+            recipeList: []
+        }
+    },
+    created() {
+        this.tab = 'log';
+        this.recipeList = this.$store.state.userRecipes;
+    }
     
 }
 </script>

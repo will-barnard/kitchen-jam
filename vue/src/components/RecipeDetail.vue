@@ -105,9 +105,9 @@
                 <img src="/img/check.png" />
             </div>
        </div> 
-        <div class="meals" v-if="recipe.mealList && !editing">
+        <div class="meals" v-if="mealList && !editing">
             <h3>Meals following this recipe</h3>
-            <MealCard v-for="meal in recipe.mealList" :key="meal.mealId" :meal="meal"></MealCard>
+            <MealCard v-for="meal in mealList" :key="meal.mealId" :meal="meal"></MealCard>
        </div>       
    </body>
    </Transition>
@@ -133,23 +133,24 @@ export default {
             deleting: false,
             newTag: {},
             newCategory: {},
-            searchCategory: []
+            searchCategory: [],
+            mealList: []
         }
     },
     created() {
+        this.mealList = this.$store.state.userMeals.filter(
+            (meal) => {
+                return meal.recipeId == this.recipe.recipeId;
+            }
+        )
         this.staticRecipe = this.cloneRecipe(this.recipe);
         this.newRecipe = this.cloneRecipe(this.staticRecipe);
         if (this.recipe.imageId == 0 || this.recipe.imageId == null) {
             this.imgPath = "../img/placeholder.jpeg";
             this.showImage = true;
         } else {
-            ImageService.getImage(this.recipe.imageId).then(
-                (res) => {
-                    const base64 = ImageService.parseImg(res);
-                    this.imgPath = "data:image/png;base64," + base64;
-                    this.showImage = true;
-                }
-            )
+            this.imgPath = this.recipe.img;
+            this.showImage = true;
         }
 
     },
@@ -193,6 +194,7 @@ export default {
                 newRecipe.categoryId = recipe.categoryId;
                 newRecipe.categoryName = recipe.categoryName;
                 newRecipe.mealList = recipe.mealList;
+                newRecipe.img = recipe.img;
 
                 newRecipe.categories = recipe.categories;
 

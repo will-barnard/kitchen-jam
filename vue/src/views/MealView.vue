@@ -33,9 +33,7 @@ export default {
         this.tab = 'log';
         if (!this.$store.state.userMeals.length < 1) {
             this.mealList = this.$store.state.userMeals;
-        } else {
-            this.$store.commit('GET_USER_MEALS');
-        }
+        } 
     }
 }
 </script>

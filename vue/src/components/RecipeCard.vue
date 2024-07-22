@@ -7,7 +7,7 @@
                 
                 <div class="recipe-img" >
                     <img src="../img/placeholder.jpeg" v-if="!recipe.imageId">
-                    <img :src="imgPath" v-show="showImg = true" v-if="recipe.imageId"/>
+                    <img :src="recipe.img" v-if="recipe.imageId"/>
                 </div>
 
                 <div class="content">
@@ -52,9 +52,7 @@ export default {
     props: ['recipe'],
     data() {
         return {
-            showMore: false,
-            showImg: false,
-            imgPath: ""
+            showMore: false
         }
     },
     methods: {
@@ -66,16 +64,7 @@ export default {
         }
     },
     created() {
-        if (this.recipe.imageId == 0 || this.recipe.imageId == null) {
-        } else {
-            ImageService.getImage(this.recipe.imageId).then(
-                (res) => {
-                    const base64 = ImageService.parseImg(res);
-                    this.imgPath = "data:image/png;base64," + base64;
-                    this.showImg = true;
-                }
-            )
-        }
+
     }
 }
 </script>
@@ -126,6 +115,7 @@ export default {
     .content {
         flex-grow: 1;
         margin-left: 10px;
+        width: 50%;
     }
     .title {
         text-align: center;

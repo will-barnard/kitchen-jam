@@ -24,12 +24,21 @@ export default {
     },
     created() {
         this.loadingWait();
-        RecipeService.getRecipe(this.$route.params.recipeId).then(
-            (response) => {
-                this.getRecipe = response.data;
-                this.loading = false;
-            }
-        );
+        if (this.$store.state.userRecipes.find((recipe) => {return recipe.recipeId == this.$route.params.recipeId;})) {
+            this.getRecipe = this.$store.state.userRecipes.find(
+                (recipe) => {
+                    return recipe.recipeId == this.$route.params.recipeId;
+                }
+            );
+            this.loading = false;
+        } else {
+            RecipeService.getRecipe(this.$route.params.recipeId).then(
+                (response) => {
+                    this.getRecipe = response.data;
+                    this.loading = false;
+                }
+            )
+        }
     },
     methods: {
         loadingWait() {

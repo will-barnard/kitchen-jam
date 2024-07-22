@@ -47,19 +47,20 @@ export function createStore(currentToken, currentUser) {
           }
         )
       },
-      GET_USER_RECIPES(state, payload) {
-        state.userRecipes = payload;
-        for (let recipe of state.userRecipes) {
-          ImageService.getImage(recipe.imageId).then(
-            (response) => {
-              state.userRecipes.find(
-                (r) => {
-                  return recipe.recipeId = r.recipeId;
+      GET_USER_RECIPES(state) {
+        RecipeService.getRecipesByUser().then(
+          (response) => {
+            state.userRecipes = response.data;
+            for (let recipe of state.userRecipes) {
+              ImageService.getImage(recipe.imageId).then(
+                (res) => {
+                  const base64 = ImageService.parseImg(res);
+                  recipe.img = "data:image/png;base64," + base64;
                 }
-              ).img = ImageService.parseImg(response.data);
+              )
             }
-          )
-        }
+          }
+        )
       },
       CREATE_MEAL(state, payload) {
         MealService.createMeal(payload).then(
