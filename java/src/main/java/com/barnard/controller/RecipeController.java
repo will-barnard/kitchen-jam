@@ -109,7 +109,7 @@ public class RecipeController {
     public Recipe createRecipe(@RequestBody Recipe recipe, Principal principal) {
 
         // todo add public option on frontend
-        recipe.setPublic(false);
+        recipe.setPublic(true);
 
         int userId = userDao.getUserByUsername(principal.getName()).getId();
         recipe.setUserId(userId);
@@ -137,6 +137,7 @@ public class RecipeController {
             if (userAuth != userId) {
                 throw new AuthException("Not authorized");
             }
+            System.out.println(recipe.getImageId());
             recipe = recipeDao.updateRecipe(recipe);
         } catch(AuthException e) {
             throw new AuthException(e.getMessage());

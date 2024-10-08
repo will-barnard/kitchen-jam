@@ -1,7 +1,7 @@
 <template>
     <Transition>
      <body v-show="showImage">
-
+        
         <div class="meal-img">
                 <div>
                     <img :src="imgPath" />
@@ -170,27 +170,6 @@
                     
                 </div>
             </form>
-        </div>
-
-        <div class="delete" v-if="deleting">
-            <p id="delete-check">Are you sure you want to delete? This cannot be undone</p>
-            <h2 class="yes-delete" v-on:click="deleteMeal()">Delete</h2>
-            <h2 class="cancel-delete" v-on:click="deleting = false">Cancel</h2>
-        </div>
-
-        <div class="controls" v-show="!deleting">
-            <div class="edit-button button" v-if="!editing" v-on:click="editing=true">
-                <img src="/img/edit.png" />
-            </div>
-            <div class="trash button" v-if="!editing" v-on:click="deleteButton()">
-                <img src="/img/trash.png" />
-            </div>
-            <div class="undo button" v-if="editing" v-on:click="cancelEdit()">
-                <img src="/img/undo.png" />
-            </div>
-            <div class="check button" v-if="editing" v-on:click="saveEdit()">
-                <img src="/img/check.png" />
-            </div>
         </div>
 
     </body>

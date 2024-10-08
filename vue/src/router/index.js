@@ -12,7 +12,8 @@ import MealDetailView from '../views/MealDetailView.vue';
 import CreateRecipeView from '../views/CreateRecipeView.vue';
 import RecipeDetailView from '../views/RecipeDetailView.vue'
 import AboutView from '../views/AboutView.vue';
-
+import WillView from '../views/WillView.vue';
+import PublicMealDetailView from '../views/PublicMealDetailView.vue';
 
 const routes = [
   {
@@ -72,6 +73,14 @@ const routes = [
     }
   },
   {
+    path: "/meal/public/:mealId",
+    name: "public-meal-detail",
+    component: PublicMealDetailView,
+    meta: {
+      requiresAuth: false
+    }
+  },
+  {
     path: "/cookbook",
     name: "cookbook",
     component: RecipeBookView,
@@ -99,6 +108,11 @@ const routes = [
     path: "/about",
     name: "about",
     component: AboutView,
+  },
+  {
+    path: '/will',
+    name: 'will',
+    component: WillView
   }
 ];
 

@@ -20,10 +20,10 @@ export default {
         }
     },
     created() {
-        if (this.$store.state.userMeals.find((meal) => {return meal.mealId = this.$route.params.mealId;})) {
+        if (this.$store.state.userMeals.find((meal) => {return meal.mealId == this.$route.params.mealId;})) {
             this.getMeal = this.$store.state.userMeals.find(
                 (meal) => {
-                    return meal.mealId = this.$route.params.mealId;
+                    return meal.mealId == this.$route.params.mealId;
                 }
             );
             this.loading = false;

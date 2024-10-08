@@ -22,8 +22,10 @@ import NavComp from "./components/NavComp.vue";
 export default {
   components: {NavComp},
   created() {
-    this.$store.commit('GET_USER_MEALS');
-    this.$store.commit('GET_USER_RECIPES');
+    if (this.$store.state.token) {
+      this.$store.commit('GET_USER_MEALS');
+      this.$store.commit('GET_USER_RECIPES');
+    }
   }
 }
 </script>

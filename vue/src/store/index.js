@@ -13,7 +13,8 @@ export function createStore(currentToken, currentUser) {
       user: currentUser || {},
       userMeals: [],
       userRecipes: [],
-      subMenu: {}
+      subMenu: {},
+      publicMealGallery: []
     },
     mutations: {
       SET_AUTH_TOKEN(state, token) {
@@ -37,12 +38,14 @@ export function createStore(currentToken, currentUser) {
           (response) => {
             state.userMeals = response.data;
             for (let meal of state.userMeals) {
-              ImageService.getImage(meal.imageId).then(
-                (res) => {
-                  const base64 = ImageService.parseImg(res);
-                  meal.img = "data:image/png;base64," + base64;
-                }
-              )
+              if (meal.imageId) {
+                ImageService.getImage(meal.imageId).then(
+                  (res) => {
+                    const base64 = ImageService.parseImg(res);
+                    meal.img = "data:image/png;base64," + base64;
+                  }
+                )
+              }  
             }
           }
         )
@@ -52,12 +55,14 @@ export function createStore(currentToken, currentUser) {
           (response) => {
             state.userRecipes = response.data;
             for (let recipe of state.userRecipes) {
-              ImageService.getImage(recipe.imageId).then(
-                (res) => {
-                  const base64 = ImageService.parseImg(res);
-                  recipe.img = "data:image/png;base64," + base64;
-                }
-              )
+              if (recipe.imageId) {
+                ImageService.getImage(recipe.imageId).then(
+                  (res) => {
+                    const base64 = ImageService.parseImg(res);
+                    recipe.img = "data:image/png;base64," + base64;
+                  }
+                )
+              } 
             }
           }
         )
@@ -119,8 +124,21 @@ export function createStore(currentToken, currentUser) {
             )
           }
         )
+      },
+      LOAD_MEAL_GALLERY(state, payload) {
+        state.publicMealGallery = payload;
+        for (let meal of state.publicMealGallery) {
+          if (meal.imageId) {
+            ImageService.getImage(meal.imageId).then(
+              (res) => {
+                const base64 = ImageService.parseImg(res);
+                meal.img = "data:image/png;base64," + base64;
+              }
+            )
+          }
+        }
       }
-    },
+    }
   });
   return store;
 }

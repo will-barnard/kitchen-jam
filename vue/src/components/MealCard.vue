@@ -53,9 +53,14 @@
             </div>
 
             <Transition name="control">
-            <div id="controls" v-if="showMore">
-                <div class="control" v-on:click="goDetail()"><img src="/img/detail.png" /></div>
-            </div>
+                <div>
+                    <div id="controls" v-if="showMore && !isPublic">
+                        <div class="control" v-on:click="goDetail()"><img src="/img/detail.png" /></div>
+                    </div>
+                    <div id="controls" v-if="showMore && isPublic">
+                        <div class="control" v-on:click="goPublicDetail()"><img src="/img/detail.png" /></div>
+                    </div>
+                </div>
             </Transition>
             
         </body>
@@ -69,7 +74,7 @@ import Tag from './Tag.vue';
 
 export default {
     components: {Tag},
-    props: ['meal'],
+    props: ['meal', 'isPublic'],
     data() {
         return {
             showMore: false        }
@@ -77,6 +82,9 @@ export default {
     methods: {
         goDetail() {
             this.$router.push( {name: 'meal-detail', params: {mealId: this.meal.mealId} })
+        },
+        goPublicDetail() {
+            this.$router.push( {name: 'public-meal-detail', params: {mealId: this.meal.mealId} })
         },
         switch() {
             this.showMore = !this.showMore;

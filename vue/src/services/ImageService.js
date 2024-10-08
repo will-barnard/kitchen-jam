@@ -54,6 +54,9 @@ export default {
       )
     );
     return base64;
+  },
+  getPlaceholder() {
+    return "../img/placeholder.png"
   }
 
 }

@@ -165,7 +165,6 @@ export default {
                     this.staticRecipe = response.data;
                     this.newRecipe = this.staticRecipe;
                     this.editing = false;
-                    console.log(response.data)
                 }
             )
         },
@@ -206,35 +205,37 @@ export default {
             
             if (this.recipe.imageId == 0 || this.recipe.imageId == null) {
                 ImageService.createImage(event.target.files[0]).then(
-                (response) => {
-                    ImageService.addImageToRecipe(this.recipe.recipeId, response.data).then(
-                        () => {
-                            ImageService.getImage(response.data).then(
-                                (r) => {
-                                    const base64 = ImageService.parseImg(r);
-                                    this.imgPath = "data:image/png;base64," + base64;
-                                    console.log(1)
-                                    this.showImage = true;
-                                }
-                            )
-                        }
-                    );
-                }
-            ) 
+                    (response) => {
+                        this.newRecipe.imgageId = response.data;
+                        ImageService.addImageToRecipe(this.recipe.recipeId, response.data).then(
+                            () => {
+                                ImageService.getImage(response.data).then(
+                                    (r) => {
+                                        const base64 = ImageService.parseImg(r);
+                                        this.imgPath = "data:image/png;base64," + base64;
+                                        this.showImage = true;
+                                    }
+                                )
+                            }
+                        );
+                    }
+                ) 
             } else {
                 ImageService.createImage(event.target.files[0]).then(
-                (response) => {
-                    let id = response.data;
-                    ImageService.updateMealImage(this.recipe.recipeId, response.data).then(
-                        (res) => {
-                            ImageService.getImage(id).then(
-                                (r) => {
-                                    const base64 = ImageService.parseImg(r);
-                                    this.imgPath = "data:image/png;base64," + base64;
-                                    this.showImage = true;
-                                }
-                            )
-                        });
+                    (response) => {
+                        let id = response.data;
+                        this.newRecipe.imgageId = id;
+                        ImageService.updateRecipeImage(this.recipe.recipeId, id).then(
+                            () => {
+                                ImageService.getImage(id).then(
+                                    (r) => {
+                                        const base64 = ImageService.parseImg(r);
+                                        this.imgPath = "data:image/png;base64," + base64;
+                                        this.showImage = true;
+                                    }
+                                )
+                            }
+                        );
                     }
                 ) 
                 }
