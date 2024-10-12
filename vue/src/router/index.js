@@ -14,6 +14,7 @@ import RecipeDetailView from '../views/RecipeDetailView.vue'
 import AboutView from '../views/AboutView.vue';
 import WillView from '../views/WillView.vue';
 import PublicMealDetailView from '../views/PublicMealDetailView.vue';
+import WalkthroughView from '../views/WalkthroughView.vue';
 
 const routes = [
   {
@@ -113,7 +114,12 @@ const routes = [
     path: '/will',
     name: 'will',
     component: WillView
-  }
+  },
+  {
+    path: '/walkthrough',
+    name: 'walkthrough',
+    component: WalkthroughView
+  },
 ];
 
 // Create the router

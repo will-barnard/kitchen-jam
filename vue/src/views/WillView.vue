@@ -1,9 +1,8 @@
 <template>
     <div>
         <h1>Will's Page</h1>
-        <body>
-            <MealLog :mealList="mealList" :isPublic="true"/>
-        </body> 
+        <MealLog v-if="show" :mealList="mealList" :isPublic="true"/>
+        <p v-if="!show">Loading...</p>
     </div>
 </template>
 
@@ -15,7 +14,8 @@ export default {
     components: {MealLog},
     data() {
         return {
-            mealList: []
+            mealList: [],
+            show: false
         }
     },
     created() {
@@ -23,6 +23,7 @@ export default {
             (result) => {
                 this.$store.commit('LOAD_MEAL_GALLERY', result.data)
                 this.mealList = this.$store.state.publicMealGallery;
+                this.show = true;
             }
         )
     }
