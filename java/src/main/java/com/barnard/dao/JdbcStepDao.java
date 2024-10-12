@@ -1,6 +1,7 @@
 package com.barnard.dao;
 
 import com.barnard.exception.DaoException;
+import com.barnard.model.Recipe;
 import com.barnard.model.Step;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -55,6 +56,52 @@ public class JdbcStepDao implements StepDao {
             throw new DaoException("Data integrity violation", e);
         }
         return stepList;
+    }
+
+    @Override
+    public List<Recipe> getSteplist(List<Recipe> recipes) {
+        String sql  = "SELECT * FROM step " +
+                "WHERE recipe_id = ";
+
+        for (int i = 0; i < recipes.size(); i++) {
+            if (i == 0 || i == recipes.size() -1) {
+                sql += recipes.get(i).getRecipeId() + " ";
+            } else {
+                sql += "OR recipe_id = " + recipes.get(i).getRecipeId() + " ";
+            }
+        }
+
+        sql += "GROUP BY recipe_id " +
+                "ORDER BY step_order ASC;";
+
+        try {
+            SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql);
+            Step prevStep = null;
+            Step newStep;
+            List<Step> stepList = new ArrayList<>();
+            while (rowSet.next()) {
+
+                newStep = mapRowToStep(rowSet);
+                if (prevStep == null) {
+                    stepList.add(newStep);
+                } else if (prevStep.getRecipeId() == newStep.getStepId()) {
+                    stepList.add(newStep);
+                } else {
+                    for (Recipe recipe : recipes) {
+                        if (recipe.getRecipeId() == stepList.get(0).getRecipeId()) {
+                            recipe.setStepList(stepList);
+                        }
+                    }
+                    stepList = new ArrayList<>();
+                }
+                prevStep = newStep;
+            }
+        } catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Unable to connect to server or database", e);
+        } catch (DataIntegrityViolationException e) {
+            throw new DaoException("Data integrity violation", e);
+        }
+        return recipes;
     }
 
     @Override

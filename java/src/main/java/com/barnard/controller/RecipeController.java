@@ -33,6 +33,8 @@ public class RecipeController {
     private UserDao userDao;
     @Autowired
     private ImageDao imageDao;
+    @Autowired
+    private StepDao stepDao;
 
     @GetMapping(path = "/{recipeId}")
     public Recipe getRecipe(@PathVariable int recipeId) {
@@ -68,6 +70,7 @@ public class RecipeController {
         int userId = userDao.getUserByUsername(principal.getName()).getId();
         try {
             recipes = recipeDao.getRecipesByUserId(userId);
+            recipes = stepDao.getSteplist(recipes);
         } catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
         }

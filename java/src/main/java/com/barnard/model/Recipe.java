@@ -15,6 +15,7 @@ public class Recipe {
     private String categoryName;
     private Category category;
     private List<Meal> mealList;
+    private List<Step> stepList;
 
     public Integer getRecipeId() {
         return recipeId;
@@ -102,5 +103,13 @@ public class Recipe {
 
     public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
+    }
+
+    public List<Step> getStepList() {
+        return stepList;
+    }
+
+    public void setStepList(List<Step> stepList) {
+        this.stepList = stepList;
     }
 }
