@@ -2,20 +2,26 @@ import axios from 'axios';
 
 export default {
 
-  getMeal(mealId) {
-    return axios.get('/meal/' + mealId)
+  getIngredientsByMeal(mealId) {
+    return axios.get('/ingredient/meal/' + mealId)
   },
-  getMealsByUser() {
-    return axios.get('/meal/user')
+  getIngredientsByRecipe(recipeId) {
+    return axios.get('/ingredient/recipe/' + recipeId)
   },
-  createMeal(meal) {
-    return axios.post('/meal', meal)
+  searchLikeIngredient(search) {
+    return axios.get('/ingredient/search' + search)
   },
-  updateMeal(meal) {
-    return axios.put('/meal', meal)
+  createIngredient(ingredient) {
+    return axios.post('/ingredient', ingredient)
   },
-  deleteMeal(mealId) {
-    return axios.delete('/meal/' + mealId)
+  updateIngredient(ingredient) {
+    return axios.put('/ingredient', ingredient)
+  },
+  updateMealIngredients(ingredients) {
+    return axios.put('/ingredient/meal' + ingredients)
+  },
+  updateRecipeIngredients(ingredients) {
+    return axios.put('/ingredient/recipe' + ingredients)
   }
 
 }

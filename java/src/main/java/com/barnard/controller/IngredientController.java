@@ -45,7 +45,7 @@ public class IngredientController {
         return ingredients;
     }
 
-    @GetMapping("/search")
+    @PostMapping("/search")
     public List<Ingredient> searchLikeIngredient(@RequestBody String search, Principal principal) {
         List<Ingredient> ingredients = null;
         int userId = userDao.getUserByUsername(principal.getName()).getId();
