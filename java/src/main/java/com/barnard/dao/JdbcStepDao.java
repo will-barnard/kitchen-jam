@@ -64,15 +64,14 @@ public class JdbcStepDao implements StepDao {
                 "WHERE recipe_id = ";
 
         for (int i = 0; i < recipes.size(); i++) {
-            if (i == 0 || i == recipes.size() -1) {
+            if (i == 0) {
                 sql += recipes.get(i).getRecipeId() + " ";
             } else {
                 sql += "OR recipe_id = " + recipes.get(i).getRecipeId() + " ";
             }
         }
 
-        sql += "GROUP BY recipe_id " +
-                "ORDER BY step_order ASC;";
+        sql += "ORDER BY step.recipe_id ASC;";
 
         try {
             SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql);
