@@ -13,15 +13,18 @@
                <div class="details">
                    <div class="title">
                        <h2 >{{ staticRecipe.recipeName }}</h2>
-                   </div>
-                   <div class="category" v-show="staticRecipe.categoryId">
-                    <h3>{{ staticRecipe.categoryName }}</h3>
-                   </div>
-                   <div class="subtitle">
-                    <p>{{ staticRecipe.description }}</p>   
-                   </div>
-                   <!-- <h3>Last made here?</h3> -->
-
+                    </div>
+                    <div class="category" v-show="staticRecipe.categoryId">
+                        <h3>{{ staticRecipe.categoryName }}</h3>
+                    </div>
+                    <div class="subtitle">
+                        <p>{{ staticRecipe.description }}</p>   
+                    </div>
+                    <div class="steplist">
+                        <StepList :stepList="staticRecipe.stepList"/>
+                    </div>
+                    <!-- <h3>Last made here?</h3> -->
+                   
                    
 
                     <div class="widgets">
@@ -119,10 +122,12 @@ import Tag from './Tag.vue';
 import MealCard from '../components/MealCard.vue';
 import CategoryService from '../services/CategoryService.js';
 import ImageService from '../services/ImageService.js';
+import StepList from './StepList.vue';
+import StepService from '../services/StepService.js';
 
 export default {
     props: ['recipe', 'loading'],
-    components: {Tag, MealCard},
+    components: {Tag, MealCard, StepList},
     data() {
         return {
             editing: false,
@@ -144,7 +149,14 @@ export default {
             }
         )
         this.staticRecipe = this.cloneRecipe(this.recipe);
+
+        // add steps here?
+        StepService;
+
         this.newRecipe = this.cloneRecipe(this.staticRecipe);
+
+        
+
         if (this.recipe.imageId == 0 || this.recipe.imageId == null) {
             this.imgPath = "../img/placeholder.jpeg";
             this.showImage = true;
@@ -196,6 +208,7 @@ export default {
                 newRecipe.img = recipe.img;
 
                 newRecipe.categories = recipe.categories;
+                newRecipe.stepList = recipe.stepList;
 
             }
             return newRecipe;

@@ -11,7 +11,6 @@
 </template>
 
 <script>
-import RecipeService from '../services/RecipeService.js';
 import RecipeCard from '../components/RecipeCard.vue';
 
 export default {
