@@ -4,6 +4,7 @@ import com.barnard.dao.*;
 import com.barnard.exception.AuthException;
 import com.barnard.model.Meal;
 import com.barnard.model.Recipe;
+import com.barnard.model.Step;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -118,6 +119,11 @@ public class RecipeController {
         recipe.setUserId(userId);
         try {
             recipeDao.createRecipe(recipe);
+            if (recipe.isUpdateSteps() == true) {
+                for (Step step : recipe.getStepList()) {
+                    stepDao.createStep(step);
+                }
+            }
         } catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
         }
@@ -140,8 +146,13 @@ public class RecipeController {
             if (userAuth != userId) {
                 throw new AuthException("Not authorized");
             }
-            System.out.println(recipe.getImageId());
             recipe = recipeDao.updateRecipe(recipe);
+            if (recipe.isUpdateSteps()) {
+                stepDao.deleteAllStepsFromRecipe(recipe.getRecipeId());
+                for (Step step : recipe.getStepList()) {
+                    stepDao.createStep(step);
+                }
+            }
         } catch(AuthException e) {
             throw new AuthException(e.getMessage());
         } catch(Exception e) {

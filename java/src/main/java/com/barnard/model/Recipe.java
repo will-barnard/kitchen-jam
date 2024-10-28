@@ -16,6 +16,7 @@ public class Recipe {
     private Category category;
     private List<Meal> mealList;
     private List<Step> stepList;
+    private boolean updateSteps = false;
 
     public Integer getRecipeId() {
         return recipeId;
@@ -111,5 +112,13 @@ public class Recipe {
 
     public void setStepList(List<Step> stepList) {
         this.stepList = stepList;
+    }
+
+    public boolean isUpdateSteps() {
+        return updateSteps;
+    }
+
+    public void setUpdateSteps(boolean updateSteps) {
+        this.updateSteps = updateSteps;
     }
 }

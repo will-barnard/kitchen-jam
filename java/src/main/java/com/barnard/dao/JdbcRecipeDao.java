@@ -193,17 +193,15 @@ public class JdbcRecipeDao implements RecipeDao {
     public void deleteRecipeById(int recipeId) {
 
         String sql = "UPDATE meal SET recipe_id = NULL " +
-                "WHERE recipe_id = ?;";
-        String sql2 = "DELETE FROM recipe " +
+                "WHERE recipe_id = ?; " +
+                "DELETE FROM step " +
+                "WHERE recipe_id = ?; " +
+                "DELETE FROM recipe " +
                 "WHERE recipe_id = ?;";
 
         try {
 
             jdbcTemplate.update(sql, recipeId);
-            int rowsAffected = jdbcTemplate.update(sql2, recipeId);
-            if (rowsAffected != 1) {
-                throw new DaoException();
-            }
 
         } catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database", e);
