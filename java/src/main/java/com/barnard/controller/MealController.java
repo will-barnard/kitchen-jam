@@ -57,6 +57,7 @@ public class MealController {
         return meal;
     }
 
+    @PreAuthorize("permitAll")
     @GetMapping(path = "/public/{uuid}")
     public Meal getPublicMeal(@PathVariable String uuid, Principal principal) {
         Meal meal = null;

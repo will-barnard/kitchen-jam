@@ -52,6 +52,7 @@ public class RecipeController {
         return recipe;
     }
 
+    @PreAuthorize("permitAll")
     @GetMapping(path = "/public/{uuid}")
     public Recipe getPublicRecipe(@PathVariable String uuid) {
         Recipe recipe = null;
