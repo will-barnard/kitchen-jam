@@ -59,9 +59,8 @@ public class MealController {
 
     @PreAuthorize("permitAll")
     @GetMapping(path = "/public/{uuid}")
-    public Meal getPublicMeal(@PathVariable String uuid, Principal principal) {
+    public Meal getPublicMeal(@PathVariable String uuid) {
         Meal meal = null;
-        int userId = userDao.getUserByUsername(principal.getName()).getId();
         try {
             meal = mealDao.getPublicMeal(uuid);
             meal.setTags(tagsDao.getTagsByMealId(meal.getMealId()));
