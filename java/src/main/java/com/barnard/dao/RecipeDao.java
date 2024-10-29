@@ -1,6 +1,7 @@
 package com.barnard.dao;
 
 
+import com.barnard.model.Meal;
 import com.barnard.model.Recipe;
 
 import java.util.List;
@@ -14,6 +15,9 @@ public interface RecipeDao {
     Recipe getRecipeByMealId(int mealId);
     Recipe createRecipe(Recipe recipe);
     Recipe updateRecipe(Recipe recipe);
+    Recipe getPublicRecipe(String uuid);
+    String makePublic(Recipe recipe);
+    void makePrivate(Recipe recipe);
     void deleteRecipeById(int recipeId);
     boolean verifyRecipeOwner(int userId, int recipeId);
     void aggregateRecipeData(int recipeId);

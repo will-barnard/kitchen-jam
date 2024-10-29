@@ -57,6 +57,19 @@ public class MealController {
         return meal;
     }
 
+    @GetMapping(path = "/public/{uuid}")
+    public Meal getPublicMeal(@PathVariable String uuid, Principal principal) {
+        Meal meal = null;
+        int userId = userDao.getUserByUsername(principal.getName()).getId();
+        try {
+            meal = mealDao.getPublicMeal(uuid);
+            meal.setTags(tagsDao.getTagsByMealId(meal.getMealId()));
+        } catch(Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
+        }
+        return meal;
+    }
+
     @GetMapping(path = "/search")
     public List<Meal> searchMeals(@RequestBody String search, Principal principal) {
         int userId = userDao.getUserByUsername(principal.getName()).getId();
@@ -109,6 +122,7 @@ public class MealController {
         meal.setUserId(userId);
         meal.setDateCreated(LocalDateTime.now());
         meal.setLastModified(LocalDateTime.now());
+        meal.setPublic(false);
         Meal newMeal = null;
         try {
             newMeal = mealDao.createMeal(meal);
@@ -154,6 +168,40 @@ public class MealController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
         }
         return updatedMeal;
+    }
+
+    @PostMapping("/public/{mealId}")
+    public String makePublic(@PathVariable int mealId, Principal principal) {
+        Meal meal = null;
+        int userId = userDao.getUserByUsername(principal.getName()).getId();
+        try {
+            meal = mealDao.getMeal(mealId);
+            if (meal.getUserId() != userId) {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+            }
+            meal.setPublic(true);
+            meal.setPublicUrl(mealDao.makePublic(meal));
+        } catch(Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
+        }
+        return meal.getPublicUrl();
+    }
+
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    @DeleteMapping("/public/{mealId}")
+    public void makePrivate(@PathVariable int mealId, Principal principal) {
+        Meal meal = null;
+        int userId = userDao.getUserByUsername(principal.getName()).getId();
+        try {
+            meal = mealDao.getMeal(mealId);
+            if (meal.getUserId() != userId) {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+            }
+            meal.setPublic(false);
+            mealDao.makePrivate(meal);
+        } catch(Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
+        }
     }
 
     @ResponseStatus(HttpStatus.ACCEPTED)

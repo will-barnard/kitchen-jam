@@ -53,6 +53,22 @@ public class RecipeController {
         return recipe;
     }
 
+    @GetMapping(path = "/public/{uuid}")
+    public Recipe getPublicRecipe(@PathVariable String uuid) {
+        Recipe recipe = null;
+        try {
+            recipe = recipeDao.getPublicRecipe(uuid);
+            recipe.setMealList(mealDao.getMealsByRecipeId(recipe.getRecipeId()));
+            for (Meal meal : recipe.getMealList()) {
+                meal.setRecipeName(recipe.getRecipeName());
+                meal.setTags(tagsDao.getTagsByMealId(meal.getMealId()));
+            }
+        } catch(Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
+        }
+        return recipe;
+    }
+
     @PostMapping(path = "/search")
     public List<Recipe> searchRecipes(@RequestBody Recipe recipe, Principal principal) {
         List<Recipe> recipes = null;
@@ -112,8 +128,7 @@ public class RecipeController {
     @ResponseStatus(HttpStatus.CREATED)
     public Recipe createRecipe(@RequestBody Recipe recipe, Principal principal) {
 
-        // todo add public option on frontend
-        recipe.setPublic(true);
+        recipe.setPublic(false);
 
         int userId = userDao.getUserByUsername(principal.getName()).getId();
         recipe.setUserId(userId);
@@ -133,8 +148,6 @@ public class RecipeController {
     @PutMapping(path = "")
     public Recipe updateRecipe(@RequestBody Recipe recipe, Principal principal) {
 
-        // todo add public option on frontend
-        recipe.setPublic(true);
         if (recipe.getCategoryId() == 0) {
             recipe.setCategoryId(null);
         }
@@ -162,6 +175,40 @@ public class RecipeController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
         }
         return recipe;
+    }
+
+    @PostMapping("/public/{recipeId}")
+    public String makePublic(@PathVariable int recipeId, Principal principal) {
+        Recipe recipe = null;
+        int userId = userDao.getUserByUsername(principal.getName()).getId();
+        try {
+            recipe = recipeDao.getRecipe(recipeId);
+            if (recipe.getUserId() != userId) {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+            }
+            recipe.setPublic(true);
+            recipe.setPublicUrl(recipeDao.makePublic(recipe));
+        } catch(Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
+        }
+        return recipe.getPublicUrl();
+    }
+
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    @DeleteMapping("/public/{recipeId}")
+    public void makePrivate(@PathVariable int recipeId, Principal principal) {
+        Recipe recipe = null;
+        int userId = userDao.getUserByUsername(principal.getName()).getId();
+        try {
+            recipe = recipeDao.getRecipe(recipeId);
+            if (recipe.getUserId() != userId) {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+            }
+            recipe.setPublic(false);
+            recipeDao.makePrivate(recipe);
+        } catch(Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
+        }
     }
 
     @ResponseStatus(HttpStatus.ACCEPTED)

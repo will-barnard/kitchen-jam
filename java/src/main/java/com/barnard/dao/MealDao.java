@@ -14,6 +14,9 @@ public interface MealDao {
     List<Meal> getMealsByRecipeId(int recipeId);
     Meal createMeal(Meal meal);
     Meal updateMeal(Meal meal);
+    Meal getPublicMeal(String uuid);
+    String makePublic(Meal meal);
+    void makePrivate(Meal meal);
     void deleteMealById(int mealId);
     boolean verifyMealOwner(int userId, int mealId);
 

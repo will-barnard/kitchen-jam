@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Component
 public class JdbcRecipeDao implements RecipeDao {
@@ -190,6 +191,65 @@ public class JdbcRecipeDao implements RecipeDao {
     }
 
     @Override
+    public Recipe getPublicRecipe(String uuid) {
+        Recipe recipe = null;
+        String sql = "SELECT recipe.*, category.category_name " +
+                "FROM recipe " +
+                "LEFT JOIN category ON recipe.category_id = category.category_id " +
+                "WHERE recipe.public_url = ?;";
+
+        try {
+            SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, uuid);
+            if (rowSet.next()) {
+                recipe = mapRowToRecipe(rowSet, true);
+            }
+        }  catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Unable to connect to server or database", e);
+        } catch (DataIntegrityViolationException e) {
+            throw new DaoException("Data integrity violation", e);
+        }
+        return recipe;
+    }
+
+    @Override
+    public String makePublic(Recipe recipe) {
+        String uuid = UUID.randomUUID().toString();
+        String sql = "UPDATE recipe " +
+                "SET is_public = true, public_url = ? " +
+                "WHERE meal_id = ?;";
+        try {
+            int rowsAffected = 0;
+            rowsAffected = jdbcTemplate.update(sql, uuid, recipe.getRecipeId());
+            if (rowsAffected == 0) {
+                throw new DaoException("Something went wrong, no rows affected");
+            }
+        } catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Unable to connect to server or database", e);
+        } catch (DataIntegrityViolationException e) {
+            throw new DaoException("Data integrity violation", e);
+        }
+        return uuid;
+    }
+
+    @Override
+    public void makePrivate(Recipe recipe) {
+        String sql = "UPDATE recipe " +
+                "SET is_public = false, public_url = ? " +
+                "WHERE meal_id = ?;";
+        try {
+            int rowsAffected = 0;
+            rowsAffected = jdbcTemplate.update(sql, null, recipe.getRecipeId());
+            if (rowsAffected == 0) {
+                throw new DaoException("Something went wrong, no rows affected");
+            }
+        } catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Unable to connect to server or database", e);
+        } catch (DataIntegrityViolationException e) {
+            throw new DaoException("Data integrity violation", e);
+        }
+    }
+
+    @Override
     public void deleteRecipeById(int recipeId) {
 
         String sql = "UPDATE meal SET recipe_id = NULL " +
@@ -270,6 +330,7 @@ public class JdbcRecipeDao implements RecipeDao {
         recipe.setImageId(rs.getInt("image_id"));
         recipe.setPublic(rs.getBoolean("is_public"));
         recipe.setCategoryId(rs.getInt("category_id"));
+        recipe.setPublicUrl(rs.getString("public_url"));
         if (isCategory) {
             recipe.setCategoryName(rs.getString("category_name"));
         }

@@ -24,6 +24,7 @@ public class Meal {
     private Integer rating;
     private Integer imageId;
     private boolean isPublic;
+    private String publicUrl;
     private List<Tag> tags;
 
     public Recipe getRecipe() {
@@ -160,5 +161,13 @@ public class Meal {
 
     public void setRecipeName(String recipeName) {
         this.recipeName = recipeName;
+    }
+
+    public String getPublicUrl() {
+        return publicUrl;
+    }
+
+    public void setPublicUrl(String publicUrl) {
+        this.publicUrl = publicUrl;
     }
 }
