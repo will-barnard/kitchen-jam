@@ -58,6 +58,7 @@ public class RecipeController {
         try {
             recipe = recipeDao.getPublicRecipe(uuid);
             recipe.setMealList(mealDao.getMealsByRecipeId(recipe.getRecipeId()));
+            recipe.setStepList(stepDao.getStepsByRecipe(recipe.getRecipeId()));
             for (Meal meal : recipe.getMealList()) {
                 meal.setRecipeName(recipe.getRecipeName());
                 meal.setTags(tagsDao.getTagsByMealId(meal.getMealId()));
@@ -190,7 +191,7 @@ public class RecipeController {
         } catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
         }
-        String url = "http://kitchen-jam.com/public/recipe/" + recipe.getPublicUrl();
+        String url = "http://kitchen-jam.com/p/recipe/" + recipe.getPublicUrl();
         return url;
     }
 
