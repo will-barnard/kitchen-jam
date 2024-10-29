@@ -1,6 +1,5 @@
 <template>
     <div class="block">
-        Steps:
         <div>
             <div v-for="step in stepList" class="step-item">
                 <p>{{ step.stepOrder }}. {{ step.stepDescription }}</p>
@@ -32,9 +31,3 @@ export default {
         padding: 5px;
     }
 </style>
-
-<!-- private int stepId;
-    private int userId;
-    private int recipeId;
-    private String stepDescription;
-    private int stepOrder; -->
