@@ -1,12 +1,10 @@
 <template>
-    <div>
-        Steplist
+    <div class="block">
+        Steps:
         <div>
-            <ol>
-                <div v-for="step in stepList">
-                    <li>{{ step.stepDescription }}</li>
-                </div>
-            </ol>
+            <div v-for="step in stepList" class="step-item">
+                <p>{{ step.stepOrder }}. {{ step.stepDescription }}</p>
+            </div>
         </div>
     </div>
 </template>
@@ -15,8 +13,24 @@ export default {
     props: ['stepList']
 }
 </script>
-<style>
-    
+<style scoped>
+    .block {
+        margin-left: 0px;
+        margin-top: 10px;
+        padding: 10px;
+        background-color: var(--light-1);
+        border-radius: 10px;
+        flex-grow: 1;
+    }
+    .step-item {
+        background-color: var(--light-2);
+        border-radius: 5px;
+        border: 1px;
+    }
+    p {
+        margin: 3px;
+        padding: 5px;
+    }
 </style>
 
 <!-- private int stepId;

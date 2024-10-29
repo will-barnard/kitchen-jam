@@ -28,7 +28,9 @@
                     <div class="widget">
                         <p>{{ recipe.avgCookTime }} min</p>
                     </div>
-
+                    <div v-if="showMore">
+                        <StepList :stepList="recipe.stepList" />
+                    </div>
                     
                 </div>
                 
@@ -46,10 +48,11 @@
 </template>
 
 <script>
-import ImageService from '../services/ImageService';
+import StepList from './StepList.vue';
 
 export default {
     props: ['recipe'],
+    components: {StepList},
     data() {
         return {
             showMore: false
