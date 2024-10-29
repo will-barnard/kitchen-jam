@@ -119,7 +119,7 @@ public class RecipeController {
         recipe.setUserId(userId);
         try {
             recipeDao.createRecipe(recipe);
-            if (recipe.isUpdateSteps() == true) {
+            if (recipe.isUpdateSteps()) {
                 for (Step step : recipe.getStepList()) {
                     stepDao.createStep(step);
                 }
@@ -146,13 +146,16 @@ public class RecipeController {
             if (userAuth != userId) {
                 throw new AuthException("Not authorized");
             }
-            recipe = recipeDao.updateRecipe(recipe);
             if (recipe.isUpdateSteps()) {
                 stepDao.deleteAllStepsFromRecipe(recipe.getRecipeId());
                 for (Step step : recipe.getStepList()) {
+                    step.setUserId(userId);
+                    step.setRecipeId(recipe.getRecipeId());
                     stepDao.createStep(step);
                 }
             }
+            recipe = recipeDao.updateRecipe(recipe);
+            recipe.setStepList(stepDao.getStepsByRecipe(recipe.getRecipeId()));
         } catch(AuthException e) {
             throw new AuthException(e.getMessage());
         } catch(Exception e) {

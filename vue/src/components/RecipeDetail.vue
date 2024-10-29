@@ -49,22 +49,7 @@
                 <h3>Edit image</h3>
                 <input type="file" name="file" accept="image/*" @change="uploadImage">
             </div>
-           <form>
-               <div class="edit-form">
-                    <h3>Edit details</h3>
-
-                   <div class="input-area">
-                       <label>Name</label>
-                       <input type="text" v-model="newRecipe.recipeName">
-                   </div>
-                   <div class="input-area">
-                       <label>Description</label>
-                       <textarea v-model="newRecipe.description"></textarea>
-                   </div>
-            
-               </div>
-           </form>
-           <div class="edit-form edit-category">
+            <div class="edit-form edit-category">
                 <h3>Edit Category</h3>
                 <div>
                     <div v-if="newRecipe.categoryId" class="current-category">
@@ -85,6 +70,40 @@
                     </div>
                 </div>
            </div>
+           <form>
+               <div class="edit-form">
+                    <h3>Edit details</h3>
+
+                   <div class="input-area">
+                       <label>Name</label>
+                       <input type="text" v-model="newRecipe.recipeName">
+                   </div>
+                   <div class="input-area">
+                       <label>Description</label>
+                       <textarea v-model="newRecipe.description"></textarea>
+                   </div>
+                   <div class="input-area">
+                       <label>Steps</label>
+                       <div v-for="step in newRecipe.stepList" :key="step.stepOrder" class="single-row">
+                            <p class="list-number">{{ step.stepOrder }}</p>
+                            <textarea class="step-input" v-model="step.stepDescription"></textarea>
+                            <div class="single-row">
+                                <div class="arrow small-button" @click="moveStep(-1, step)">
+                                    &#8593;
+                                </div>
+                                <div class="arrow small-button" @click="moveStep(1, step)">
+                                    &darr;
+                                </div>
+                                <div @click="deleteStep(step)">
+                                    <img src="/img/trash.png" class="small-button minus"/>
+                                </div>
+                            </div> 
+                       </div>
+                       <input type="text" v-model="newStep">
+                       <button @click.prevent="addStep">Add step</button>
+                   </div>
+               </div>
+           </form>
        </div>
 
 
@@ -139,7 +158,8 @@ export default {
             newTag: {},
             newCategory: {},
             searchCategory: [],
-            mealList: []
+            mealList: [],
+            newStep: ""
         }
     },
     created() {
@@ -148,14 +168,11 @@ export default {
                 return meal.recipeId == this.recipe.recipeId;
             }
         )
+        if (this.recipe.stepList == null) {
+            this.recipe.stepList = [];
+        }
         this.staticRecipe = this.cloneRecipe(this.recipe);
-
-        // add steps here?
-        StepService;
-
-        this.newRecipe = this.cloneRecipe(this.staticRecipe);
-
-        
+        this.newRecipe = this.cloneRecipe(this.staticRecipe);        
 
         if (this.recipe.imageId == 0 || this.recipe.imageId == null) {
             this.imgPath = "../img/placeholder.jpeg";
@@ -172,6 +189,9 @@ export default {
             this.newRecipe = this.cloneRecipe(this.staticRecipe);
         },
         saveEdit() {
+            // todo implement this better
+            this.newRecipe.updateSteps = true;
+
             RecipeService.updateRecipe(this.newRecipe).then(
                 (response) => {
                     this.staticRecipe = response.data;
@@ -208,8 +228,12 @@ export default {
                 newRecipe.img = recipe.img;
 
                 newRecipe.categories = recipe.categories;
-                newRecipe.stepList = recipe.stepList;
 
+                newRecipe.stepList = [];
+                for(let i = 0; i < recipe.stepList.length; i++) {
+                    let step = Object.assign({}, recipe.stepList[i])
+                    newRecipe.stepList.push(step);
+                }
             }
             return newRecipe;
         },
@@ -282,6 +306,59 @@ export default {
                     this.newRecipe.categoryName = response.data.categoryName;
                 }
             )
+        },
+        addStep() {
+            let step = {};
+            step.stepDescription = this.newStep;
+            step.stepOrder = this.newRecipe.stepList.length + 1;
+            this.newRecipe.stepList.push(step);
+            this.newStep = "";
+        },
+        moveStep(k, step) {
+            if (k == 1) {
+                // move down the list
+                if (step.stepOrder != this.newRecipe.stepList.length) {
+                    let moveStep = Object.assign(step.stepDescription);
+                    let pivotStep = this.newRecipe.stepList[step.stepOrder];
+                    step.stepDescription = pivotStep.stepDescription;
+                    pivotStep.stepDescription = moveStep;
+                }
+            }
+            if (k == -1) {
+                // move up the list
+                if (step.stepOrder != 1) {
+                    let moveStep = Object.assign(step.stepDescription);
+                    let pivotStep = this.newRecipe.stepList[step.stepOrder - 2];
+                    step.stepDescription = pivotStep.stepDescription;
+                    pivotStep.stepDescription = moveStep;
+                }
+            }
+        },
+        deleteStep(step) {
+            let list = this.newRecipe.stepList;
+            if (step.stepOrder == list.length) {
+                list.pop();
+            }
+            else if (step.stepOrder == 1) {
+                for (let i = 0; i < list.length; i++) {
+                    if (i != list.length - 1) {
+                        list[i].stepDescription = Object.assign(list[i+1].stepDescription);
+                    }
+                    else if (i == list.length - 1) {
+                        list.pop();
+                    }
+                }
+            }
+            else {
+                for (let i = step.stepOrder - 1; i < list.length; i++) {
+                    if (i != list.length - 1) {
+                        list[i].stepDescription = Object.assign(list[i+1].stepDescription);
+                    }
+                    else if (i == list.length - 1) {
+                        list.pop();
+                    }
+                }
+            }
         }
     }
 }
@@ -533,5 +610,21 @@ export default {
         margin-top: 30px;
         margin-bottom: 5px;
         padding: 10px;
+    }
+    .step-input {
+        padding: 0px;
+        margin: 10px;
+        flex-grow: 1;
+
+    }
+    .list-number {
+        margin: 3px;
+    }
+    .arrow {
+        width: 15px;
+        padding: 5px;
+        display: flex;
+        justify-content: center;
+        background-color: var(--light-5);
     }
 </style>

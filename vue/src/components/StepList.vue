@@ -1,11 +1,13 @@
 <template>
     <div>
         Steplist
-        <ol>
-            <div v-for="step in stepList">
-            <p>{{ step.stepDescription }}</p>
+        <div>
+            <ol>
+                <div v-for="step in stepList">
+                    <li>{{ step.stepDescription }}</li>
+                </div>
+            </ol>
         </div>
-        </ol>
     </div>
 </template>
 <script>

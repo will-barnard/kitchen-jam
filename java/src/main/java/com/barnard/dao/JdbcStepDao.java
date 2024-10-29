@@ -76,14 +76,14 @@ public class JdbcStepDao implements StepDao {
         try {
             SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql);
             Step prevStep = null;
-            Step newStep;
+            Step newStep = null;
             List<Step> stepList = new ArrayList<>();
             while (rowSet.next()) {
 
                 newStep = mapRowToStep(rowSet);
                 if (prevStep == null) {
                     stepList.add(newStep);
-                } else if (prevStep.getRecipeId() == newStep.getStepId()) {
+                } else if (prevStep.getRecipeId() == newStep.getRecipeId()) {
                     stepList.add(newStep);
                 } else {
                     for (Recipe recipe : recipes) {
@@ -95,6 +95,14 @@ public class JdbcStepDao implements StepDao {
                 }
                 prevStep = newStep;
             }
+            if (stepList.size() > 0) {
+                for (Recipe recipe : recipes) {
+                    if (recipe.getRecipeId() == stepList.get(0).getRecipeId()) {
+                        recipe.setStepList(stepList);
+                    }
+                }
+            }
+
         } catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database", e);
         } catch (DataIntegrityViolationException e) {
