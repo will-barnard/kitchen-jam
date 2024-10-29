@@ -22,7 +22,6 @@ import java.security.Principal;
 public class RecipeController {
 
     // todo add authentication and security when doing GET
-    // todo add category to gets
 
     @Autowired
     private MealDao mealDao;
@@ -191,7 +190,8 @@ public class RecipeController {
         } catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
         }
-        return recipe.getPublicUrl();
+        String url = "http://kitchen-jam.com/public/recipe/" + recipe.getPublicUrl();
+        return url;
     }
 
     @ResponseStatus(HttpStatus.ACCEPTED)

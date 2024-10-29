@@ -216,7 +216,7 @@ public class JdbcRecipeDao implements RecipeDao {
         String uuid = UUID.randomUUID().toString();
         String sql = "UPDATE recipe " +
                 "SET is_public = true, public_url = ? " +
-                "WHERE meal_id = ?;";
+                "WHERE recipe_id = ?;";
         try {
             int rowsAffected = 0;
             rowsAffected = jdbcTemplate.update(sql, uuid, recipe.getRecipeId());
@@ -235,7 +235,7 @@ public class JdbcRecipeDao implements RecipeDao {
     public void makePrivate(Recipe recipe) {
         String sql = "UPDATE recipe " +
                 "SET is_public = false, public_url = ? " +
-                "WHERE meal_id = ?;";
+                "WHERE recipe_id = ?;";
         try {
             int rowsAffected = 0;
             rowsAffected = jdbcTemplate.update(sql, null, recipe.getRecipeId());

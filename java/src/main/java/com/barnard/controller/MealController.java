@@ -184,7 +184,8 @@ public class MealController {
         } catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
         }
-        return meal.getPublicUrl();
+        String url = "http://kitchen-jam.com/public/meal/" + meal.getPublicUrl();
+        return url;
     }
 
     @ResponseStatus(HttpStatus.ACCEPTED)
