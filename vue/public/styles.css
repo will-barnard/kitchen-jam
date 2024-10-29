@@ -5,6 +5,7 @@
    --border-color: #330217;
    --dark-1: #b53122;
    --dark-2: #c10631;
+   --dark-3: #3b3eff;
    --light-orange: #ff8019;
    --light-1: #eacee4;
    --light-2: #f2e4f1;
@@ -67,7 +68,7 @@ textarea {
    transition: opacity .2s ease .2s;
 }
 .quickFade-leave-active {
-   transition: opacity .15s ease;
+   transition: opacity .2s ease;
 }
 .quickFade-enter-from, .quickFade-leave-to {
    opacity: 0;

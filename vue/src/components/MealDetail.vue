@@ -64,6 +64,22 @@
                 <h3>Edit image</h3>
                 <input type="file" name="file" accept="image/*" @change="uploadImage">
             </div>
+            <div class="edit-block">
+                <h3>Sharing</h3>
+                <Transition name="quickFade">
+                    <div v-if="newMeal.public">
+                        <p>Meal is public</p>
+                        <a :href="newMeal.publicUrl">Public Url</a>
+                        <button @click.prevent="makePrivate()">Make private</button>
+                    </div>
+                </Transition>
+                <Transition name="quickFade">
+                    <div v-if="!newMeal.public">
+                        <p>Meal is private</p>
+                        <button @click.prevent="makePublic()">Make public</button>
+                    </div>
+                </Transition>
+            </div>
 
             <div class="edit-recipe edit-block">
                 <h3>Edit recipe</h3>
@@ -205,6 +221,31 @@ import UtilityService from '../services/UtilityService.js';
 import TagService from '../services/TagService.js';
 import RecipeService from '../services/RecipeService.js';
 
+function cloneMeal(meal) {
+    let newMeal = {};
+    if (meal) {
+        newMeal.mealId = meal.mealId;
+        newMeal.userId = meal.userId;
+        newMeal.recipeId = meal.recipeId;
+        newMeal.recipeName = meal.recipeName;
+        newMeal.mealName = meal.mealName;
+        newMeal.mealComment = meal.mealComment;
+        newMeal.dateCreated = meal.dateCreated;
+        newMeal.dateCooked = meal.dateCooked;
+        newMeal.lastModified = meal.lastModified;
+        newMeal.cookTime = meal.cookTime;
+        newMeal.notes = meal.notes;
+        newMeal.ingredients = meal.ingredients;
+        newMeal.rating = meal.rating;
+        newMeal.imageId = meal.imageId;
+        newMeal.tags = meal.tags;
+        newMeal.img = meal.img;
+        newMeal.public = meal.public;
+        newMeal.publicUrl = meal.publicUrl;
+    }
+    return newMeal;
+}
+
 export default {
     props: ['meal', 'loading'],
     components: {Tag},
@@ -223,8 +264,8 @@ export default {
         }
     },
     created() {
-        this.staticMeal = this.cloneMeal(this.meal);
-        this.newMeal = this.cloneMeal(this.staticMeal);
+        this.staticMeal = cloneMeal(this.meal);
+        this.newMeal = cloneMeal(this.staticMeal);
 
         // img handling
         if (this.meal.imageId == 0 || this.meal.imageId == null) {
@@ -236,9 +277,12 @@ export default {
         }
     },
     methods: {
+
+        // EDIT method
+
         cancelEdit() {
             this.editing = false;
-            this.newMeal = this.cloneMeal(this.staticMeal);
+            this.newMeal = cloneMeal(this.staticMeal);
         },
         saveEdit() {
             MealService.updateMeal(this.newMeal).then(
@@ -262,69 +306,13 @@ export default {
                 }
             )
         },
-        cloneMeal(meal) {
-            let newMeal = {};
-            if (meal) {
-                newMeal.mealId = meal.mealId;
-                newMeal.userId = meal.userId;
-                newMeal.recipeId = meal.recipeId;
-                newMeal.recipeName = meal.recipeName;
-                newMeal.mealName = meal.mealName;
-                newMeal.mealComment = meal.mealComment;
-                newMeal.dateCreated = meal.dateCreated;
-                newMeal.dateCooked = meal.dateCooked;
-                newMeal.lastModified = meal.lastModified;
-                newMeal.cookTime = meal.cookTime;
-                newMeal.notes = meal.notes;
-                newMeal.ingredients = meal.ingredients;
-                newMeal.rating = meal.rating;
-                newMeal.imageId = meal.imageId;
-                newMeal.tags = meal.tags;
-                newMeal.img = meal.img;
-            }
-            return newMeal;
-        },
-        uploadImage(event){
-            this.showImage = false;
-            
-            if (this.meal.imageId == 0 || this.meal.imageId == null) {
-                ImageService.createImage(event.target.files[0]).then(
-                    (response) => {
-                        ImageService.addImageToMeal(this.meal.mealId, response.data).then(
-                            () => {
-                                ImageService.getImage(id).then(
-                                    (r) => {
-                                        const base64 = ImageService.parseImg(r);
-                                        this.imgPath = "data:image/png;base64," + base64;
-                                        this.showImage = true;
-                                    }
-                                )
-                            }
-                        );
-                    }
-                ) 
-            } else {
-                ImageService.createImage(event.target.files[0]).then(
-                    (response) => {
-                        let id = response.data;
-                        ImageService.updateMealImage(this.meal.mealId, id).then(
-                            () => {
-                                ImageService.getImage(id).then(
-                                    (r) => {
-                                        const base64 = ImageService.parseImg(r);
-                                        this.imgPath = "data:image/png;base64," + base64;
-                                        this.showImage = true;
-                                    }
-                                )
-                            }
-                        );
-                        }
-                    ) 
-                }
-        },
+        // remove??
         formatDate(date) {
             return UtilityService.formatDate(date);
         },
+
+        // TAG methods
+
         removeTag(id) {
             TagService.removeTagFromMeal(this.meal.mealId, id).then(
                 () => {
@@ -360,6 +348,9 @@ export default {
                 console.log(this.searchTags);
             }
         },
+
+        // RECIPE methods
+
         searchForRecipes() {
             if (this.newRecipe.recipeName) {
                 RecipeService.searchRecipes(this.newRecipe).then(
@@ -388,6 +379,72 @@ export default {
                     this.addRecipe(response.data);
                 }
             )
+        },
+
+        // PUBLIC methods
+        // TODO implement store here?
+
+        makePublic() {
+            MealService.makePublic(this.meal.mealId).then(
+                (response) => {
+                    this.newMeal.publicUrl = response.data;
+                    this.newMeal.public = true;
+                    this.staticMeal.publicUrl = response.data;
+                    this.staticMeal.public = true;
+
+                }
+            )
+        },
+        makePrivate() {
+            MealService.makePrivate(this.meal.mealId).then(
+                () => {
+                    this.newMeal.publicUrl = null;
+                    this.newMeal.public = false;
+                    this.staticMeal.publicUrl = null;
+                    this.staticMeal.public = false;
+                }
+            );
+        },
+
+        // TODO FIX IMG method
+
+        uploadImage(event){
+            this.showImage = false;
+            
+            if (this.meal.imageId == 0 || this.meal.imageId == null) {
+                ImageService.createImage(event.target.files[0]).then(
+                    (response) => {
+                        ImageService.addImageToMeal(this.meal.mealId, response.data).then(
+                            () => {
+                                ImageService.getImage(id).then(
+                                    (r) => {
+                                        const base64 = ImageService.parseImg(r);
+                                        this.imgPath = "data:image/png;base64," + base64;
+                                        this.showImage = true;
+                                    }
+                                )
+                            }
+                        );
+                    }
+                ) 
+            } else {
+                ImageService.createImage(event.target.files[0]).then(
+                    (response) => {
+                        let id = response.data;
+                        ImageService.updateMealImage(this.meal.mealId, id).then(
+                            () => {
+                                ImageService.getImage(id).then(
+                                    (r) => {
+                                        const base64 = ImageService.parseImg(r);
+                                        this.imgPath = "data:image/png;base64," + base64;
+                                        this.showImage = true;
+                                    }
+                                )
+                            }
+                        );
+                    }
+                ) 
+            }
         }
     }
 }

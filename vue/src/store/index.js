@@ -41,6 +41,9 @@ export function createStore(currentToken, currentUser) {
             state.userMeals = response.data;
             state.loadedMeals = true;
             for (let meal of state.userMeals) {
+              if (meal.public) {
+                meal.publicUrl = "http://kitchen-jam.com/p/meal/" + meal.publicUrl;
+              }
               if (meal.imageId) {
                 ImageService.getImage(meal.imageId).then(
                   (res) => {
@@ -59,6 +62,9 @@ export function createStore(currentToken, currentUser) {
             state.userRecipes = response.data;
             state.loadedRecipes = true;
             for (let recipe of state.userRecipes) {
+              if (recipe.public) {
+                recipe.publicUrl = "http://kitchen-jam.com/p/recipe/" + recipe.publicUrl;
+              }
               if (recipe.imageId) {
                 ImageService.getImage(recipe.imageId).then(
                   (res) => {

@@ -13,8 +13,10 @@ import CreateRecipeView from '../views/CreateRecipeView.vue';
 import RecipeDetailView from '../views/RecipeDetailView.vue'
 import AboutView from '../views/AboutView.vue';
 import WillView from '../views/WillView.vue';
-import PublicMealDetailView from '../views/PublicMealDetailView.vue';
+import GalleryMealDetailView from '../views/GalleryMealDetailView.vue';
 import WalkthroughView from '../views/WalkthroughView.vue';
+import PublicMealView from '../views/PublicMealView.vue';
+import PublicRecipeView from '../views/PublicRecipeView.vue';
 
 const routes = [
   {
@@ -76,7 +78,7 @@ const routes = [
   {
     path: "/meal/public/:mealId",
     name: "public-meal-detail",
-    component: PublicMealDetailView,
+    component: GalleryMealDetailView,
     meta: {
       requiresAuth: false
     }
@@ -119,6 +121,16 @@ const routes = [
     path: '/walkthrough',
     name: 'walkthrough',
     component: WalkthroughView
+  },
+  {
+    path: '/p/meal/:uuid',
+    name: 'public-meal',
+    component: PublicMealView
+  },
+  {
+    path: '/p/recipe/:uuid',
+    name: 'public-recipe',
+    component: PublicRecipeView
   },
 ];
 

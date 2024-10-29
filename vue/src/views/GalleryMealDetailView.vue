@@ -2,15 +2,15 @@
     <div>
         <!-- TODO make header -->
         <p v-if="loading">Loading...</p>
-        <PublicMealDetail v-if="!loading" :meal="getMeal"/>
+        <GalleryMealDetail v-if="!loading" :meal="getMeal"/>
     </div>
 </template>
 
 <script>
-import PublicMealDetail from '../components/PublicMealDetail.vue';
+import GalleryMealDetail from '../components/GalleryMealDetail.vue';
 
 export default {
-    components: {PublicMealDetail},
+    components: {GalleryMealDetail},
     data() {
         return {
             getMeal: {},

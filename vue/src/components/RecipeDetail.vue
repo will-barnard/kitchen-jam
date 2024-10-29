@@ -9,45 +9,29 @@
         </div>
 
        <div v-show="!editing">
-           <div>
-               <div class="details">
-                   <div class="title">
-                       <h2 >{{ staticRecipe.recipeName }}</h2>
-                    </div>
-                    <div class="category" v-show="staticRecipe.categoryId">
-                        <h3>{{ staticRecipe.categoryName }}</h3>
-                    </div>
-                    <div class="subtitle">
-                        <p>{{ staticRecipe.description }}</p>   
-                    </div>
-                    <div class="steplist" v-show="staticRecipe.stepList.length > 0">
-                        <StepList :stepList="staticRecipe.stepList"/>
-                    </div>
-                    <!-- <h3>Last made here?</h3> -->
-                   
-                   
-
-                    <div class="widgets">
-                        <div class="widgets">
-                            <div class="cooktime">
-                                <img src="/img/clock.png" />
-                                <p>{{ staticRecipe.avgCookTime }} min</p>
-                            </div>
-                        </div>
-                        <div class="rating">
-                           <p>rating / 5 Rating</p>
-                       </div>
-                   </div>
-
-                   
-               </div>            
-           </div>
+           <RecipeDetailCard :recipe="staticRecipe" :editing="true"/>
        </div>
 
        <div v-show="editing">
             <div class="edit-image edit-block">
                 <h3>Edit image</h3>
                 <input type="file" name="file" accept="image/*" @change="uploadImage">
+            </div>
+            <div class="edit-form">
+                <h3>Sharing</h3>
+                <Transition name="quickFade">
+                    <div v-if="newRecipe.public">
+                        <p>Recipe is public</p>
+                        <a :href="newRecipe.publicUrl">Public Url</a>
+                        <button @click.prevent="makePrivate()">Make private</button>
+                    </div>
+                </Transition>
+                <Transition name="quickFade">
+                    <div v-if="!newRecipe.public">
+                        <p>Recipe is private</p>
+                        <button @click.prevent="makePublic()">Make public</button>
+                    </div>
+                </Transition>
             </div>
             <div class="edit-form edit-category">
                 <h3>Edit Category</h3>
@@ -142,11 +126,38 @@ import MealCard from '../components/MealCard.vue';
 import CategoryService from '../services/CategoryService.js';
 import ImageService from '../services/ImageService.js';
 import StepList from './StepList.vue';
-import StepService from '../services/StepService.js';
+import RecipeDetailCard from './RecipeDetailCard.vue';
+
+function cloneRecipe(recipe) {
+    let newRecipe = {};
+    if (recipe) {
+        newRecipe.recipeId = recipe.recipeId;
+        newRecipe.userId = recipe.userId;
+        newRecipe.recipeName = recipe.recipeName;
+        newRecipe.description = recipe.description;
+        newRecipe.avgCookTime = recipe.avgCookTime;
+        newRecipe.imageId = recipe.imageId;
+        newRecipe.public = recipe.public;
+        newRecipe.publicUrl = recipe.publicUrl;
+        newRecipe.categoryId = recipe.categoryId;
+        newRecipe.categoryName = recipe.categoryName;
+        newRecipe.mealList = recipe.mealList;
+        newRecipe.img = recipe.img;
+
+        newRecipe.categories = recipe.categories;
+
+        newRecipe.stepList = [];
+        for(let i = 0; i < recipe.stepList.length; i++) {
+            let step = Object.assign({}, recipe.stepList[i])
+            newRecipe.stepList.push(step);
+        }
+    }
+    return newRecipe;
+}
 
 export default {
     props: ['recipe', 'loading'],
-    components: {Tag, MealCard, StepList},
+    components: {Tag, MealCard, StepList, RecipeDetailCard},
     data() {
         return {
             editing: false,
@@ -171,8 +182,8 @@ export default {
         if (this.recipe.stepList == null) {
             this.recipe.stepList = [];
         }
-        this.staticRecipe = this.cloneRecipe(this.recipe);
-        this.newRecipe = this.cloneRecipe(this.staticRecipe);        
+        this.staticRecipe = cloneRecipe(this.recipe);
+        this.newRecipe = cloneRecipe(this.staticRecipe);        
 
         // img handling
         if (this.recipe.imageId == 0 || this.recipe.imageId == null) {
@@ -185,9 +196,12 @@ export default {
 
     },
     methods: {
+
+        // EDIT methods
+
         cancelEdit() {
             this.editing = false;
-            this.newRecipe = this.cloneRecipe(this.staticRecipe);
+            this.newRecipe = cloneRecipe(this.staticRecipe);
         },
         saveEdit() {
             // todo implement this better
@@ -213,31 +227,127 @@ export default {
                 }
             )
         },
-        cloneRecipe(recipe) {
-            let newRecipe = {};
-            if (recipe) {
-                newRecipe.recipeId = recipe.recipeId;
-                newRecipe.userId = recipe.userId;
-                newRecipe.recipeName = recipe.recipeName;
-                newRecipe.description = recipe.description;
-                newRecipe.avgCookTime = recipe.avgCookTime;
-                newRecipe.imageId = recipe.imageId;
-                newRecipe.isPublic = recipe.isPublic;
-                newRecipe.categoryId = recipe.categoryId;
-                newRecipe.categoryName = recipe.categoryName;
-                newRecipe.mealList = recipe.mealList;
-                newRecipe.img = recipe.img;
 
-                newRecipe.categories = recipe.categories;
+        // CATEGORY methods
 
-                newRecipe.stepList = [];
-                for(let i = 0; i < recipe.stepList.length; i++) {
-                    let step = Object.assign({}, recipe.stepList[i])
-                    newRecipe.stepList.push(step);
+        searchForCategory() {
+            if (this.newCategory.categoryName) {
+                CategoryService.searchCategory(this.newCategory).then(
+                    (response) => {
+                        this.searchCategory = response.data;
+                    }
+                )
+            } else {
+                this.searchCategory = [];
+            }
+            
+        },
+        addCategory(category) {
+            this.newRecipe.categoryId = category.categoryId;
+            this.newRecipe.categoryName = category.categoryName;
+            this.newCategory.categoryName = "";
+            this.searchCategory = [];
+        },
+        removeCategory() {
+            this.newRecipe.categoryId = 0;
+            this.newRecipe.categoryName = "";
+        },
+        createCategory() {
+            CategoryService.createCategory(this.newCategory).then(
+                (response) => {
+                    this.newRecipe.categoryId = response.data.categoryId;
+                    this.newRecipe.categoryName = response.data.categoryName;
+                }
+            )
+        },
+
+        // STEP methods
+
+        addStep() {
+            let step = {};
+            step.stepDescription = this.newStep;
+            step.stepOrder = this.newRecipe.stepList.length + 1;
+            this.newRecipe.stepList.push(step);
+            this.newStep = "";
+        },
+        moveStep(k, step) {
+            if (k == 1) {
+                // move down the list
+                if (step.stepOrder != this.newRecipe.stepList.length) {
+                    let moveStep = Object.assign(step.stepDescription);
+                    let pivotStep = this.newRecipe.stepList[step.stepOrder];
+                    step.stepDescription = pivotStep.stepDescription;
+                    pivotStep.stepDescription = moveStep;
                 }
             }
-            return newRecipe;
+            if (k == -1) {
+                // move up the list
+                if (step.stepOrder != 1) {
+                    let moveStep = Object.assign(step.stepDescription);
+                    let pivotStep = this.newRecipe.stepList[step.stepOrder - 2];
+                    step.stepDescription = pivotStep.stepDescription;
+                    pivotStep.stepDescription = moveStep;
+                }
+            }
         },
+        deleteStep(step) {
+            let list = this.newRecipe.stepList;
+            if (step.stepOrder == list.length) {
+                // case for last on list
+                list.pop();
+            }
+            else if (step.stepOrder == 1) {
+                // case for first on list
+                for (let i = 0; i < list.length; i++) {
+                    if (i != list.length - 1) {
+                        list[i].stepDescription = Object.assign(list[i+1].stepDescription);
+                    }
+                    else if (i == list.length - 1) {
+                        list.pop();
+                    }
+                }
+            }
+            else {
+                // case for middle of list
+                for (let i = step.stepOrder - 1; i < list.length; i++) {
+                    if (i != list.length - 1) {
+                        list[i].stepDescription = Object.assign(list[i+1].stepDescription);
+                    }
+                    else if (i == list.length - 1) {
+                        list.pop();
+                    }
+                }
+            }
+        },
+
+        // PUBLIC methods
+        // TODO implement store here?
+
+
+        makePublic() {
+            RecipeService.makePublic(this.recipe.recipeId).then(
+                (response) => {
+                    this.newRecipe.publicUrl = response.data;
+                    this.newRecipe.public = true;
+                    this.staticRecipe.publicUrl = response.data;
+                    this.staticRecipe.public = true;
+
+                }
+            )
+        },
+        makePrivate() {
+            RecipeService.makePrivate(this.recipe.recipeId).then(
+                () => {
+                    this.newRecipe.publicUrl = null;
+                    this.newRecipe.public = false;
+                    this.staticRecipe.publicUrl = null;
+                    this.staticRecipe.public = false;
+                }
+            );
+        },
+
+        // TODO FIX IMG method
+
         uploadImage(event){
             this.showImage = false;
             
@@ -277,89 +387,6 @@ export default {
                     }
                 ) 
                 }
-        },
-        searchForCategory() {
-            if (this.newCategory.categoryName) {
-                CategoryService.searchCategory(this.newCategory).then(
-                    (response) => {
-                        this.searchCategory = response.data;
-                    }
-                )
-            } else {
-                this.searchCategory = [];
-            }
-            
-        },
-        addCategory(category) {
-            this.newRecipe.categoryId = category.categoryId;
-            this.newRecipe.categoryName = category.categoryName;
-            this.newCategory.categoryName = "";
-            this.searchCategory = [];
-        },
-        removeCategory() {
-            this.newRecipe.categoryId = 0;
-            this.newRecipe.categoryName = "";
-        },
-        createCategory() {
-            CategoryService.createCategory(this.newCategory).then(
-                (response) => {
-                    this.newRecipe.categoryId = response.data.categoryId;
-                    this.newRecipe.categoryName = response.data.categoryName;
-                }
-            )
-        },
-        addStep() {
-            let step = {};
-            step.stepDescription = this.newStep;
-            step.stepOrder = this.newRecipe.stepList.length + 1;
-            this.newRecipe.stepList.push(step);
-            this.newStep = "";
-        },
-        moveStep(k, step) {
-            if (k == 1) {
-                // move down the list
-                if (step.stepOrder != this.newRecipe.stepList.length) {
-                    let moveStep = Object.assign(step.stepDescription);
-                    let pivotStep = this.newRecipe.stepList[step.stepOrder];
-                    step.stepDescription = pivotStep.stepDescription;
-                    pivotStep.stepDescription = moveStep;
-                }
-            }
-            if (k == -1) {
-                // move up the list
-                if (step.stepOrder != 1) {
-                    let moveStep = Object.assign(step.stepDescription);
-                    let pivotStep = this.newRecipe.stepList[step.stepOrder - 2];
-                    step.stepDescription = pivotStep.stepDescription;
-                    pivotStep.stepDescription = moveStep;
-                }
-            }
-        },
-        deleteStep(step) {
-            let list = this.newRecipe.stepList;
-            if (step.stepOrder == list.length) {
-                list.pop();
-            }
-            else if (step.stepOrder == 1) {
-                for (let i = 0; i < list.length; i++) {
-                    if (i != list.length - 1) {
-                        list[i].stepDescription = Object.assign(list[i+1].stepDescription);
-                    }
-                    else if (i == list.length - 1) {
-                        list.pop();
-                    }
-                }
-            }
-            else {
-                for (let i = step.stepOrder - 1; i < list.length; i++) {
-                    if (i != list.length - 1) {
-                        list[i].stepDescription = Object.assign(list[i+1].stepDescription);
-                    }
-                    else if (i == list.length - 1) {
-                        list.pop();
-                    }
-                }
-            }
         }
     }
 }

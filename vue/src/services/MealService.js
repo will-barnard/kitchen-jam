@@ -5,6 +5,9 @@ export default {
   getMeal(mealId) {
     return axios.get('/meal/' + mealId)
   },
+  getPublicMeal(uuid) {
+    return axios.get('/meal/public/' + uuid)
+  },
   getMealsByUser() {
     return axios.get('/meal/user')
   },
@@ -13,6 +16,12 @@ export default {
   },
   updateMeal(meal) {
     return axios.put('/meal', meal)
+  },
+  makePublic(mealId) {
+    return axios.post('/meal/public/' + mealId)
+  },
+  makePrivate(mealId) {
+    return axios.delete('/meal/public/' + mealId)
   },
   deleteMeal(mealId) {
     return axios.delete('/meal/' + mealId)

@@ -1,6 +1,6 @@
 {
-  "name": "final-vue-capstone-seed",
-  "version": "0.1.0",
+  "name": "kitchen-jam-frontend",
+  "version": "1.2.0",
   "private": true,
   "scripts": {
     "dev": "vite",
