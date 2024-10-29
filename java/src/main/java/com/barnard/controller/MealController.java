@@ -124,7 +124,8 @@ public class MealController {
     @PutMapping(path = "")
     public Meal updateMeal(@RequestBody Meal meal, Principal principal) {
 
-        if (meal.getRecipeId() == 0) {
+        if (meal.getRecipeId() == null) {
+        } else if (meal.getRecipeId() == 0) {
             meal.setRecipeId(null);
         }
 
