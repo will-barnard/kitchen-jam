@@ -1,7 +1,11 @@
 <template>
     <div>
         <RecipeMenu />
-        <CreateRecipe />
+        <Transition name="quickFade">
+            <div v-show="show">
+                <CreateRecipe />
+            </div>
+        </Transition>    
     </div>
 </template>
 
@@ -10,9 +14,17 @@ import RecipeMenu from '../components/RecipeMenu.vue';
 import CreateRecipe from '../components/CreateRecipe.vue';
 
 export default {
-    components: {RecipeMenu, CreateRecipe}
-
-    
+    components: {RecipeMenu, CreateRecipe},
+    data() {
+        return {
+            show: false
+        }
+    },
+    created() {
+        setTimeout(
+        () => {this.show = true}
+        , 10)
+    }
 }
 </script>
 

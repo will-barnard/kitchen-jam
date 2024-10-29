@@ -1,8 +1,10 @@
 !<template>
     <div>
         <RecipeMenu />
-        <Transition>
-            <RecipeBook :recipeList="$store.state.userRecipes"/>
+        <Transition name="quickFade">
+            <div v-show="show">
+                <RecipeBook :recipeList="$store.state.userRecipes"/>
+            </div>
         </Transition>
     </div>
 </template>
@@ -15,12 +17,15 @@ export default {
     components: {RecipeMenu, RecipeBook},
     data() {
         return {
-            recipeList: []
+            recipeList: [],
+            show: false
         }
     },
     created() {
-        this.tab = 'log';
         this.recipeList = this.$store.state.userRecipes;
+        setTimeout(
+        () => {this.show = true}
+        , 10)
     }
     
 }
