@@ -12,7 +12,9 @@ export function createStore(currentToken, currentUser) {
       token: currentToken || '',
       user: currentUser || {},
       userMeals: [],
+      loadedMeals: false,
       userRecipes: [],
+      loadedRecipes: false,
       subMenu: {},
       publicMealGallery: []
     },
@@ -37,6 +39,7 @@ export function createStore(currentToken, currentUser) {
         MealService.getMealsByUser().then(
           (response) => {
             state.userMeals = response.data;
+            state.loadedMeals = true;
             for (let meal of state.userMeals) {
               if (meal.imageId) {
                 ImageService.getImage(meal.imageId).then(
@@ -54,6 +57,7 @@ export function createStore(currentToken, currentUser) {
         RecipeService.getRecipesByUser().then(
           (response) => {
             state.userRecipes = response.data;
+            state.loadedRecipes = true;
             for (let recipe of state.userRecipes) {
               if (recipe.imageId) {
                 ImageService.getImage(recipe.imageId).then(

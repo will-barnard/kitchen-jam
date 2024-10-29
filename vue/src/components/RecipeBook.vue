@@ -1,7 +1,7 @@
 <template>
     <Transition>
        <div>
-            <p v-if="!recipeList">you have not logged any recipes</p>  
+            <p v-if="!recipeList">you have not logged any recipes</p>
             <TransitionGroup>
                 <RecipeCard class="recipe-card" v-if="recipeList" v-for="recipe in recipeList" :key="recipe.recipeId" :recipe="recipe" :selected="select == recipe.recipeId" v-on:click="selectCard()"/>
             </TransitionGroup>
@@ -12,9 +12,10 @@
 
 <script>
 import RecipeCard from '../components/RecipeCard.vue';
+import LoadingWidget from './LoadingWidget.vue';
 
 export default {
-    components: {RecipeCard},
+    components: {RecipeCard, LoadingWidget},
     props: ['recipeList'],
     data() {
         return {

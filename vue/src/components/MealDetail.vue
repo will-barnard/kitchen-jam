@@ -225,6 +225,8 @@ export default {
     created() {
         this.staticMeal = this.cloneMeal(this.meal);
         this.newMeal = this.cloneMeal(this.staticMeal);
+
+        // img handling
         if (this.meal.imageId == 0 || this.meal.imageId == null) {
             this.imgPath = "../img/placeholder.jpeg";
             this.showImage = true;

@@ -20,7 +20,7 @@
                     <div class="subtitle">
                         <p>{{ staticRecipe.description }}</p>   
                     </div>
-                    <div class="steplist">
+                    <div class="steplist" v-show="staticRecipe.stepList.length > 0">
                         <StepList :stepList="staticRecipe.stepList"/>
                     </div>
                     <!-- <h3>Last made here?</h3> -->
@@ -174,6 +174,7 @@ export default {
         this.staticRecipe = this.cloneRecipe(this.recipe);
         this.newRecipe = this.cloneRecipe(this.staticRecipe);        
 
+        // img handling
         if (this.recipe.imageId == 0 || this.recipe.imageId == null) {
             this.imgPath = "../img/placeholder.jpeg";
             this.showImage = true;

@@ -28,7 +28,7 @@
                     <div class="widget">
                         <p>{{ recipe.avgCookTime }} min</p>
                     </div>
-                    <div v-if="showMore">
+                    <div v-if="showMore && recipe.stepList">
                         <StepList :stepList="recipe.stepList" />
                     </div>
                     

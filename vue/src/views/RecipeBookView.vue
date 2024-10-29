@@ -1,6 +1,7 @@
 !<template>
     <div>
         <RecipeMenu />
+        <LoadingWidget v-if="!showLoading"/>  
         <Transition name="quickFade">
             <div v-show="show">
                 <RecipeBook :recipeList="$store.state.userRecipes"/>
@@ -12,9 +13,10 @@
 <script>
 import RecipeMenu from '../components/RecipeMenu.vue';
 import RecipeBook from '../components/RecipeBook.vue';
+import LoadingWidget from '../components/LoadingWidget.vue';
 
 export default {
-    components: {RecipeMenu, RecipeBook},
+    components: {RecipeMenu, RecipeBook, LoadingWidget},
     data() {
         return {
             recipeList: [],
@@ -26,6 +28,16 @@ export default {
         setTimeout(
         () => {this.show = true}
         , 10)
+    },
+    computed: {
+        showLoading() {
+            if (!this.$store.state.loadedRecipes) {
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
     }
     
 }

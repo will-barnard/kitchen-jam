@@ -2,7 +2,7 @@
         <div v-show="show">
 
             <MealMenu />
-
+            <LoadingWidget v-if="!showLoading"/>  
             <Transition name="quickFade">
                 <body v-show="show">
                     <MealLog :mealList="$store.state.userMeals"/>
@@ -13,12 +13,13 @@
 </template>
 
 <script>
+import LoadingWidget from '../components/LoadingWidget.vue';
 import MealLog from '../components/MealLog.vue';
 import MealMenu from '../components/MealMenu.vue';
 
 
 export default {
-    components: {MealLog, MealMenu},
+    components: {MealLog, MealMenu, LoadingWidget},
     data() {
         return {
             mealList: [],
@@ -40,6 +41,16 @@ export default {
         setTimeout(
         () => {this.show = true}
         , 10)
+    },
+    computed: {
+        showLoading() {
+            if (!this.$store.state.loadedRecipes) {
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
     }
 }
 </script>

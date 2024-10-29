@@ -1,44 +1,78 @@
 <template>
     <div>
         <MealMenu />
-        <p v-if="loading">Loading...</p>
-        <MealDetail v-if="!loading" :meal="getMeal"/>
+        <LoadingWidget v-if="loading"/>
+        <Transition>
+            <MealDetail v-if="!loading" :meal="meal"/>
+        </Transition>
     </div>
 </template>
 
 <script>
-import MealService from '../services/MealService.js';
 import MealMenu from '../components/MealMenu.vue';
 import MealDetail from '../components/MealDetail.vue';
+import LoadingWidget from '../components/LoadingWidget.vue';
 
 export default {
-    components: {MealMenu, MealDetail},
+    components: {MealMenu, MealDetail, LoadingWidget},
     data() {
         return {
-            getMeal: {},
+            meal: {},
             loading: true
         }
     },
     created() {
-        if (this.$store.state.userMeals.find((meal) => {return meal.mealId == this.$route.params.mealId;})) {
-            this.getMeal = this.$store.state.userMeals.find(
-                (meal) => {
-                    return meal.mealId == this.$route.params.mealId;
+        if (this.$store.state.loadedMeals) {
+            this.meal = this.$store.state.userMeals.find(
+                (mealObj) => {
+                    return mealObj.mealId == this.$route.params.mealId;
                 }
             );
             this.loading = false;
         } else {
-            MealService.getMeal(this.$route.params.mealId).then(
-                (response) => {
-                    this.getMeal = response.data;
-                    this.loading = false;
+            this.loadingTick();
+        }
+    },
+    methods: {
+        loadingTick() {
+            setTimeout( () => {
+                if (this.$store.state.loadedMeals) {
+                    this.meal = this.$store.state.userMeals.find(
+                        (mealObj) => {
+                            return mealObj.mealId == this.$route.params.mealId;
+                        }
+                    );
+                    if (this.meal.img) {
+                        this.loading = false;
+                    } else {
+                        this.imgTick();
+                    }
+                } else {
+                    this.loadingTick();
                 }
-            )
+            }, 500)
+        },
+        imgTick() {
+            setTimeout( () => {
+                if (this.meal.img) {
+                    this.loading = false;
+                } else {
+                        this.imgTick();
+                }
+            }, 500);
         }
     }
 }
 </script>
 
 <style scoped>
-    
+    .v-enter-active,
+    .v-leave-active {
+        transition: opacity .5s ease;
+    }
+
+    .v-enter-from,
+    .v-leave-to {
+        opacity: 0%;
+    }
 </style>

@@ -1,50 +1,66 @@
 <template>
     <div>
         <RecipeMenu />
-        <p v-if="loading  && showLoading">Loading...</p>
+        <LoadingWidget v-if="loading" />
         <Transition>
-            <RecipeDetail v-if="!loading" :recipe="getRecipe"/>
+            <RecipeDetail v-if="!loading" :recipe="recipe"/>
         </Transition>
     </div>
 </template>
 
 <script>
-import RecipeService from '../services/RecipeService.js'
 import RecipeMenu from '../components/RecipeMenu.vue';
 import RecipeDetail from '../components/RecipeDetail.vue';
+import LoadingWidget from '../components/LoadingWidget.vue';
 
 export default {
-    components: {RecipeMenu, RecipeDetail},
+    components: {RecipeMenu, RecipeDetail, LoadingWidget},
     data() {
         return {
-            getRecipe: {},
-            loading: true,
-            showLoading: false
+            recipe: {},
+            loading: true
         }
     },
     created() {
-        this.loadingWait();
-        if (this.$store.state.userRecipes.find((recipe) => {return recipe.recipeId == this.$route.params.recipeId;})) {
-            this.getRecipe = this.$store.state.userRecipes.find(
-                (recipe) => {
-                    return recipe.recipeId == this.$route.params.recipeId;
+        if (this.$store.state.loadedRecipes) {
+            this.recipe = this.$store.state.userRecipes.find(
+                (recipeObj) => {
+                    return recipeObj.recipeId == this.$route.params.recipeId;
                 }
             );
             this.loading = false;
         } else {
-            RecipeService.getRecipe(this.$route.params.recipeId).then(
-                (response) => {
-                    this.getRecipe = response.data;
-                    this.loading = false;
-                }
-            )
+            this.loadingTick();
         }
+        
     },
     methods: {
-        loadingWait() {
+        loadingTick() {
+            setTimeout(() => {
+                if (this.$store.state.loadedRecipes) {
+                    this.recipe = this.$store.state.userRecipes.find(
+                        (recipeObj) => {
+                            return recipeObj.recipeId == this.$route.params.recipeId;
+                        }
+                    );
+                    if (this.recipe.img) {
+                        this.loading = false;
+                    } else {
+                        this.imgTick();
+                    }
+                } else {
+                    this.loadingTick();
+                }
+            }, 500)
+        },
+        imgTick() {
             setTimeout( () => {
-                this.showLoading = true;
-            }, 5000)
+                if (this.recipe.img) {
+                    this.loading = false;
+                } else {
+                        this.imgTick();
+                }
+            }, 500);
         }
     }
 }
