@@ -125,12 +125,18 @@ const routes = [
   {
     path: '/p/meal/:uuid',
     name: 'public-meal',
-    component: PublicMealView
+    component: PublicMealView,
+    meta: {
+      requiresAuth: false
+    }
   },
   {
     path: '/p/recipe/:uuid',
     name: 'public-recipe',
-    component: PublicRecipeView
+    component: PublicRecipeView,
+    meta: {
+      requiresAuth: false
+    }
   },
 ];
 
