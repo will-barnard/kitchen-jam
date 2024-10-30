@@ -92,6 +92,7 @@ public class JdbcStepDao implements StepDao {
                         }
                     }
                     stepList = new ArrayList<>();
+                    stepList.add(newStep);
                 }
                 prevStep = newStep;
             }
