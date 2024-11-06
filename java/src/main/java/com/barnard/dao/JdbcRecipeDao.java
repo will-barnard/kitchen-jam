@@ -196,7 +196,8 @@ public class JdbcRecipeDao implements RecipeDao {
         String sql = "SELECT recipe.*, category.category_name " +
                 "FROM recipe " +
                 "LEFT JOIN category ON recipe.category_id = category.category_id " +
-                "WHERE recipe.public_url = ?;";
+                "WHERE recipe.public_url = ? " +
+                "AND is_public = true;";
 
         try {
             SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, uuid);
@@ -213,15 +214,35 @@ public class JdbcRecipeDao implements RecipeDao {
 
     @Override
     public String makePublic(Recipe recipe) {
+        // todo refactor this into one sql query
         String uuid = UUID.randomUUID().toString();
-        String sql = "UPDATE recipe " +
+
+        String sql = "SELECT public_url " +
+                "FROM recipe " +
+                "WHERE recipe_id = ?;";
+        String sql2 = "UPDATE recipe " +
                 "SET is_public = true, public_url = ? " +
                 "WHERE recipe_id = ?;";
+        String sql3 = "UPDATE recipe " +
+                "SET is_public = true " +
+                "WHERE recipe_id = ?;";
+
         try {
-            int rowsAffected = 0;
-            rowsAffected = jdbcTemplate.update(sql, uuid, recipe.getRecipeId());
-            if (rowsAffected == 0) {
-                throw new DaoException("Something went wrong, no rows affected");
+            SqlRowSet rs = jdbcTemplate.queryForRowSet(sql, recipe.getRecipeId());
+            String result = rs.getString("public_url");
+            if (result == null) {
+                int rowsAffected = 0;
+                rowsAffected = jdbcTemplate.update(sql2, uuid, recipe.getRecipeId());
+                if (rowsAffected == 0) {
+                    throw new DaoException("Something went wrong, no rows affected");
+                }
+            } else {
+                int rowsAffected = 0;
+                rowsAffected = jdbcTemplate.update(sql3, recipe.getRecipeId());
+                if (rowsAffected == 0) {
+                    throw new DaoException("Something went wrong, no rows affected");
+                }
+                uuid = result;
             }
         } catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database", e);

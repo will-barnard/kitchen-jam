@@ -197,7 +197,8 @@ public class JdbcMealDao implements MealDao {
         String sql = "SELECT meal.*, recipe.recipe_name " +
                 "FROM meal " +
                 "LEFT JOIN recipe ON meal.recipe_id = recipe.recipe_id " +
-                "WHERE meal.public_url = ?;";
+                "WHERE meal.public_url = ? " +
+                "AND is_public = true;";
         try {
             SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, uuid);
             if (rowSet.next()) {
@@ -213,15 +214,36 @@ public class JdbcMealDao implements MealDao {
 
     @Override
     public String makePublic(Meal meal) {
+
+        // todo refactor this into one sql query
         String uuid = UUID.randomUUID().toString();
-        String sql = "UPDATE meal " +
+
+        String sql = "SELECT public_url " +
+                "FROM meal " +
+                "WHERE meal_id = ?;";
+        String sql2 = "UPDATE meal " +
                 "SET is_public = true, public_url = ? " +
                 "WHERE meal_id = ?;";
+        String sql3 = "UPDATE meal " +
+                "SET is_public = true " +
+                "WHERE meal_id = ?;";
+
         try {
-            int rowsAffected = 0;
-            rowsAffected = jdbcTemplate.update(sql, uuid, meal.getMealId());
-            if (rowsAffected == 0) {
-                throw new DaoException("Something went wrong, no rows affected");
+            SqlRowSet rs = jdbcTemplate.queryForRowSet(sql, meal.getMealId());
+            String result = rs.getString("public_url");
+            if (result == null) {
+                int rowsAffected = 0;
+                rowsAffected = jdbcTemplate.update(sql2, uuid, meal.getMealId());
+                if (rowsAffected == 0) {
+                    throw new DaoException("Something went wrong, no rows affected");
+                }
+            } else {
+                int rowsAffected = 0;
+                rowsAffected = jdbcTemplate.update(sql3, meal.getMealId());
+                if (rowsAffected == 0) {
+                    throw new DaoException("Something went wrong, no rows affected");
+                }
+                uuid = result;
             }
         } catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database", e);
@@ -234,11 +256,11 @@ public class JdbcMealDao implements MealDao {
     @Override
     public void makePrivate(Meal meal) {
         String sql = "UPDATE meal " +
-                "SET is_public = false, public_url = ? " +
+                "SET is_public = false " +
                 "WHERE meal_id = ?;";
         try {
             int rowsAffected = 0;
-            rowsAffected = jdbcTemplate.update(sql, null, meal.getMealId());
+            rowsAffected = jdbcTemplate.update(sql, meal.getMealId());
             if (rowsAffected == 0) {
                 throw new DaoException("Something went wrong, no rows affected");
             }
