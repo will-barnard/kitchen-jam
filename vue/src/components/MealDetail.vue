@@ -7,55 +7,9 @@
                     <img :src="imgPath" />
                 </div>
         </div>
-        
-        <div class="display" v-show="!editing">
-            <div>
-                <div class="details">
 
-                    <div class="title">
-                        <h2 >{{ staticMeal.mealName }}</h2>
-                        <h3 v-if="staticMeal.recipeId">{{ staticMeal.recipeName }}</h3>
-                        <div class="subtitle">
-                            <h4 class="comment">{{ staticMeal.mealComment }}</h4>
-                            <h4 class="date">{{ formatDate(staticMeal.dateCooked) }}</h4>
-                        </div>
-                    </div>
-
-                    <div class="tags">
-                        <p v-if="!staticMeal.tags">No tags yet</p>
-                        <div class="tag-list">
-                            <div  v-for="tag in staticMeal.tags">
-                                <div class="tag-item-2">
-                                    <p>{{tag.tagName}}</p>
-                                </div>    
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="widgets">
-                        <div class="cooktime">
-                            <img src="/img/clock.png" />
-                            <p>{{ staticMeal.cookTime }} min</p>
-                        </div>
-                        <div class="rating">
-                            <p>{{ staticMeal.rating }} / 10 Rating</p>
-                        </div>
-                    </div>
-
-                    <div class="foot">
-                        <div class="ingredients">
-                            <h3>Ingredients:</h3>
-                            <p>{{ staticMeal.ingredients }}</p>
-                        </div>
-                        <div class="notes">
-                            <h3>Notes:</h3>
-                            <p>{{ staticMeal.notes }}</p>
-                        </div>
-            
-                    </div>
-
-                </div>            
-            </div>
+        <div v-show="!editing">
+            <MealDetailCard :meal="staticMeal" :editable="true"/>
         </div>
 
         <div class="edit" v-show="editing">
@@ -220,6 +174,7 @@ import ImageService from '../services/ImageService.js';
 import UtilityService from '../services/UtilityService.js';
 import TagService from '../services/TagService.js';
 import RecipeService from '../services/RecipeService.js';
+import MealDetailCard from './MealDetailCard.vue';
 
 function cloneMeal(meal) {
     let newMeal = {};
@@ -248,7 +203,7 @@ function cloneMeal(meal) {
 
 export default {
     props: ['meal', 'loading'],
-    components: {Tag},
+    components: {Tag, MealDetailCard},
     data() {
         return {
             editing: false,

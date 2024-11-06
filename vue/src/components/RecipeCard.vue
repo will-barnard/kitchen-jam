@@ -7,7 +7,7 @@
                 
                 <div class="recipe-img" >
                     <img src="../img/placeholder.jpeg" v-if="!recipe.imageId">
-                    <img :src="recipe.img" v-if="recipe.imageId"/>
+                    <img :src="recipe.img ? recipe.img : '../img/placeholder.jpeg'" v-if="recipe.imageId"/>
                 </div>
 
                 <div class="content">

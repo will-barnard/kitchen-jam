@@ -5,7 +5,7 @@
             <div id="details" class="body-card">
                 <div class="meal-img" >
                     <img src="../img/placeholder.jpeg" v-if="!meal.imageId">
-                    <img :src="meal.img" v-if="meal.imageId"/>
+                    <img :src="meal.img ? meal.img : '../img/placeholder.jpeg'" v-if="meal.imageId"/>
                 </div>
 
                 <div class="content">
