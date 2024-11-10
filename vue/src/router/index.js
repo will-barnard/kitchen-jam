@@ -143,7 +143,14 @@ const routes = [
 // Create the router
 const router = createRouter({
   history: createWebHistory(),
-  routes: routes
+  routes: routes,
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition;
+    } else {
+      window.scrollTo(0, 0);
+    }
+  }
 });
 
 router.beforeEach((to) => {
@@ -159,6 +166,7 @@ router.beforeEach((to) => {
     return {name: "login"};
   }
   // Otherwise, do nothing and they'll go to their next destination
+
 });
 
 export default router;
