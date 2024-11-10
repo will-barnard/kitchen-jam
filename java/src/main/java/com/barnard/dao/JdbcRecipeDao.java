@@ -197,7 +197,7 @@ public class JdbcRecipeDao implements RecipeDao {
                 "FROM recipe " +
                 "LEFT JOIN category ON recipe.category_id = category.category_id " +
                 "WHERE recipe.public_url = ? " +
-                "AND is_public = true;";
+                "AND recipe.is_public = true;";
 
         try {
             SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, uuid);

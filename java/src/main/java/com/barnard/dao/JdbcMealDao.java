@@ -198,7 +198,7 @@ public class JdbcMealDao implements MealDao {
                 "FROM meal " +
                 "LEFT JOIN recipe ON meal.recipe_id = recipe.recipe_id " +
                 "WHERE meal.public_url = ? " +
-                "AND is_public = true;";
+                "AND meal.is_public = true;";
         try {
             SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, uuid);
             if (rowSet.next()) {
