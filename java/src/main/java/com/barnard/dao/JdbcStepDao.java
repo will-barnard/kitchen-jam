@@ -71,7 +71,7 @@ public class JdbcStepDao implements StepDao {
             }
         }
 
-        sql += "ORDER BY step.recipe_id ASC;";
+        sql += "ORDER BY recipe_id, step.step_order ASC;";
 
         try {
             SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql);
