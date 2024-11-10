@@ -229,8 +229,11 @@ public class JdbcMealDao implements MealDao {
                 "WHERE meal_id = ?;";
 
         try {
+            String result = "";
             SqlRowSet rs = jdbcTemplate.queryForRowSet(sql, meal.getMealId());
-            String result = rs.getString("public_url");
+            if (rs.next()) {
+                result = rs.getString("public_url");
+            }
             if (result == null) {
                 int rowsAffected = 0;
                 rowsAffected = jdbcTemplate.update(sql2, uuid, meal.getMealId());

@@ -228,8 +228,11 @@ public class JdbcRecipeDao implements RecipeDao {
                 "WHERE recipe_id = ?;";
 
         try {
+            String result = "";
             SqlRowSet rs = jdbcTemplate.queryForRowSet(sql, recipe.getRecipeId());
-            String result = rs.getString("public_url");
+            if (rs.next()) {
+                result = rs.getString("public_url");
+            }
             if (result == null) {
                 int rowsAffected = 0;
                 rowsAffected = jdbcTemplate.update(sql2, uuid, recipe.getRecipeId());
