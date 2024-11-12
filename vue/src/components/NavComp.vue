@@ -117,7 +117,7 @@ export default {
         border-radius: 20px;
 
         height: 300px;
-        bottom: -80vh;
+        bottom: -290px;
         transition: bottom .5s ease;
     }
     .nav img {
@@ -147,33 +147,32 @@ export default {
     .hamburger {
         background-color: var(--dark-1);
         border-radius: 100%;
-        left: 30px;
+        right: -5px;
         position: fixed;
         user-select: none;
+        z-index: 1;
     }
     .hamburger-closed {
-        bottom: 20px;
-        transition: bottom .5s ease;
+        bottom: -10px;
+        transition: bottom .485s ease;
 
     }
     .hamburger-open {
-        bottom: 250px;
+        bottom: 265px;
         transition: bottom .5s ease;
-        z-index: 1;
-
     }
     .spacer {
         height: 50px;
     }
     .container {
-        padding: 18px;
+        padding: 10px;
     }
 
     .bar1, .bar2, .bar3 {
-    width: 42px;
-    height: 6px;
+    width: 20px;
+    height: 4px;
     background-color: var(--text-color);
-    margin: 6px 0;
+    margin: 3px 0;
     transition: 0.4s;
     border-radius: 3px;
   }
