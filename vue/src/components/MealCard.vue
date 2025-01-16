@@ -16,13 +16,12 @@
                     <div class="recipe" v-if="meal.recipeId">
                         <h3>{{ meal.recipeName }}</h3>
                     </div>
-                    <div class="subheader">
+                    <div class="subheader" v-if="meal.mealComment">
                         <p>{{ meal.mealComment }}</p>
-                        <p class="date">{{ formatDate(meal.dateCooked) }}</p>
+                        <p class="date" v-if="meal.dateCooked">{{ formatDate(meal.dateCooked) }}</p>
                     </div>
-                    
 
-                    <div class="tags" v-if="meal.tags.length">
+                    <div class="tags" v-if="meal.tags.length > 0">
                         <div class="tag-list">
                             <div  v-for="tag in meal.tags">
                                 <div class="tag-item">
@@ -33,20 +32,26 @@
                     </div>
                     
                     <Transition name="control">
+
                         <div class="info" v-show="showMore">
-                        <div class="row">
-                        <div class="widget">
-                            <p>{{ meal.cookTime }} min</p>
+                            <div class="row">
+                                <div class="widget" v-if="meal.cookTime > 0">
+                                    <p>{{ meal.cookTime }} min</p>
+                                </div>
+                            <div class="widget" v-if="meal.rating > 0">
+                                <p>{{ meal.rating }} / 10 Rating</p>
+                            </div>
                         </div>
-                        <div class="widget">
-                            <p>{{ meal.rating }} / 10 Rating</p>
+                            <div v-if="meal.ingredients">
+                                <h3>Ingredients:</h3>
+                                <p >{{ meal.ingredients }}</p>
+                            </div>
+                            <div v-if="meal.notes">
+                                <h3>Notes:</h3>
+                                <p id="notes">{{ meal.notes }}</p>
+                            </div>
                         </div>
-                    </div>
-                        <h3>Ingredients:</h3>
-                        <p >{{ meal.ingredients }}</p>
-                        <h3>Notes:</h3>
-                        <p id="notes">{{ meal.notes }}</p>
-                    </div>
+
                     </Transition>
                 </div>
                 

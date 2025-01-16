@@ -12,12 +12,12 @@
                     <h2 >{{ meal.mealName }}</h2>
                     <h3 v-if="meal.recipeId">{{ meal.recipeName }}</h3>
                     <div class="subtitle">
-                        <h4 class="comment">{{ meal.mealComment }}</h4>
-                        <h4 class="date">{{ formatDate(meal.dateCooked) }}</h4>
+                        <h4 class="comment" v-show="meal.mealComment">{{ meal.mealComment }}</h4>
+                        <h4 class="date" v-show="meal.dateCooked">{{ formatDate(meal.dateCooked) }}</h4>
                     </div>
                 </div>
 
-                <div class="tags">
+                <div class="tags" v-show="meal.tags > 0">
                     <p v-if="!meal.tags">No tags yet</p>
                     <div class="tag-list">
                         <div  v-for="tag in meal.tags">
@@ -29,21 +29,21 @@
                 </div>
 
                 <div class="widgets">
-                    <div class="cooktime">
+                    <div class="cooktime" v-show="meal.cookTime">
                         <img src="/img/clock.png" />
                         <p>{{ meal.cookTime }} min</p>
                     </div>
-                    <div class="rating">
+                    <div class="rating" v-show="meal.rating">
                         <p>{{ meal.rating }} / 10 Rating</p>
                     </div>
                 </div>
 
-                <div class="foot">
-                    <div class="ingredients">
+                <div class="foot" v-show="meal.ingredients || meal.notes">
+                    <div class="ingredients" v-show="meal.ingredients">
                         <h3>Ingredients:</h3>
                         <p>{{ meal.ingredients }}</p>
                     </div>
-                    <div class="notes">
+                    <div class="notes" v-show="meal.notes">
                         <h3>Notes:</h3>
                         <p>{{ meal.notes }}</p>
                     </div>
