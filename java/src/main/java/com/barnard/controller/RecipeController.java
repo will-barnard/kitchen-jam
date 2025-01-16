@@ -149,7 +149,9 @@ public class RecipeController {
     @PutMapping(path = "")
     public Recipe updateRecipe(@RequestBody Recipe recipe, Principal principal) {
 
-        if (recipe.getCategoryId() == 0) {
+        if (recipe.getCategoryId() == null) {
+            // do nothing
+        } else if (recipe.getCategoryId() == 0) {
             recipe.setCategoryId(null);
         }
 
