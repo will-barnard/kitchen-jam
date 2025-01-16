@@ -42,7 +42,7 @@ export default {
                             return mealObj.mealId == this.$route.params.mealId;
                         }
                     );
-                    if (this.meal.img) {
+                    if (!this.meal.imageId) {
                         this.loading = false;
                     } else {
                         this.imgTick();

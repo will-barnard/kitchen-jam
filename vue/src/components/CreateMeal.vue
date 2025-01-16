@@ -58,14 +58,25 @@ export default {
         createMeal() {
             MealService.createMeal(this.meal).then(
                 (response) => {
-                    if (this.newImgId != null) {
+                    let newMeal = response.data;
+                    newMeal.tags = [];
+                    if (this.newImgId) {
                         ImageService.addImageToMeal(response.data.mealId, this.newImgId).then(
-                        this.$router.push({ name: 'meal-detail', params: {mealId: response.data.mealId} })
+                            () => {
+                                ImageService.getImage(newMeal.imageId).then(
+                                    (res) => {
+                                        const base64 = ImageService.parseImg(res);
+                                        newMeal.img = "data:image/png;base64," + base64;
+                                        this.$store.commit('CREATE_MEAL', newMeal);
+                                    }
+                                )
+                                this.$router.push({ name: 'meal-detail', params: {mealId: response.data.mealId}})
+                            }
                     );
                     } else {
+                        this.$store.commit('CREATE_MEAL', newMeal);
                         this.$router.push({ name: 'meal-detail', params: {mealId: response.data.mealId} })
                     }
-                    
                 }
             )
         },

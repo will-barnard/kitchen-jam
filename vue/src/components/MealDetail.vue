@@ -255,11 +255,8 @@ export default {
             }
         },
         deleteMeal() {
-            MealService.deleteMeal(this.meal.mealId).then(
-                () => {
-                    this.$router.push({name: 'meal-log'})
-                }
-            )
+            this.$store.commit('DELETE_MEAL', this.meal.mealId);
+            this.$router.push({name: 'meal-log'})
         },
         // remove??
         formatDate(date) {

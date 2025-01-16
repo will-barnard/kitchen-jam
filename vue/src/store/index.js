@@ -78,11 +78,7 @@ export function createStore(currentToken, currentUser) {
         )
       },
       CREATE_MEAL(state, payload) {
-        MealService.createMeal(payload).then(
-          (response) => {
-            state.userMeals.push(response.data);
-          }
-        )
+        state.userMeals.push(payload);
       },
       UPDATE_MEAL(state, payload) {
         MealService.updateMeal(payload).then(
@@ -98,7 +94,7 @@ export function createStore(currentToken, currentUser) {
       DELETE_MEAL(state, payload) {
         MealService.deleteMeal(payload).then(
           () => {
-            state.userMeals.filter(
+            state.userMeals = state.userMeals.filter(
               (meal) => {
                 return meal.mealId != payload;
               }

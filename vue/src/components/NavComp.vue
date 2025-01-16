@@ -35,9 +35,9 @@ export default {
     computed: {
         menu() {
             if (!this.toggle) {
-                return "nav-open";
+                return "nav nav-open";
             } else {
-                return "nav";
+                return "nav nav-closed";
             }
         },
         hamburger() {
@@ -89,45 +89,21 @@ export default {
         flex-direction: column;
         justify-content: start;
         align-items: center;
-
-        background-color: var(--dark-1);
-
         position: fixed;
+        background-color: var(--dark-1);
         left: 0px;
         right: 0px;
         width: 100vw;
         border-radius: 20px;
-
         height: 300px;
-        bottom: -10px;
-        transition: bottom .5s ease;
     }
     .nav-open {
-        display: flex;
-        flex-direction: column;
-        justify-content: start;
-        align-items: center;
-
-        background-color: var(--dark-1);
-
-        position: fixed;
-        left: 0px;
-        right: 0px;
-        width: 100vw;
-        border-radius: 20px;
-
-        height: 300px;
         bottom: -290px;
         transition: bottom .5s ease;
     }
-    .nav img {
-        height: 8vh;
-        margin-top: 10px;
-
-    }
-    .nav-open img {
-        height: 8vh;
-        margin-top: 10px;
+    .nav-closed {
+        bottom: -10px;
+        transition: bottom .5s ease;
     }
     .white {
         position: fixed;
@@ -144,6 +120,11 @@ export default {
         bottom: 0px;
         transition: bottom .5s ease;
     }
+    .spacer {
+        height: 50px;
+    }
+
+    /* HAMBURGER */
     .hamburger {
         background-color: var(--dark-1);
         border-radius: 100%;
@@ -161,32 +142,28 @@ export default {
         bottom: 265px;
         transition: bottom .5s ease;
     }
-    .spacer {
-        height: 50px;
-    }
     .container {
         padding: 10px;
     }
-
     .bar1, .bar2, .bar3 {
-    width: 20px;
-    height: 4px;
-    background-color: var(--text-color);
-    margin: 3px 0;
-    transition: 0.4s;
-    border-radius: 3px;
-  }
+        width: 20px;
+        height: 4px;
+        background-color: var(--text-color);
+        margin: 3px 0;
+        transition: 0.4s;
+        border-radius: 3px;
+    }
     /* Rotate first bar */
-  .change .bar1 {
-    transform: translate(0, 11px) rotate(-90deg);
-  }
-  /* Fade out the second bar */
-  .change .bar2 {
-      opacity: 0;
-      transition: 0.1s;
-  }
-  /* Rotate last bar */
-  .change .bar3 {
-    transform: translate(0, -11px) rotate(90deg);
-  }
+    .change .bar1 {
+        transform: translate(0, 11px) rotate(-90deg);
+    }
+    /* Fade out the second bar */
+    .change .bar2 {
+        opacity: 0;
+        transition: 0.1s;
+    }
+    /* Rotate last bar */
+    .change .bar3 {
+        transform: translate(0, -11px) rotate(90deg);
+    }
 </style>
