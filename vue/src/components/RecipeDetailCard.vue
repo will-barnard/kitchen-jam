@@ -12,10 +12,10 @@
             <div class="category" v-show="recipe.categoryId">
                 <h3>{{ recipe.categoryName }}</h3>
             </div>
-            <div class="subtitle">
+            <div class="subtitle" v-show="recipe.description">
                 <p>{{ recipe.description }}</p>   
             </div>
-            <div class="steplist" v-if="recipe.stepList">
+            <div class="steplist" v-show="recipe.stepList.length > 0">
                 <StepList :stepList="recipe.stepList"/>
             </div>
             <!-- <h3>Last made here?</h3> -->
@@ -24,13 +24,23 @@
 
             <div class="widgets">
                 <div class="widgets">
-                    <div class="cooktime">
-                        <img src="/img/clock.png" />
-                        <p>{{ recipe.avgCookTime }} min</p>
+                    <div class="widgets">
+                        <div class="cooktime" v-show="recipe.avgCookTime > 0">
+                            <img src="/img/clock.png" />
+                            <p>{{ recipe.avgCookTime }} min</p>
+                        </div>
+                        <div v-show="recipe.avgCookTime == 0">
+                            <p>no cooktime data available</p>
+                        </div>
                     </div>
                 </div>
                 <div class="rating">
-                    <p>rating / 5 Rating</p>
+                    <!-- <div>
+                        <p>rating / 10 Rating</p>
+                    </div> -->
+                    <div>
+                        <p>no aggregate rating available</p>
+                    </div>
                 </div>
             </div>
         </div>            

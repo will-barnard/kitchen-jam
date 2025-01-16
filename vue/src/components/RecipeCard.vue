@@ -21,11 +21,11 @@
                         <h3>{{ recipe.categoryName }}</h3>
                     </div> 
 
-                    <div class="info">
+                    <div class="info" v-show="recipe.description">
                         <p >{{ recipe.description }}</p>
                     </div>
 
-                    <div class="widget">
+                    <div class="widget" v-show="recipe.avgCookTime > 0">
                         <p>{{ recipe.avgCookTime }} min</p>
                     </div>
                     <div v-if="showMore && recipe.stepList">

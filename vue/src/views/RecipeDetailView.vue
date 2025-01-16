@@ -43,7 +43,7 @@ export default {
                             return recipeObj.recipeId == this.$route.params.recipeId;
                         }
                     );
-                    if (this.recipe.img) {
+                    if (!this.recipe.imageId) {
                         this.loading = false;
                     } else {
                         this.imgTick();

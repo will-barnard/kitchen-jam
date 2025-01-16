@@ -78,18 +78,15 @@ export function createStore(currentToken, currentUser) {
         )
       },
       CREATE_MEAL(state, payload) {
-        state.userMeals.push(payload);
+        state.userMeals.unshift(payload);
       },
       UPDATE_MEAL(state, payload) {
-        MealService.updateMeal(payload).then(
-          (response) => {
-            state.userMeals.filter(
-              (meal) => {
-                return meal.mealId != response.data.mealId;
-              }
-            ).push(response.data);
+        let i = state.userMeals.findIndex(
+          (meal) => {
+            return meal.mealId == payload.mealId;
           }
-        )
+        );
+        state.userMeals[i] = payload;
       },
       DELETE_MEAL(state, payload) {
         MealService.deleteMeal(payload).then(
@@ -103,27 +100,20 @@ export function createStore(currentToken, currentUser) {
         )
       },
       CREATE_RECIPE(state, payload) {
-        RecipeService.createRecipe(payload).then(
-          (response) => {
-            state.userRecipes.push(response.data);
-          }
-        )
+        state.userRecipes.unshift(payload);
       },
       UPDATE_RECIPE(state, payload) {
-        RecipeService.updateRecipe(payload).then(
-          (response) => {
-            state.userRecipes.filter(
-              (recipe) => {
-                return recipe.recipeId != response.data.recipeId;
-              }
-            ).push(response.data);
+        let i = state.userRecipes.findIndex(
+          (recipe) => {
+            return recipe.recipeId == payload.recipeId;
           }
-        )
+        );
+        state.userRecipes[i] = payload;
       },
       DELETE_RECIPE(state, payload) {
         RecipeService.deleteRecipe(payload).then(
           () => {
-            state.userRecipes.filter(
+            state.userRecipes = state.userRecipes.filter(
               (recipe) => {
                 return recipe.recipeId != payload;
               }

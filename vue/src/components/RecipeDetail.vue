@@ -204,13 +204,14 @@ export default {
             this.newRecipe = cloneRecipe(this.staticRecipe);
         },
         saveEdit() {
-            // todo implement this better
+            // todo implement this better?
             this.newRecipe.updateSteps = true;
 
             RecipeService.updateRecipe(this.newRecipe).then(
                 (response) => {
-                    this.staticRecipe = response.data;
-                    this.newRecipe = this.staticRecipe;
+                    this.$store.commit('UPDATE_RECIPE', response.data)
+                    this.staticRecipe = cloneRecipe(response.data);
+                    this.newRecipe = cloneRecipe(this.staticRecipe);
                     this.editing = false;
                 }
             )
@@ -221,11 +222,8 @@ export default {
             }
         },
         deleteRecipe() {
-            RecipeService.deleteRecipe(this.recipe.recipeId).then(
-                () => {
-                    this.$router.push({name: 'cookbook'})
-                }
-            )
+            this.$store.commit('DELETE_RECIPE', this.recipe.recipeId)
+            this.$router.push({name: 'cookbook'})
         },
 
         // CATEGORY methods
@@ -354,7 +352,7 @@ export default {
             if (this.recipe.imageId == 0 || this.recipe.imageId == null) {
                 ImageService.createImage(event.target.files[0]).then(
                     (response) => {
-                        this.newRecipe.imgageId = response.data;
+                        this.newRecipe.imageId = response.data;
                         ImageService.addImageToRecipe(this.recipe.recipeId, response.data).then(
                             () => {
                                 ImageService.getImage(response.data).then(

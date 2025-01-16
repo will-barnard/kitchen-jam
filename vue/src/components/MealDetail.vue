@@ -242,9 +242,9 @@ export default {
         saveEdit() {
             MealService.updateMeal(this.newMeal).then(
                 (response) => {
-                    this.staticMeal.tags = response.data.tags;
-                    this.staticMeal = response.data;
-                    this.newMeal = this.staticMeal;
+                    this.$store.commit('UPDATE_MEAL', response.data)
+                    this.staticMeal = cloneMeal(response.data);
+                    this.newMeal = cloneMeal(this.staticMeal);
                     this.editing = false;
                 }
             )
@@ -366,6 +366,7 @@ export default {
             if (this.meal.imageId == 0 || this.meal.imageId == null) {
                 ImageService.createImage(event.target.files[0]).then(
                     (response) => {
+                        let id = response.data;
                         ImageService.addImageToMeal(this.meal.mealId, response.data).then(
                             () => {
                                 ImageService.getImage(id).then(

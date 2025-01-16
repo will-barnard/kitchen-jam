@@ -30,8 +30,9 @@ export default {
     methods: {
         createRecipe() {
             RecipeService.createRecipe(this.recipe).then(
-                () => {
-                    this.$router.push({ name: 'cookbook' });
+                (response) => {
+                    this.$store.commit('CREATE_RECIPE', response.data)
+                    this.$router.push({name: 'recipe-detail', params: {recipeId: response.data.recipeId}})
                 }
             )
         }
