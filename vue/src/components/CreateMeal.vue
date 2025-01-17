@@ -61,6 +61,7 @@ export default {
                     let newMeal = response.data;
                     newMeal.tags = [];
                     if (this.newImgId) {
+                        newMeal.imageId = this.newImgId;
                         ImageService.addImageToMeal(response.data.mealId, this.newImgId).then(
                             () => {
                                 ImageService.getImage(newMeal.imageId).then(

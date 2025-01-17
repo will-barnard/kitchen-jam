@@ -23,12 +23,18 @@ export default {
     },
     created() {
         if (this.$store.state.loadedMeals) {
-            this.meal = this.$store.state.userMeals.find(
+            let tempMeal = this.$store.state.userMeals.find(
                 (mealObj) => {
                     return mealObj.mealId == this.$route.params.mealId;
                 }
-            );
-            this.loading = false;
+            )
+            if (tempMeal) {
+                this.meal = tempMeal;
+                this.loading = false;
+            } else {
+                this.createdTick();
+            }
+            
         } else {
             this.loadingTick();
         }
@@ -60,6 +66,20 @@ export default {
                         this.imgTick();
                 }
             }, 500);
+        },
+        createdTick() {
+            setTimeout( () => {
+                let tempMeal = this.$store.state.userMeals.find(
+                    (mealObj) => {
+                        return mealObj.mealId == this.$route.params.mealId;
+                    })
+                if (tempMeal) {
+                    this.meal = tempMeal;
+                    this.loading = false;
+            } else {
+                this.createdTick();
+            }
+            }, 500)
         }
     }
 }
