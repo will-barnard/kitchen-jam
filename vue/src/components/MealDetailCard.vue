@@ -17,7 +17,7 @@
                     </div>
                 </div>
 
-                <div class="tags" v-show="meal.tags > 0">
+                <div class="tags" v-show="meal.tags.length > 0">
                     <p v-if="!meal.tags">No tags yet</p>
                     <div class="tag-list">
                         <div  v-for="tag in meal.tags">
