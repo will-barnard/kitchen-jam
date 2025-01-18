@@ -1,6 +1,6 @@
 <template>
     <div>
-        <MealMenu />
+        <MealMenu :create="true"/>
         <Transition name="quickFade">
             <div v-show="show">
                 <CreateMeal />

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <RecipeMenu />
+        <RecipeMenu :create="true" />
         <Transition name="quickFade">
             <div v-show="show">
                 <CreateRecipe />

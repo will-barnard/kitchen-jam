@@ -1,15 +1,22 @@
 <template>
     <header>
-         <h1>Cookbook</h1>
-         <nav>
-             <p v-on:click="log()">My Cookbook</p>
-             <p v-on:click="newMeal()">Add New Recipe</p>
-         </nav>
+
+        <div>
+            <h1 v-on:click="log()">Cookbook</h1>
+            <div class="spacer">
+
+            </div>
+            <nav>
+                <p v-on:click="newMeal()" v-show="!create">+ Add New Recipe</p>
+            </nav>
+        </div>
+         
      </header>
  </template>
  <script>
  
  export default {
+    props: ['create'],
      methods: {
          log() {
              this.$router.push({ name: 'cookbook'});
@@ -30,9 +37,13 @@
          display: flex;
          flex-direction: row;
          justify-content: center;
+         align-items: center;
      }
      div {
          margin: 0px;
+         display: flex;
+         justify-content: center;
+         align-items: center;
      }
      p {
          margin: 0px;
@@ -41,8 +52,6 @@
          background-color: var(--light-3);
          margin: 5px;
          border-radius: 10px;
-         margin-bottom: 10px;
-         margin-top: 0px;
          font-weight: bold;
      }
      p:hover {
@@ -52,5 +61,8 @@
         margin: 0px;
         padding-top: 10px;
         margin-bottom: 5px;
+     }
+     .spacer {
+        flex-grow: 1;
      }
  </style>

@@ -223,7 +223,6 @@ export default {
         this.newMeal = cloneMeal(this.staticMeal);
 
 
-        console.log(this.meal)
         // img handling
         if (this.meal.imageId == 0 || this.meal.imageId == null) {
             this.imgPath = "../img/placeholder.jpeg";

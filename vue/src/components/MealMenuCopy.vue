@@ -1,20 +1,15 @@
 <template>
    <header>
-        <div>
-            <h1 v-on:click="log()">Meal Log</h1>
-            <div class="spacer">
-
-            </div>
-            <nav>
-                <p v-on:click="newMeal()" v-show="!create">+ Log New Meal</p>
-            </nav>
-        </div> 
+        <h1>Meal Log</h1>
+        <nav>
+            <p v-on:click="log()">My Log</p>
+            <p v-on:click="newMeal()">Log New Meal</p>
+        </nav>
     </header>
 </template>
 <script>
 
 export default {
-    props: ['create'],
     methods: {
         log() {
             this.$router.push({ name: 'meal-log'});
@@ -35,13 +30,9 @@ export default {
         display: flex;
         flex-direction: row;
         justify-content: center;
-        align-items: center;
     }
     div {
         margin: 0px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
     }
     p {
         margin: 0px;
@@ -50,6 +41,8 @@ export default {
         margin: 5px;
         border-radius: 10px;
         padding: 8px;
+        margin-bottom: 10px;
+        margin-top: 0px;    
         font-weight: bold;
     }
     p:hover {
@@ -57,9 +50,5 @@ export default {
     }
     h1 {
         margin: 10px;
-        text-align: left;
-    }
-    .spacer {
-        flex-grow: 1;
     }
 </style>
