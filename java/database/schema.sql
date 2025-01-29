@@ -90,7 +90,7 @@ CREATE TABLE tags (
 CREATE TABLE step (
     step_id serial PRIMARY KEY,
 	user_id int REFERENCES users(user_id),
-	recipe_id REFERENCES recipe(recipe_id),
+	recipe_id int REFERENCES recipe(recipe_id),
     step_description varchar(200),
     step_order int
 );
@@ -98,23 +98,11 @@ CREATE TABLE step (
 CREATE TABLE ingredient (
     ingredient_id serial PRIMARY KEY,
 	user_id int REFERENCES users(user_id),
-    ingredient_name varchar(200)
-);
-
-CREATE TABLE ingredient_recipe (
-    ingredient_id int REFERENCES ingredient(ingredient_id),
-    recipe_id int REFERENCES recipe(recipe_id),
+    ingredient_name varchar(200),
     quantity varchar(50),
     list_order int,
-    CONSTRAINT PK_ingredient_recipe PRIMARY KEY (ingredient_id, recipe_id)
-);
-
-CREATE TABLE ingredient_meal (
-    ingredient_id int REFERENCES ingredient(ingredient_id),
-	meal_id int REFERENCES meal(meal_id),
-	quantity varchar(50),
-	list_order int,
-	CONSTRAINT PK_ingredient_meal PRIMARY KEY (ingredient_id, meal_id)
+    recipe_id int REFERENCES recipe(recipe_id),
+	meal_id int REFERENCES meal(meal_id)
 );
 
 CREATE TABLE recipe_category (

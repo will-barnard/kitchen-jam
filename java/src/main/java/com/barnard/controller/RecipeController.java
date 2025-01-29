@@ -35,6 +35,8 @@ public class RecipeController {
     private ImageDao imageDao;
     @Autowired
     private StepDao stepDao;
+    @Autowired
+    private IngredientDao ingredientDao;
 
     @GetMapping(path = "/{recipeId}")
     public Recipe getRecipe(@PathVariable int recipeId) {
@@ -60,6 +62,7 @@ public class RecipeController {
             recipe = recipeDao.getPublicRecipe(uuid);
             recipe.setMealList(mealDao.getMealsByRecipeId(recipe.getRecipeId()));
             recipe.setStepList(stepDao.getStepsByRecipe(recipe.getRecipeId()));
+            recipe.setIngredientList(ingredientDao.getIngredientsByRecipe(recipe.getRecipeId()));
             for (Meal meal : recipe.getMealList()) {
                 meal.setRecipeName(recipe.getRecipeName());
                 meal.setTags(tagsDao.getTagsByMealId(meal.getMealId()));
@@ -89,6 +92,10 @@ public class RecipeController {
         try {
             recipes = recipeDao.getRecipesByUserId(userId);
             recipes = stepDao.getSteplist(recipes);
+            for (Recipe recipe : recipes) {
+                // todo make this one SQL query
+                recipe.setIngredientList(ingredientDao.getIngredientsByRecipe(recipe.getRecipeId()));
+            }
         } catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
         }

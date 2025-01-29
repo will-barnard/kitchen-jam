@@ -17,6 +17,7 @@ public class Recipe {
     private List<Meal> mealList;
     private List<Step> stepList;
     private boolean updateSteps = false;
+    private List<Ingredient> ingredientList;
     private String publicUrl;
 
     public Integer getRecipeId() {
@@ -129,5 +130,13 @@ public class Recipe {
 
     public void setPublicUrl(String publicUrl) {
         this.publicUrl = publicUrl;
+    }
+
+    public List<Ingredient> getIngredientList() {
+        return ingredientList;
+    }
+
+    public void setIngredientList(List<Ingredient> ingredientList) {
+        this.ingredientList = ingredientList;
     }
 }
