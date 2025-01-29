@@ -52,6 +52,7 @@ public class MealController {
             if (mealDao.verifyMealOwner(userId, mealId)) {
                 meal = mealDao.getMeal(mealId);
                 meal.setTags(tagsDao.getTagsByMealId(mealId));
+                meal.setIngredientList(ingredientDao.getIngredientsByMeal(mealId));
             }
         } catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
@@ -66,6 +67,7 @@ public class MealController {
         try {
             meal = mealDao.getPublicMeal(uuid);
             meal.setTags(tagsDao.getTagsByMealId(meal.getMealId()));
+            meal.setIngredientList(ingredientDao.getIngredientsByMeal(meal.getMealId()));
         } catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
         }
@@ -78,6 +80,7 @@ public class MealController {
         List<Meal> meals = null;
         try {
             meals = mealDao.searchLikeMeals(search, userId);
+            meals = ingredientDao.getIngredientsByMeals(meals);
         } catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
         }
@@ -101,6 +104,7 @@ public class MealController {
         List<Meal> meals = null;
         try {
             meals = mealDao.getMealsByTagAndUser(tag.getTagId(), userId);
+            meals = ingredientDao.getIngredientsByMeals(meals);
         } catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
         }
@@ -112,6 +116,7 @@ public class MealController {
         List<Meal> meals = null;
         try {
             meals = mealDao.getMealsByRecipeId(recipe.getRecipeId());
+            meals = ingredientDao.getIngredientsByMeals(meals);
         } catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
         }
@@ -129,6 +134,10 @@ public class MealController {
         Meal newMeal = null;
         try {
             newMeal = mealDao.createMeal(meal);
+            if (!meal.getIngredientList().isEmpty()) {
+                newMeal = ingredientDao.addIngredientsToMeal(meal.getIngredientList(), newMeal);
+            }
+
             if (meal.getRecipeId() != null) {
                 recipeDao.aggregateRecipeData(meal.getRecipeId());
             }
@@ -156,6 +165,11 @@ public class MealController {
             }
             Integer oldRecipeId = getMeal.getRecipeId();
             updatedMeal = mealDao.updateMeal(meal);
+            ingredientDao.deleteAllIngredientsFromMeal(meal.getMealId());
+            if (!meal.getIngredientList().isEmpty()) {
+                updatedMeal = ingredientDao.addIngredientsToMeal(meal.getIngredientList(), meal);
+            }
+
             if (meal.getRecipeId() != null) {
                 if (meal.getRecipeId().equals(oldRecipeId)) {
                     recipeDao.aggregateRecipeData(meal.getRecipeId());

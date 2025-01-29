@@ -48,6 +48,7 @@ public class RecipeController {
                 meal.setRecipeName(recipe.getRecipeName());
                 meal.setTags(tagsDao.getTagsByMealId(meal.getMealId()));
             }
+            recipe.setIngredientList(ingredientDao.getIngredientsByRecipe(recipeId));
         } catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
         }
@@ -79,6 +80,7 @@ public class RecipeController {
         int userId = userDao.getUserByUsername(principal.getName()).getId();
         try {
             recipes = recipeDao.searchLikeRecipes(recipe.getRecipeName(), userId);
+            recipes = ingredientDao.getIngredientsByRecipes(recipes);
         } catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
         }
@@ -92,10 +94,7 @@ public class RecipeController {
         try {
             recipes = recipeDao.getRecipesByUserId(userId);
             recipes = stepDao.getSteplist(recipes);
-            for (Recipe recipe : recipes) {
-                // todo make this one SQL query
-                recipe.setIngredientList(ingredientDao.getIngredientsByRecipe(recipe.getRecipeId()));
-            }
+            recipes = ingredientDao.getIngredientsByRecipes(recipes);
         } catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
         }
@@ -108,6 +107,7 @@ public class RecipeController {
         int userId = userDao.getUserByUsername(principal.getName()).getId();
         try {
             recipes = recipeDao.getRecipesByCategoryId(categoryId, userId);
+            recipes = ingredientDao.getIngredientsByRecipes(recipes);
         } catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
         }
@@ -124,6 +124,7 @@ public class RecipeController {
                 recipe = null;
                 throw new AuthException("User not authorized");
             }
+            recipe.setIngredientList(ingredientDao.getIngredientsByRecipe(recipe.getRecipeId()));
         } catch(AuthException e) {
             throw new AuthException(e.getMessage());
         } catch(Exception e) {
@@ -146,6 +147,9 @@ public class RecipeController {
                 for (Step step : recipe.getStepList()) {
                     stepDao.createStep(step);
                 }
+            }
+            if (!recipe.getIngredientList().isEmpty()) {
+                ingredientDao.addIngredientsToRecipe(recipe.getIngredientList(), recipe);
             }
         } catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
@@ -177,8 +181,14 @@ public class RecipeController {
                     stepDao.createStep(step);
                 }
             }
+            ingredientDao.deleteAllIngredientsFromRecipe(recipe.getRecipeId());
+            if (!recipe.getIngredientList().isEmpty()) {
+                ingredientDao.addIngredientsToRecipe(recipe.getIngredientList(), recipe);
+            }
             recipe = recipeDao.updateRecipe(recipe);
             recipe.setStepList(stepDao.getStepsByRecipe(recipe.getRecipeId()));
+            recipe.setIngredientList(ingredientDao.getIngredientsByRecipe(recipe.getRecipeId()));
+
         } catch(AuthException e) {
             throw new AuthException(e.getMessage());
         } catch(Exception e) {

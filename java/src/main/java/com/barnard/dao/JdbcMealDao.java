@@ -278,17 +278,15 @@ public class JdbcMealDao implements MealDao {
     public void deleteMealById(int mealId) {
 
         String sql = "DELETE FROM tags_meal " +
-                "WHERE meal_id  = ?;";
-        String sql2 = "DELETE FROM meal " +
+                "WHERE meal_id  = ?; " +
+                "DELETE FROM ingredient " +
+                "WHERE meal_id  = ?; " +
+                "DELETE FROM meal " +
                 "WHERE meal_id = ?;";
 
         try {
 
             jdbcTemplate.update(sql, mealId);
-            int rowsAffected = jdbcTemplate.update(sql2, mealId);
-            if (rowsAffected != 1) {
-                throw new DaoException();
-            }
 
         } catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database", e);

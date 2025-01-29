@@ -280,6 +280,8 @@ public class JdbcRecipeDao implements RecipeDao {
                 "WHERE recipe_id = ?; " +
                 "DELETE FROM step " +
                 "WHERE recipe_id = ?; " +
+                "DELETE FROM ingredient " +
+                "WHERE recipe_id  = ?; " +
                 "DELETE FROM recipe " +
                 "WHERE recipe_id = ?;";
 
