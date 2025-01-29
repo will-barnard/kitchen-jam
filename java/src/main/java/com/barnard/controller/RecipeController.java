@@ -21,8 +21,6 @@ import java.security.Principal;
 @RequestMapping(path = "/recipe")
 public class RecipeController {
 
-    // todo add authentication and security when doing GET
-
     @Autowired
     private MealDao mealDao;
     @Autowired
@@ -39,9 +37,11 @@ public class RecipeController {
     private IngredientDao ingredientDao;
 
     @GetMapping(path = "/{recipeId}")
-    public Recipe getRecipe(@PathVariable int recipeId) {
+    public Recipe getRecipe(@PathVariable int recipeId, Principal principal) {
         Recipe recipe = null;
+        int userId = userDao.getUserByUsername(principal.getName()).getId();
         try {
+            if (recipeDao.verifyRecipeOwner(userId, recipeId))
             recipe = recipeDao.getRecipe(recipeId);
             recipe.setMealList(mealDao.getMealsByRecipeId(recipeId));
             for (Meal meal : recipe.getMealList()) {
