@@ -36,6 +36,8 @@ public class MealController {
     private ImageDao imageDao;
     @Autowired
     private EmailService emailService;
+    @Autowired
+    private IngredientDao ingredientDao;
 
     @GetMapping(path="/test")
     public void test() {
@@ -89,6 +91,7 @@ public class MealController {
         for (Meal meal : result) {
             meal.setTags(tagsDao.getTagsByMealId(meal.getMealId()));
         }
+        result = ingredientDao.getIngredientsByMeals(result);
         return result;
     }
 

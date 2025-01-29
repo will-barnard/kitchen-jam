@@ -26,6 +26,7 @@ public class Meal {
     private boolean isPublic;
     private String publicUrl;
     private List<Tag> tags;
+    private List<Ingredient> ingredientList;
 
     public Recipe getRecipe() {
         return recipe;
@@ -169,5 +170,13 @@ public class Meal {
 
     public void setPublicUrl(String publicUrl) {
         this.publicUrl = publicUrl;
+    }
+
+    public List<Ingredient> getIngredientList() {
+        return ingredientList;
+    }
+
+    public void setIngredientList(List<Ingredient> ingredientList) {
+        this.ingredientList = ingredientList;
     }
 }

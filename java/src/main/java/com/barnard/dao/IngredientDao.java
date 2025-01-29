@@ -14,8 +14,8 @@ public interface IngredientDao {
     List<Ingredient> getIngredientsByRecipe(int recipeId);
     List<Meal> getIngredientsByMeals(List<Meal> meals);
     List<Recipe> getIngredientsByRecipes(List<Recipe> recipes);
-    Ingredient addIngredientsToMeal(Ingredient ingredient);
-    Ingredient addIngredientsToRecipe(Ingredient ingredient);
+    Meal addIngredientsToMeal(List<Ingredient> ingredients, Meal meal);
+    Recipe addIngredientsToRecipe(List<Ingredient> ingredients, Recipe recipe);
     void deleteAllIngredientsFromMeal(int mealId);
     void deleteAllIngredientsFromRecipe(int recipeId);
 
