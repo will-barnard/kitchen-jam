@@ -24,6 +24,8 @@
 
    font-family: var(--font);
 
+   border: var(--border-color);
+
    
 }
 

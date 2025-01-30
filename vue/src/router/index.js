@@ -17,6 +17,7 @@ import GalleryMealDetailView from '../views/GalleryMealDetailView.vue';
 import WalkthroughView from '../views/WalkthroughView.vue';
 import PublicMealView from '../views/PublicMealView.vue';
 import PublicRecipeView from '../views/PublicRecipeView.vue';
+import UpdatesView from '../views/UpdatesView.vue';
 
 const routes = [
   {
@@ -138,6 +139,14 @@ const routes = [
       requiresAuth: false
     }
   },
+  {
+    path: '/updates',
+    name: 'updates',
+    component: UpdatesView,
+    meta: {
+      requiresAuth: false
+    }
+  }
 ];
 
 // Create the router

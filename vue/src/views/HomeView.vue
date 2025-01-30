@@ -16,6 +16,7 @@
         <h3 v-if="this.$store.state.token == ''" class="button" @click="$router.push({ name: 'register' })">Create Free Account</h3>
         <h3 v-if="this.$store.state.token != ''" class="button" @click="$router.push({ name: 'meal-log' })">Meal Log</h3>
         <h3 v-if="this.$store.state.token != ''" class="button" @click="$router.push({  name: 'cookbook'})">Cookbook</h3>
+        <h3 class="button2" @click="$router.push({  name: 'updates'})">Updates</h3>
       </div>
       
     </div>
@@ -61,6 +62,13 @@ export default {
   }
   .button {
       background-color: var(--dark-1);
+      border: 2px solid var(--dark-1);
+      border-radius: 10px;
+      padding: 10px;
+  }
+  .button2 {
+      background-color: var(--bg-color);
+      border: 2px solid var(--dark-1);
       border-radius: 10px;
       padding: 10px;
   }
