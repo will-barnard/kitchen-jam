@@ -15,13 +15,14 @@
             <div class="subtitle" v-show="recipe.description">
                 <p>{{ recipe.description }}</p>   
             </div>
+            <div class="steplist" v-show="recipe.ingredientList.length > 0">
+                <IngredientList :ingredientList="recipe.ingredientList"/>
+            </div>
             <div class="steplist" v-show="recipe.stepList.length > 0">
                 <StepList :stepList="recipe.stepList"/>
             </div>
             <!-- <h3>Last made here?</h3> -->
             
-            
-
             <div class="widgets">
                 <div class="widgets">
                     <div class="widgets">
@@ -48,10 +49,11 @@
 </template>
 
 <script>
+import IngredientList from './IngredientList.vue';
 import StepList from './StepList.vue';
 
 export default {
-    components: {StepList},
+    components: {StepList, IngredientList},
     props: ['recipe', 'editable', 'img']
 }
 </script>

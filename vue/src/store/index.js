@@ -39,6 +39,11 @@ export function createStore(currentToken, currentUser) {
         MealService.getMealsByUser().then(
           (response) => {
             state.userMeals = response.data;
+            for (let meal of state.userMeals) {
+              if (!meal.ingredientList) {
+                meal.ingredientList = [];
+              }
+            }
             state.loadedMeals = true;
             for (let meal of state.userMeals) {
               if (meal.public) {
@@ -60,6 +65,11 @@ export function createStore(currentToken, currentUser) {
         RecipeService.getRecipesByUser().then(
           (response) => {
             state.userRecipes = response.data;
+            for (let recipe of state.userRecipes) {
+              if (!recipe.ingredientList) {
+                recipe.ingredientList = [];
+              }
+            }
             state.loadedRecipes = true;
             for (let recipe of state.userRecipes) {
               if (recipe.public) {
@@ -78,9 +88,15 @@ export function createStore(currentToken, currentUser) {
         )
       },
       CREATE_MEAL(state, payload) {
+        if (payload.ingredientList == null) {
+          payload.ingredientList = [];
+        }
         state.userMeals.unshift(payload);
       },
       UPDATE_MEAL(state, payload) {
+        if (payload.ingredientList == null) {
+          payload.ingredientList = [];
+        }
         let i = state.userMeals.findIndex(
           (meal) => {
             return meal.mealId == payload.mealId;
@@ -100,9 +116,15 @@ export function createStore(currentToken, currentUser) {
         )
       },
       CREATE_RECIPE(state, payload) {
+        if (payload.ingredientList == null) {
+          payload.ingredientList = [];
+        }
         state.userRecipes.unshift(payload);
       },
       UPDATE_RECIPE(state, payload) {
+        if (payload.ingredientList == null) {
+          payload.ingredientList = [];
+        }
         let i = state.userRecipes.findIndex(
           (recipe) => {
             return recipe.recipeId == payload.recipeId;

@@ -1,7 +1,6 @@
 <template>
     <Transition>
     <body>
-       
         <div class="recipe-img">
             <div>
                 <img :src="imgPath" />
@@ -34,7 +33,7 @@
                 </Transition>
             </div>
             <div class="edit-form edit-category">
-                <h3>Edit Category</h3>
+                <h3>Category</h3>
                 <div>
                     <div v-if="newRecipe.categoryId" class="current-category">
                         <img src="/img/minus.png" class="minus mini-button" @click="removeCategory()">
@@ -56,7 +55,7 @@
            </div>
            <form>
                <div class="edit-form">
-                    <h3>Edit details</h3>
+                    <h3>Details</h3>
 
                    <div class="input-area">
                        <label>Name</label>
@@ -66,8 +65,46 @@
                        <label>Description</label>
                        <textarea v-model="newRecipe.description"></textarea>
                    </div>
+                </div>
+                <div class="edit-form">
                    <div class="input-area">
-                       <label>Steps</label>
+                        <h3>Ingredients</h3>
+                        <div v-for="ingredient in newRecipe.ingredientList" :key="ingredient.listOrder" class="single-row">
+                            <p class="list-number">&#8226;</p>
+                            <div class="single-column spacer">
+                                <div class="single-row">
+                                    <p>QTY:</p><input type="text" v-model="ingredient.quantity" class="quantity">
+                                    <div class="spacer"></div>
+                                </div>
+                                <input type="text" class="ingredient-input" v-model="ingredient.ingredientName">
+                            </div>
+                            <div class="single-row">
+                                <div class="arrow small-button" @click="moveIngredient(-1, ingredient)">
+                                    &#8593;
+                                </div>
+                                <div class="arrow small-button" @click="moveIngredient(1, ingredient)">
+                                    &darr;
+                                </div>
+                                <div @click="deleteIngredient(ingredient)">
+                                    <img src="/img/trash.png" class="small-button minus"/>
+                                </div>
+                            </div> 
+                       </div>
+                       <div class="ingredient-column spacer border">
+                            <div class="single-row">
+                                <p>QTY:</p>
+                                <input type="text" class="quantity" v-model="newIngredientQuantity">
+                                <div class="spacer"></div>
+                            </div>
+                            <input type="text" v-model="newIngredient" class="ingredient-input">
+                            <button @click.prevent="addIngredient">Add Ingredient</button>
+                       </div>
+                       
+                    </div>
+                </div>
+                <div class="edit-form">
+                   <div class="input-area">
+                       <h3>Steps</h3>
                        <div v-for="step in newRecipe.stepList" :key="step.stepOrder" class="single-row">
                             <p class="list-number">{{ step.stepOrder }}</p>
                             <textarea class="step-input" v-model="step.stepDescription"></textarea>
@@ -84,7 +121,7 @@
                             </div> 
                        </div>
                        <input type="text" v-model="newStep">
-                       <button @click.prevent="addStep">Add step</button>
+                       <button @click.prevent="addStep">Add Step</button>
                    </div>
                </div>
            </form>
@@ -111,7 +148,7 @@
                 <img src="/img/check.png" />
             </div>
        </div> 
-        <div class="meals" v-if="mealList && !editing">
+        <div class="meals" v-if="mealList.length > 0 && !editing">
             <h3>Meals following this recipe</h3>
             <MealCard v-for="meal in mealList" :key="meal.mealId" :meal="meal"></MealCard>
        </div>       
@@ -145,6 +182,7 @@ function cloneRecipe(recipe) {
         newRecipe.img = recipe.img;
 
         newRecipe.categories = recipe.categories;
+        newRecipe.ingredientList = recipe.ingredientList;
 
         newRecipe.stepList = [];
         for(let i = 0; i < recipe.stepList.length; i++) {
@@ -170,7 +208,9 @@ export default {
             newCategory: {},
             searchCategory: [],
             mealList: [],
-            newStep: ""
+            newStep: "",
+            newIngredient: "",
+            newIngredientQuantity: ""
         }
     },
     created() {
@@ -310,6 +350,75 @@ export default {
                 for (let i = step.stepOrder - 1; i < list.length; i++) {
                     if (i != list.length - 1) {
                         list[i].stepDescription = Object.assign(list[i+1].stepDescription);
+                    }
+                    else if (i == list.length - 1) {
+                        list.pop();
+                    }
+                }
+            }
+        },
+
+        // INGREDIENT methods
+
+        addIngredient() {
+            let ingredient = {};
+            ingredient.ingredientName = this.newIngredient;
+            ingredient.listOrder = this.newRecipe.ingredientList.length + 1;
+            ingredient.quantity = this.newIngredientQuantity;
+            this.newRecipe.ingredientList.push(ingredient);
+            this.newIngredient = "";
+            this.newIngredientQuantity = "";
+        },
+        moveIngredient(k, ingredient) {
+            if (k == 1) {
+                // move down the list
+                if (ingredient.listOrder != this.newRecipe.ingredientList.length) {
+                    let moveIngredient = Object.assign(ingredient.ingredientName);
+                    let moveQuantity = Object.assign(ingredient.quantity);
+                    let pivotIngredient = this.newRecipe.ingredientList[ingredient.listOrder];
+                    ingredient.ingredientName = pivotIngredient.ingredientName;
+                    ingredient.quantity = pivotIngredient.quantity;
+                    pivotIngredient.ingredientName = moveIngredient;
+                    pivotIngredient.quantity = moveQuantity;
+                }
+            }
+            if (k == -1) {
+                // move up the list
+                if (ingredient.listOrder != 1) {
+                    let moveIngredient = Object.assign(ingredient.ingredientName);
+                    let moveQuantity = Object.assign(ingredient.quantity);
+                    let pivotIngredient = this.newRecipe.ingredientList[ingredient.listOrder - 2];
+                    ingredient.ingredientName = pivotIngredient.ingredientName;
+                    ingredient.quantity = pivotIngredient.quantity;
+                    pivotIngredient.ingredientName = moveIngredient;
+                    pivotIngredient.quantity = moveQuantity;
+                }
+            }
+        },
+        deleteIngredient(ingredient) {
+            let list = this.newRecipe.ingredientList;
+            if (ingredient.listOrder == list.length) {
+                // case for last on list
+                list.pop();
+            }
+            else if (ingredient.listOrder == 1) {
+                // case for first on list
+                for (let i = 0; i < list.length; i++) {
+                    if (i != list.length - 1) {
+                        list[i].ingredientName = Object.assign(list[i+1].ingredientName);
+                        list[i].quantity = Object.assign(list[i+1].quantity);
+                    }
+                    else if (i == list.length - 1) {
+                        list.pop();
+                    }
+                }
+            }
+            else {
+                // case for middle of list
+                for (let i = step.stepOrder - 1; i < list.length; i++) {
+                    if (i != list.length - 1) {
+                        list[i].ingredientName = Object.assign(list[i+1].ingredientName);
+                        list[i].quantity = Object.assign(list[i+1].quantity);
                     }
                     else if (i == list.length - 1) {
                         list.pop();
@@ -560,7 +669,7 @@ export default {
     .input-area {
         display: flex;
         flex-direction: column;
-        margin-bottom: 5px;
+        margin-bottom: 15px;
     }
     .edit-form {
         display: flex;
@@ -652,5 +761,33 @@ export default {
         display: flex;
         justify-content: center;
         background-color: var(--light-5);
+    }
+    .ingredient-input {
+        width: 90%;
+        flex-grow: 1;
+        margin-bottom: 10px;
+    }
+    .quantity {
+        width: 20%;
+        margin: 5px;
+    }
+    .single-column {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        align-items: start;
+        justify-content: left;
+    }
+    .ingredient-column {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        align-items: start;
+        justify-content: start;
+    }
+    .border {
+        border: 1px solid;
+        padding: 10px;
+        border-radius: 10px;;
     }
 </style>

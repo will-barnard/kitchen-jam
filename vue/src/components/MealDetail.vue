@@ -15,7 +15,7 @@
         <div class="edit" v-show="editing">
 
             <div class="edit-image edit-block">
-                <h3>Edit image</h3>
+                <h3>Image</h3>
                 <input type="file" name="file" accept="image/*" @change="uploadImage">
             </div>
             <div class="edit-block">
@@ -36,7 +36,7 @@
             </div>
 
             <div class="edit-recipe edit-block">
-                <h3>Edit recipe</h3>
+                <h3>Recipe</h3>
                 <div v-if="newMeal.recipeId" class="current-recipe">
                     <img src="/img/minus.png" class="minus mini-button" @click="removeRecipe()">
                     <div class="tag-spacer"></div>
@@ -56,7 +56,7 @@
             </div>
 
             <div class="edit-tags edit-block">
-                <h3>Edit tags</h3>
+                <h3>Tags</h3>
                
                 <div>
                     <p v-if="!newMeal.tags">no tags</p>
@@ -140,6 +140,44 @@
                     
                 </div>
             </form>
+            <div class="edit-form">
+                   <div class="input-area">
+                        <h3>Ingredients</h3>
+                        <div v-for="ingredient in newMeal.ingredientList" :key="ingredient.listOrder" class="single-row">
+                            <p class="list-number">&#8226;</p>
+                            <div class="single-column spacer">
+                                <div class="single-row">
+                                    <p>QTY:</p><input type="text" v-model="ingredient.quantity" class="quantity">
+                                    <div class="spacer"></div>
+                                </div>
+                                <input type="text" class="ingredient-input" v-model="ingredient.ingredientName">
+                            </div>
+                            <div class="single-row">
+                                <div class="arrow small-button" @click="moveIngredient(-1, ingredient)">
+                                    &#8593;
+                                </div>
+                                <div class="arrow small-button" @click="moveIngredient(1, ingredient)">
+                                    &darr;
+                                </div>
+                                <div @click="deleteIngredient(ingredient)">
+                                    <img src="/img/trash.png" class="small-button minus"/>
+                                </div>
+                            </div> 
+                       </div>
+                       <div>
+
+                    </div>
+                    <div class="ingredient-column spacer border">
+                        <div class="single-row">
+                            <p>QTY:</p>
+                            <input type="text" class="quantity" v-model="newIngredientQuantity">
+                            <div class="spacer"></div>
+                        </div>
+                        <input type="text" v-model="newIngredient" class="ingredient-input">
+                        <button @click.prevent="addIngredient">Add Ingredient</button>
+                        </div>
+                    </div>
+                </div>
         </div>
 
         <div class="delete" v-if="deleting">
@@ -191,6 +229,7 @@ function cloneMeal(meal) {
         newMeal.cookTime = meal.cookTime;
         newMeal.notes = meal.notes;
         newMeal.ingredients = meal.ingredients;
+        newMeal.ingredientList = meal.ingredientList;
         newMeal.rating = meal.rating;
         newMeal.imageId = meal.imageId;
         newMeal.tags = meal.tags;
@@ -215,7 +254,9 @@ export default {
             newTag: {},
             searchTags: [],
             newRecipe: {},
-            searchRecipe: []
+            searchRecipe: [],
+            newIngredient: "",
+            newIngredientQuantity: ""
         }
     },
     created() {
@@ -320,7 +361,7 @@ export default {
             this.newMeal.recipeId = recipe.recipeId;
             this.newMeal.recipeName = recipe.recipeName;
             this.searchRecipe = null;
-            this.newRecipe = "";
+            this.newRecipe = {};
         },
         removeRecipe() {
             this.newMeal.recipeId = 0;
@@ -333,6 +374,79 @@ export default {
                 }
             )
         },
+
+        // INGREDIENT methods
+
+        addIngredient() {
+            let ingredient = {};
+            ingredient.ingredientName = this.newIngredient;
+            ingredient.listOrder = this.newMeal.ingredientList.length + 1;
+            ingredient.quantity = this.newIngredientQuantity;
+            this.newMeal.ingredientList.push(ingredient);
+            this.newIngredient = "";
+            this.newIngredientQuantity = "";
+        },
+        moveIngredient(k, ingredient) {
+            if (k == 1) {
+                // move down the list
+                if (ingredient.listOrder != this.newMeal.ingredientList.length) {
+                    let moveIngredient = Object.assign(ingredient.ingredientName);
+                    let moveQuantity = Object.assign(ingredient.quantity);
+                    let pivotIngredient = this.newMeal.ingredientList[ingredient.listOrder];
+                    ingredient.ingredientName = pivotIngredient.ingredientName;
+                    ingredient.quantity = pivotIngredient.quantity;
+                    pivotIngredient.ingredientName = moveIngredient;
+                    pivotIngredient.quantity = moveQuantity;
+                }
+            }
+            if (k == -1) {
+                // move up the list
+                if (ingredient.listOrder != 1) {
+                    let moveIngredient = Object.assign(ingredient.ingredientName);
+                    let moveQuantity = Object.assign(ingredient.quantity);
+                    let pivotIngredient = this.newMeal.ingredientList[ingredient.listOrder - 2];
+                    ingredient.ingredientName = pivotIngredient.ingredientName;
+                    ingredient.quantity = pivotIngredient.quantity;
+                    pivotIngredient.ingredientName = moveIngredient;
+                    pivotIngredient.quantity = moveQuantity;
+                }
+            }
+        },
+        deleteIngredient(ingredient) {
+            let list = this.newMeal.ingredientList;
+            if (ingredient.listOrder == list.length) {
+                // case for last on list
+                list.pop();
+            }
+            else if (ingredient.listOrder == 1) {
+                // case for first on list
+                for (let i = 0; i < list.length; i++) {
+                    if (i != list.length - 1) {
+                        list[i].ingredientName = Object.assign(list[i+1].ingredientName);
+                        list[i].quantity = Object.assign(list[i+1].quantity);
+                    }
+                    else if (i == list.length - 1) {
+                        list.pop();
+                    }
+                }
+            }
+            else {
+                // case for middle of list
+                for (let i = step.stepOrder - 1; i < list.length; i++) {
+                    if (i != list.length - 1) {
+                        list[i].ingredientName = Object.assign(list[i+1].ingredientName);
+                        list[i].quantity = Object.assign(list[i+1].quantity);
+                    }
+                    else if (i == list.length - 1) {
+                        list.pop();
+                    }
+                }
+            }
+            if (null) {
+                
+            }
+        },
+
 
         // PUBLIC methods
         // TODO implement store here?
@@ -457,6 +571,13 @@ export default {
     .edit-form {
         display: flex;
         flex-direction: column;
+        background-color: var(--light-2);
+        margin: 5px;
+        padding: 10px;
+        border-radius: 10px;
+    }
+    .edit-form h3 {
+        margin-bottom: 5px;
     }
     
     .delete {
@@ -771,6 +892,56 @@ export default {
 .v-leave-to {
   opacity: 0;
 }
+.list-number {
+        margin: 3px;
+    }
+    .arrow {
+        width: 15px;
+        padding: 5px;
+        display: flex;
+        justify-content: center;
+        background-color: var(--light-5);
+    }
+    .ingredient-input {
+        width: 90%;
+        flex-grow: 1;
+        margin-bottom: 10px;
+    }
+    .quantity {
+        width: 20%;
+        margin: 5px;
+    }
+    .single-column {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        align-items: start;
+        justify-content: left;
+    }
+    .step-input {
+        padding: 0px;
+        margin: 10px;
+        flex-grow: 1;
 
+    }
+    .button {
+        width: 15vw;
+        /* border: 1px solid var(--border-color); */
+        border-radius: 10px;
+        padding: 5px;
+        margin-right: 5px;
+    }
+    .ingredient-column {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        align-items: start;
+        justify-content: start;
+    }
+    .border {
+        border: 1px solid;
+        padding: 10px;
+        border-radius: 10px;;
+    }
 
 </style>

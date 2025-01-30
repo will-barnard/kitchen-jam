@@ -1,16 +1,16 @@
 <template>
     <div class="block">
         <div>
-            <h3>Steps</h3>
-            <div v-for="step in stepList" class="step-item">
-                <p>{{ step.stepOrder }}. {{ step.stepDescription }}</p>
+            <h3>Ingredients</h3>
+            <div v-for="ingredient in ingredientList" class="step-item">
+                <ul>&#8226; {{ ingredient.quantity }} {{ ingredient.ingredientName }}</ul>
             </div>
         </div>
     </div>
 </template>
 <script>
 export default {
-    props: ['stepList']
+    props: ['ingredientList']
 }
 </script>
 <style scoped>
@@ -27,7 +27,7 @@ export default {
         border-radius: 5px;
         border: 1px;
     }
-    p {
+    ul {
         margin: 3px;
         padding: 5px;
     }

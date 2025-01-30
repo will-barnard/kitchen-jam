@@ -35,6 +35,7 @@ html {
 textarea {
    resize: none;
    font-family: var(--font);
+   padding: 2px;
 }
 
 .single-row {
@@ -44,6 +45,7 @@ textarea {
    align-items: center;
    justify-content: center;
 }
+
 
 .small-button {
    height: 1.1em;

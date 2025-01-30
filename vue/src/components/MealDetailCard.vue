@@ -10,7 +10,7 @@
 
                 <div class="title">
                     <h2 >{{ meal.mealName }}</h2>
-                    <h3 v-if="meal.recipeId">{{ meal.recipeName }}</h3>
+                    <h3 v-if="meal.recipeId" >{{ meal.recipeName }}</h3>
                     <div class="subtitle">
                         <h4 class="comment" v-show="meal.mealComment">{{ meal.mealComment }}</h4>
                         <h4 class="date" v-show="meal.dateCooked">{{ formatDate(meal.dateCooked) }}</h4>
@@ -44,10 +44,13 @@
                         <p>{{ meal.ingredients }}</p>
                     </div>
                     <div class="notes" v-show="meal.notes">
-                        <h3>Notes:</h3>
+                        <h3 class="right" >Notes</h3>
                         <p>{{ meal.notes }}</p>
                     </div>
         
+                </div>
+                <div class="steplist" v-show="meal.ingredientList.length > 0">
+                    <IngredientList :ingredientList="meal.ingredientList"/>
                 </div>
 
             </div>            
@@ -56,9 +59,11 @@
 </template>
 <script>
 import UtilityService from '../services/UtilityService.js';
+import IngredientList from './IngredientList.vue';
 
 
 export default {
+    components: {IngredientList},
     props: ['meal', 'editable', 'img'],
     methods: {
         formatDate(date) {
@@ -434,5 +439,8 @@ export default {
     .v-enter-from,
     .v-leave-to {
         opacity: 0;
+    }
+    .right {
+        text-align: right;
     }
 </style>
