@@ -143,7 +143,9 @@ public class RecipeController {
         recipe.setUserId(userId);
         try {
             recipeDao.createRecipe(recipe);
-            if (recipe.isUpdateSteps()) {
+            if (recipe.getIngredientList() == null) {
+                // do nothing
+            } else if (recipe.isUpdateSteps()) {
                 for (Step step : recipe.getStepList()) {
                     stepDao.createStep(step);
                 }
@@ -182,7 +184,9 @@ public class RecipeController {
                 }
             }
             ingredientDao.deleteAllIngredientsFromRecipe(recipe.getRecipeId());
-            if (!recipe.getIngredientList().isEmpty()) {
+            if (recipe.getIngredientList() == null) {
+                // do nothing
+            } else if (!recipe.getIngredientList().isEmpty()) {
                 ingredientDao.addIngredientsToRecipe(recipe.getIngredientList(), recipe);
             }
             recipe = recipeDao.updateRecipe(recipe);

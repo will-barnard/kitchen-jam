@@ -135,7 +135,9 @@ public class MealController {
         Meal newMeal = null;
         try {
             newMeal = mealDao.createMeal(meal);
-            if (!meal.getIngredientList().isEmpty()) {
+            if (meal.getIngredientList() == null) {
+                // do nothing
+            } else if (!meal.getIngredientList().isEmpty()) {
                 newMeal = ingredientDao.addIngredientsToMeal(meal.getIngredientList(), newMeal);
             }
 
@@ -167,7 +169,9 @@ public class MealController {
             Integer oldRecipeId = getMeal.getRecipeId();
             updatedMeal = mealDao.updateMeal(meal);
             ingredientDao.deleteAllIngredientsFromMeal(meal.getMealId());
-            if (!meal.getIngredientList().isEmpty()) {
+            if (meal.getIngredientList() == null) {
+                // do nothing
+            } else if (!meal.getIngredientList().isEmpty()) {
                 updatedMeal = ingredientDao.addIngredientsToMeal(meal.getIngredientList(), meal);
             }
 
