@@ -229,7 +229,7 @@ function cloneMeal(meal) {
         newMeal.cookTime = meal.cookTime;
         newMeal.notes = meal.notes;
         newMeal.ingredients = meal.ingredients;
-        newMeal.ingredientList = meal.ingredientList;
+        newMeal.ingredientList = JSON.parse(JSON.stringify(meal.ingredientList));
         newMeal.rating = meal.rating;
         newMeal.imageId = meal.imageId;
         newMeal.tags = meal.tags;
@@ -280,6 +280,7 @@ export default {
         cancelEdit() {
             this.editing = false;
             this.newMeal = cloneMeal(this.staticMeal);
+            
         },
         saveEdit() {
             MealService.updateMeal(this.newMeal).then(
@@ -432,7 +433,7 @@ export default {
             }
             else {
                 // case for middle of list
-                for (let i = step.stepOrder - 1; i < list.length; i++) {
+                for (let i = ingredient.listOrder - 1; i < list.length; i++) {
                     if (i != list.length - 1) {
                         list[i].ingredientName = Object.assign(list[i+1].ingredientName);
                         list[i].quantity = Object.assign(list[i+1].quantity);
