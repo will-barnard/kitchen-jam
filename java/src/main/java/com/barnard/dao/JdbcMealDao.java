@@ -285,9 +285,7 @@ public class JdbcMealDao implements MealDao {
                 "WHERE meal_id = ?;";
 
         try {
-
-            jdbcTemplate.update(sql, mealId);
-
+            jdbcTemplate.update(sql, mealId, mealId, mealId);
         } catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database", e);
         } catch (DataIntegrityViolationException e) {

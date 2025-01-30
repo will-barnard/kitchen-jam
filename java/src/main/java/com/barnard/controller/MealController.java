@@ -9,6 +9,7 @@ import com.barnard.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -174,7 +175,9 @@ public class MealController {
                 if (meal.getRecipeId().equals(oldRecipeId)) {
                     recipeDao.aggregateRecipeData(meal.getRecipeId());
                 } else {
-                    recipeDao.aggregateRecipeData(oldRecipeId);
+                    if (oldRecipeId != null) {
+                        recipeDao.aggregateRecipeData(oldRecipeId);
+                    }
                     recipeDao.aggregateRecipeData(meal.getRecipeId());
                 }
             } else if (oldRecipeId != null) {
@@ -231,6 +234,7 @@ public class MealController {
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
             }
             Integer recipeId = mealDao.getMeal(mealId).getRecipeId();
+            ingredientDao.deleteAllIngredientsFromMeal(mealId);
             mealDao.deleteMealById(mealId);
             if (recipeId != null) {
                 recipeDao.aggregateRecipeData(recipeId);

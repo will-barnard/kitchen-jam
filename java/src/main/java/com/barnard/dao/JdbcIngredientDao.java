@@ -78,7 +78,7 @@ public class JdbcIngredientDao implements IngredientDao {
             if (i == 0) {
                 sql += meals.get(i).getMealId() + " ";
             } else {
-                sql += "OR meal_id = " + meals.get(i).getRecipeId() + " ";
+                sql += "OR meal_id = " + meals.get(i).getMealId() + " ";
             }
         }
 
@@ -88,7 +88,9 @@ public class JdbcIngredientDao implements IngredientDao {
             SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql);
             List<Ingredient> tempList = new ArrayList<>();
             int mealId = 0;
+            boolean isResult = false;
             while (rowSet.next()) {
+                isResult = true;
                 Ingredient ingredient = mapRowToIngredient(rowSet);
                 if (mealId == 0) {
                     tempList.add(ingredient);
@@ -104,15 +106,24 @@ public class JdbcIngredientDao implements IngredientDao {
                     meals.get(index.getAsInt()).setIngredientList(tempList);
                     // reset values
                     tempList = new ArrayList<>();
-                    mealId = 0;
+                    tempList.add(ingredient);
+                    mealId = ingredient.getMealId();
                 }
+            }
+            if (isResult) {
+                int finalMealId = mealId;
+                OptionalInt index = meals.stream()
+                        .filter(meal -> meal.getMealId() == finalMealId)
+                        .mapToInt(meals::indexOf)
+                        .findFirst();
+                meals.get(index.getAsInt()).setIngredientList(tempList);
             }
         } catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database", e);
         } catch (DataIntegrityViolationException e) {
             throw new DaoException("Data integrity violation", e);
         }
-        return null;
+        return meals;
     }
 
     @Override
@@ -135,32 +146,42 @@ public class JdbcIngredientDao implements IngredientDao {
             SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql);
             List<Ingredient> tempList = new ArrayList<>();
             int recipeId = 0;
+            boolean isResult = false;
             while (rowSet.next()) {
+                isResult = true;
                 Ingredient ingredient = mapRowToIngredient(rowSet);
                 if (recipeId == 0) {
                     tempList.add(ingredient);
-                    recipeId = ingredient.getMealId();
-                } else if (ingredient.getMealId() == recipeId){
+                    recipeId = ingredient.getRecipeId();
+                } else if (ingredient.getRecipeId() == recipeId){
                     tempList.add(ingredient);
                 } else {
-                    int finalMealId = recipeId;
+                    int finalRecipeId = recipeId;
                     OptionalInt index = recipes.stream()
-                            .filter(recipe -> recipe.getRecipeId() == finalMealId)
+                            .filter(recipe -> recipe.getRecipeId() == finalRecipeId)
                             .mapToInt(recipes::indexOf)
                             .findFirst();
                     recipes.get(index.getAsInt()).setIngredientList(tempList);
                     // reset values
                     tempList = new ArrayList<>();
-                    recipeId = 0;
+                    tempList.add(ingredient);
+                    recipeId = ingredient.getRecipeId();
                 }
             }
-
+            if (isResult) {
+                int finalRecipeId = recipeId;
+                OptionalInt index = recipes.stream()
+                        .filter(recipe -> recipe.getRecipeId() == finalRecipeId)
+                        .mapToInt(recipes::indexOf)
+                        .findFirst();
+                recipes.get(index.getAsInt()).setIngredientList(tempList);
+            }
         } catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database", e);
         } catch (DataIntegrityViolationException e) {
             throw new DaoException("Data integrity violation", e);
         }
-        return null;
+        return recipes;
     }
 
     @Override

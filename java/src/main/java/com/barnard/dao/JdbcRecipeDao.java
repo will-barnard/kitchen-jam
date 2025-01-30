@@ -287,7 +287,7 @@ public class JdbcRecipeDao implements RecipeDao {
 
         try {
 
-            jdbcTemplate.update(sql, recipeId, recipeId, recipeId);
+            jdbcTemplate.update(sql, recipeId, recipeId, recipeId, recipeId);
 
         } catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database", e);
