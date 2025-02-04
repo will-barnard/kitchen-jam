@@ -25,7 +25,7 @@ const routes = [
     name: 'home',
     component: HomeView,
     meta: {
-      requiresAuth: true
+      requiresAuth: false
     }
   },
   {
@@ -41,7 +41,7 @@ const routes = [
     name: "logout",
     component: LogoutView,
     meta: {
-      requiresAuth: false
+      requiresAuth: true
     }
   },
   {
