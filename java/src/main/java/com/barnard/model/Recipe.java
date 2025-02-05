@@ -6,6 +6,7 @@ public class Recipe {
 
     private Integer recipeId;
     private int userId;
+    private String userName;
     private String recipeName;
     private Integer avgCookTime;
     private String description;
@@ -30,6 +31,14 @@ public class Recipe {
 
     public void setUserId(int userId) {
         this.userId = userId;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public String getRecipeName() {

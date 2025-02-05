@@ -10,6 +10,7 @@ public class Meal {
 
     private int mealId;
     private int userId;
+    private String userName;
     private Integer recipeId;
     private String recipeName;
     private Recipe recipe;
@@ -50,6 +51,14 @@ public class Meal {
 
     public void setUserId(int userId) {
         this.userId = userId;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public Integer getRecipeId() {

@@ -23,9 +23,10 @@ public class JdbcMealDao implements MealDao {
     public Meal getMeal(int mealId) {
 
         Meal meal = null;
-        String sql = "SELECT meal.*, recipe.recipe_name " +
+        String sql = "SELECT meal.*, recipe.recipe_name, user_attributes.display_name " +
                 "FROM meal " +
                 "LEFT JOIN recipe ON meal.recipe_id = recipe.recipe_id " +
+                "JOIN user_attributes ON meal.user_id = user_attributes.user_id " +
                 "WHERE meal_id = ?;";
 
         try {
@@ -47,9 +48,10 @@ public class JdbcMealDao implements MealDao {
 
         List<Meal> meals = new ArrayList<Meal>();
         search = "%" + search + "%";
-        String sql = "SELECT meal.*, recipe.recipe_name " +
+        String sql = "SELECT meal.*, recipe.recipe_name, user_attributes.display_name " +
                 "FROM meal " +
                 "LEFT JOIN recipe ON meal.recipe_id = recipe.recipe_id " +
+                "JOIN user_attributes ON meal.user_id = user_attributes.user_id " +
                 "WHERE meal_name LIKE ? " +
                 "AND user_id = ?;";
 
@@ -71,11 +73,12 @@ public class JdbcMealDao implements MealDao {
     public List<Meal> getMealsByTagAndUser(int tagId, int userId) {
 
         List<Meal> meals = new ArrayList<Meal>();
-        String sql = "SELECT meal.*, recipe.recipe_name " +
+        String sql = "SELECT meal.*, recipe.recipe_name, user_attributes.display_name " +
                 "FROM meal " +
                 "JOIN tags_meal ON meal.meal_id = tags_meal.meal_id " +
                 "JOIN tags ON tags_meal.tag_id = tags.tag_id " +
                 "LEFT JOIN recipe ON meal.recipe_id = recipe.recipe_id " +
+                "JOIN user_attributes ON meal.user_id = user_attributes.user_id " +
                 "WHERE tags.tag_id = ? " +
                 "AND meal.user_id = ?;";
 
@@ -97,9 +100,10 @@ public class JdbcMealDao implements MealDao {
     public List<Meal> getMealsByUserId(int userId) {
 
         List<Meal> meals = new ArrayList<Meal>();
-        String sql = "SELECT meal.*, recipe.recipe_name " +
+        String sql = "SELECT meal.*, recipe.recipe_name, user_attributes.display_name " +
                 "FROM meal " +
                 "LEFT JOIN recipe ON meal.recipe_id = recipe.recipe_id " +
+                "JOIN user_attributes ON meal.user_id = user_attributes.user_id " +
                 "WHERE meal.user_id = ? " +
                 "ORDER BY date_created DESC;";
 
@@ -121,9 +125,10 @@ public class JdbcMealDao implements MealDao {
     public List<Meal> getMealsByRecipeId(int recipeId) {
 
         List<Meal> meals = new ArrayList<Meal>();
-        String sql = "SELECT * " +
+        String sql = "SELECT meal.*, user_attributes.display_name " +
                 "FROM meal " +
                 "LEFT JOIN recipe ON meal.recipe_id = recipe.recipe_id " +
+                "JOIN user_attributes ON meal.user_id = user_attributes.user_id " +
                 "WHERE meal.recipe_id = ?;";
 
         try {
@@ -194,9 +199,10 @@ public class JdbcMealDao implements MealDao {
     @Override
     public Meal getPublicMeal(String uuid) {
         Meal meal = null;
-        String sql = "SELECT meal.*, recipe.recipe_name " +
+        String sql = "SELECT meal.*, recipe.recipe_name, user_attributes.display_name " +
                 "FROM meal " +
                 "LEFT JOIN recipe ON meal.recipe_id = recipe.recipe_id " +
+                "JOIN user_attributes ON meal.user_id = user_attributes.user_id " +
                 "WHERE meal.public_url = ? " +
                 "AND meal.is_public = true;";
         try {
@@ -319,6 +325,7 @@ public class JdbcMealDao implements MealDao {
 
         meal.setMealId(rs.getInt("meal_id"));
         meal.setUserId(rs.getInt("user_id"));
+        meal.setUserName(rs.getString("display_name"));
         meal.setMealName(rs.getString("meal_name"));
         if (rs.getObject("recipe_id") != null) {
             meal.setRecipeId(rs.getInt("recipe_id"));

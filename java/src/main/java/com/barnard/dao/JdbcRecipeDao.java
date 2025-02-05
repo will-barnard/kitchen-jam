@@ -24,9 +24,10 @@ public class JdbcRecipeDao implements RecipeDao {
     public Recipe getRecipe(int recipeId) {
 
         Recipe recipe = null;
-        String sql = "SELECT recipe.*, category.category_name " +
+        String sql = "SELECT recipe.*, category.category_name, user_attributes.display_name " +
                 "FROM recipe " +
                 "LEFT JOIN category ON recipe.category_id = category.category_id " +
+                "JOIN user_attributes ON recipe.user_id = user_attributes.user_id " +
                 "WHERE recipe.recipe_id = ?;";
 
         try {
@@ -49,9 +50,10 @@ public class JdbcRecipeDao implements RecipeDao {
 
         search = "%" + search.toLowerCase() + "%";
         List<Recipe> recipes = new ArrayList<>();
-        String sql = "SELECT recipe.*, category.category_name " +
+        String sql = "SELECT recipe.*, category.category_name, user_attributes.display_name " +
                 "FROM recipe " +
                 "LEFT JOIN category ON recipe.category_id = category.category_id " +
+                "JOIN user_attributes ON recipe.user_id = user_attributes.user_id " +
                 "WHERE LOWER (recipe.recipe_name) LIKE ? " +
                 "AND recipe.user_id = ?;";
 
@@ -74,9 +76,10 @@ public class JdbcRecipeDao implements RecipeDao {
     public List<Recipe> getRecipesByUserId(int userId) {
 
         List<Recipe> recipes = new ArrayList<>();
-        String sql = "SELECT recipe.*, category.category_name " +
+        String sql = "SELECT recipe.*, category.category_name, user_attributes.display_name " +
                 "FROM recipe " +
                 "LEFT JOIN category ON recipe.category_id = category.category_id " +
+                "JOIN user_attributes ON recipe.user_id = user_attributes.user_id " +
                 "WHERE recipe.user_id = ?;";
 
         try {
@@ -98,9 +101,10 @@ public class JdbcRecipeDao implements RecipeDao {
     public List<Recipe> getRecipesByCategoryId(int categoryId, int userId) {
 
         List<Recipe> recipes = new ArrayList<>();
-        String sql = "SELECT recipe.*, category.category_name " +
+        String sql = "SELECT recipe.*, category.category_name, user_attributes.display_name " +
                 "FROM recipe " +
                 "LEFT JOIN category on recipe.category_id = category.category_id " +
+                "JOIN user_attributes ON recipe.user_id = user_attributes.user_id " +
                 "WHERE recipe.category_id = ? " +
                 "AND recipe.user_id = ?;";
 
@@ -124,10 +128,11 @@ public class JdbcRecipeDao implements RecipeDao {
     public Recipe getRecipeByMealId(int mealId) {
 
         Recipe recipe = null;
-        String sql = "SELECT recipe.*, category.category_name " +
+        String sql = "SELECT recipe.*, category.category_name, user_attributes.display_name " +
                 "FROM recipe " +
                 "JOIN meal on recipe.recipe_id = meal.recipe_id " +
                 "LEFT JOIN category on recipe.category_id = category.category_id " +
+                "JOIN user_attributes ON recipe.user_id = user_attributes.user_id " +
                 "WHERE meal.meal_id = ?;";
 
         try {
@@ -193,9 +198,10 @@ public class JdbcRecipeDao implements RecipeDao {
     @Override
     public Recipe getPublicRecipe(String uuid) {
         Recipe recipe = null;
-        String sql = "SELECT recipe.*, category.category_name " +
+        String sql = "SELECT recipe.*, category.category_name, user_attributes.display_name " +
                 "FROM recipe " +
                 "LEFT JOIN category ON recipe.category_id = category.category_id " +
+                "JOIN user_attributes ON recipe.user_id = user_attributes.user_id " +
                 "WHERE recipe.public_url = ? " +
                 "AND recipe.is_public = true;";
 
@@ -350,6 +356,7 @@ public class JdbcRecipeDao implements RecipeDao {
 
         recipe.setRecipeId(rs.getInt("recipe_id"));
         recipe.setUserId(rs.getInt("user_id"));
+        recipe.setUserName(rs.getString("display_name"));
         recipe.setRecipeName(rs.getString("recipe_name"));
         recipe.setAvgCookTime(rs.getInt("avg_cook_time"));
         recipe.setDescription(rs.getString("description"));
