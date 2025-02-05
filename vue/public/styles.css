@@ -13,6 +13,8 @@
    --light-4: #b8da3d;
    --light-5: #fda54b;
    --light-6: #eff5d1;
+   --light-7: #7c7ef5;
+   --light-8: #bfc0f5;
    --edit: #feae59;
    --tag: #eacee4;
    
@@ -72,7 +74,7 @@ textarea {
    transition: opacity .2s ease .2s;
 }
 .quickFade-leave-active {
-   transition: opacity .2s ease;
+   transition: opacity 0s;
 }
 .quickFade-enter-from, .quickFade-leave-to {
    opacity: 0;

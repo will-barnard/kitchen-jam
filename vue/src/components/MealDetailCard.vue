@@ -7,7 +7,13 @@
                 </div>
             </div>
             <div class="details">
-
+                <div class="single-row" v-show="showUser">
+                    <div class="spacer"></div>
+                    <div class="single-row user-field">
+                        <p>cooked by </p>
+                        <p class="username">{{ meal.userName }}</p>
+                    </div>
+                </div>
                 <div class="title">
                     <h2 >{{ meal.mealName }}</h2>
                     <h3 v-if="meal.recipeId" >{{ meal.recipeName }}</h3>
@@ -64,7 +70,7 @@ import IngredientList from './IngredientList.vue';
 
 export default {
     components: {IngredientList},
-    props: ['meal', 'editable', 'img'],
+    props: ['meal', 'editable', 'img', 'showUser'],
     methods: {
         formatDate(date) {
             return UtilityService.formatDate(date);
@@ -442,5 +448,20 @@ export default {
     }
     .right {
         text-align: right;
+    }
+    .username {
+        background-color: var(--light-8);
+        padding: 5px;
+        margin: 5px;
+        border-radius: 5px;;
+    }
+    .user-field {
+        background-color: var(--light-1);
+        border-radius: 10px;
+        padding-right: 10px;
+        padding-left: 10px;
+        margin-right: 0px;
+        margin-left: 5px;
+        margin-bottom: 5px;
     }
 </style>

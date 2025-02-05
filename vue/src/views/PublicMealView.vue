@@ -3,7 +3,9 @@
         <TopBanner @click="$router.push({name: 'home'})"/>
         <LoadingWidget v-if="!show"/>
         <Transition name="quickFade">
-            <MealDetailCard :meal="meal" :editable="false" :img="img" v-if="show"/>
+            <div v-if="show">
+                <MealDetailCard :meal="meal" :editable="false" :img="img" :showUser="true" />
+            </div>
         </Transition>
     </div>
 </template>
@@ -29,6 +31,12 @@ export default {
         MealService.getPublicMeal(this.$route.params.uuid).then(
             (response) => {
                 this.meal = response.data;
+                if (!this.meal.ingredientList) {
+                    this.meal.ingredientList = [];
+                }
+                if (!this.meal.tags) {
+                    this.meal.tags = [];
+                }
                 if (this.meal.imageId) {
                     ImageService.getImage(this.meal.imageId).then(
                         (res) => {
@@ -38,7 +46,7 @@ export default {
                         }
                     )
                 } else {
-                    this.meal = "../img/placeholder.jpeg";
+                    this.img = "/img/placeholder.jpeg";
                     this.show = true;
                 }
             }

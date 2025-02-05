@@ -3,7 +3,7 @@
         <TopBanner @click="$router.push({name: 'home'})"/>
         <LoadingWidget v-if="!show" />
         <Transition name="quickFade">
-            <RecipeDetailCard :recipe="recipe" :editable="false" :img="img" v-if="show" />
+            <RecipeDetailCard :recipe="recipe" :editable="false" :img="img" :showUser="true" v-if="show" />
         </Transition>
     </div>
 </template>
@@ -29,6 +29,13 @@ export default {
         RecipeService.getPublicRecipe(this.$route.params.uuid).then(
             (response) => {
                 this.recipe = response.data;
+                if (!this.recipe.ingredientList) {
+                    this.recipe.ingredientList = [];
+                }
+                if (!this.recipe.stepList) {
+                    this.recipe.stepList = [];
+                }
+                console.log(this.recipe)
                 if (this.recipe.imageId) {
                     ImageService.getImage(this.recipe.imageId).then(
                         (res) => {
@@ -38,7 +45,7 @@ export default {
                         }
                     )
                 } else {
-                    this.meal = "../img/placeholder.jpeg";
+                    this.img = "/img/placeholder.jpeg";
                     this.show = true;
                 }
             }

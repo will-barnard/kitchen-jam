@@ -6,6 +6,13 @@
             </div>
         </div>
         <div class="details">
+            <div class="single-row" v-show="showUser">
+                <div class="spacer"></div>
+                <div class="single-row user-field">
+                    <p>cooked by </p>
+                    <p class="username">{{ recipe.userName }}</p>
+                </div>
+            </div>
             <div class="title">
                 <h2 >{{ recipe.recipeName }}</h2>
             </div>
@@ -54,7 +61,7 @@ import StepList from './StepList.vue';
 
 export default {
     components: {StepList, IngredientList},
-    props: ['recipe', 'editable', 'img']
+    props: ['recipe', 'editable', 'img', 'showUser']
 }
 </script>
 
@@ -184,6 +191,21 @@ export default {
     }
    
     .edit-image h3 {
+        margin-bottom: 5px;
+    }
+    .username {
+        background-color: var(--light-8);
+        padding: 5px;
+        margin: 5px;
+        border-radius: 5px;;
+    }
+    .user-field {
+        background-color: var(--light-1);
+        border-radius: 10px;
+        padding-right: 10px;
+        padding-left: 10px;
+        margin-right: 0px;
+        margin-left: 5px;
         margin-bottom: 5px;
     }
 </style>

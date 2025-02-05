@@ -17,18 +17,35 @@
                 <input type="file" name="file" accept="image/*" @change="uploadImage">
             </div>
             <div class="edit-form">
-                <h3>Sharing</h3>
                 <Transition name="quickFade">
                     <div v-if="newRecipe.public">
-                        <p>Recipe is public</p>
-                        <a :href="newRecipe.publicUrl">Public Url</a>
-                        <button @click.prevent="makePrivate()">Make private</button>
+                        <div class="single-row">
+                            <h3>Sharing</h3>
+                            <div class="spacer"></div>
+                            <p>Public &#127760;</p>
+                        </div>
+                        <div class="single-row">
+                            <button @click.prevent="copyURL(newRecipe.publicUrl)">Copy URL</button>
+                            <div class="spacer">
+                                <Transition name="quickFade">
+                                    <p v-if="copiedURL">Link copied!</p>
+                                </Transition>
+                            </div>
+                            <button @click.prevent="makePrivate()">Make private</button>
+                        </div>
                     </div>
                 </Transition>
                 <Transition name="quickFade">
                     <div v-if="!newRecipe.public">
-                        <p>Recipe is private</p>
-                        <button @click.prevent="makePublic()">Make public</button>
+                        <div class="single-row">
+                            <h3>Sharing</h3>
+                            <div class="spacer"></div>
+                            <p>Private &#128274;</p>
+                        </div>
+                        <div class="single-row">
+                            <div class="spacer"></div>
+                            <button @click.prevent="makePublic()">Make public</button>
+                        </div>
                     </div>
                 </Transition>
             </div>
@@ -135,6 +152,10 @@
            <h2 class="cancel-delete" v-on:click="deleting = false">Cancel</h2>
        </div>
        <div class="controls" v-show="!deleting">
+            <div class="link-button button" v-show="staticRecipe.public" @click="copyURL(newRecipe.publicUrl)">
+                <img src="/img/link-symbol.svg" />
+            </div>
+            <div class="spacer"><p v-show="copiedURL">Link copied!</p></div>
            <div class="edit-button button" v-if="!editing" v-on:click="editing=true">
                 <img src="/img/edit.png" />
             </div>
@@ -210,7 +231,8 @@ export default {
             mealList: [],
             newStep: "",
             newIngredient: "",
-            newIngredientQuantity: ""
+            newIngredientQuantity: "",
+            copiedURL: false
         }
     },
     created() {
@@ -494,6 +516,14 @@ export default {
                     }
                 ) 
                 }
+        },
+        async copyURL(mytext) {
+            try {
+                await navigator.clipboard.writeText(mytext);
+                this.copiedURL = true;
+                setTimeout(() => this.copiedURL = false, 2000);
+            } catch($e) {
+            }
         }
     }
 }
@@ -601,6 +631,10 @@ export default {
     }
     .undo {
         background-color: var(--edit);
+    }
+    .link-button {
+        background-color: var(--light-7);
+        margin-left: 10px;
     }
     .details {
         background-color: var(--light-2);
