@@ -125,7 +125,7 @@ public class JdbcMealDao implements MealDao {
     public List<Meal> getMealsByRecipeId(int recipeId) {
 
         List<Meal> meals = new ArrayList<Meal>();
-        String sql = "SELECT meal.*, user_attributes.display_name " +
+        String sql = "SELECT meal.*, recipe.*, user_attributes.display_name " +
                 "FROM meal " +
                 "LEFT JOIN recipe ON meal.recipe_id = recipe.recipe_id " +
                 "JOIN user_attributes ON meal.user_id = user_attributes.user_id " +
