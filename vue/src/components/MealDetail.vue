@@ -27,7 +27,7 @@
                             <p>Public &#127760;</p>
                         </div>
                         <div class="single-row">
-                            <button @click.prevent="copyURL(newMeal.publicUrl)">Copy URL</button>
+                            <button @click.prevent="unsecuredCopyToClipboard(newMeal.publicUrl)">Copy URL</button>
                             <div class="spacer">
                                 <Transition name="quickFade">
                                     <p v-show="copiedURL">&nbsp;Link copied!</p>
@@ -204,7 +204,7 @@
         </div>
 
         <div class="controls" v-show="!deleting">
-            <div class="link-button button" v-show="staticMeal.public" @click="copyURL(newMeal.publicUrl)">
+            <div class="link-button button" v-show="staticMeal.public" @click="unsecuredCopyToClipboard(newMeal.publicUrl)">
                 <img src="/img/link-symbol.svg" />
             </div>
             <div class="spacer"><p v-show="copiedURL">Link copied!</p></div>
@@ -543,8 +543,24 @@ export default {
                 this.copiedURL = true;
                 setTimeout(() => this.copiedURL = false, 2000);
             } catch($e) {
+                console.log($e)
             }
-        }
+        },
+        unsecuredCopyToClipboard(text) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                this.copiedURL = true;
+                setTimeout(() => this.copiedURL = false, 2000);
+            } catch (err) {
+                console.error('Unable to copy to clipboard', err);
+            }
+            document.body.removeChild(textArea);
+            }
     }
 }
 </script>

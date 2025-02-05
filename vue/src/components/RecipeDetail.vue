@@ -25,7 +25,7 @@
                             <p>Public &#127760;</p>
                         </div>
                         <div class="single-row">
-                            <button @click.prevent="copyURL(newRecipe.publicUrl)">Copy URL</button>
+                            <button @click.prevent="unsecuredCopyToClipboard(newRecipe.publicUrl)">Copy URL</button>
                             <div class="spacer">
                                 <Transition name="quickFade">
                                     <p v-if="copiedURL">Link copied!</p>
@@ -152,7 +152,7 @@
            <h2 class="cancel-delete" v-on:click="deleting = false">Cancel</h2>
        </div>
        <div class="controls" v-show="!deleting">
-            <div class="link-button button" v-show="staticRecipe.public" @click="copyURL(newRecipe.publicUrl)">
+            <div class="link-button button" v-show="staticRecipe.public" @click="unsecuredCopyToClipboard(newRecipe.publicUrl)">
                 <img src="/img/link-symbol.svg" />
             </div>
             <div class="spacer"><p v-show="copiedURL">Link copied!</p></div>
@@ -524,7 +524,22 @@ export default {
                 setTimeout(() => this.copiedURL = false, 2000);
             } catch($e) {
             }
-        }
+        },
+        unsecuredCopyToClipboard(text) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                this.copiedURL = true;
+                setTimeout(() => this.copiedURL = false, 2000);
+            } catch (err) {
+                console.error('Unable to copy to clipboard', err);
+            }
+            document.body.removeChild(textArea);
+            }
     }
 }
 </script>
