@@ -30,6 +30,24 @@ CREATE TABLE user_attributes (
     nurture_state int NOT NULL
 );
 
+alter table user_attributes add column is_public boolean;
+
+alter table user_attributes add column default_public boolean;
+
+alter table user_attributes add column image_id int references image(image_id);
+
+alter table user_attributes add column headline varchar(100);
+
+alter table user_attributes add column bio varchar(2000);
+
+alter table user_attributes add column user_location varchar(100);
+
+alter table user_attributes add column favorite_foods varchar(500);
+
+alter table user_attributes add column favorite_cuisines varchar(500);
+
+alter table user_attributes add column created_at timestamp default CURRENT_TIMESTAMP;
+
 CREATE TABLE password_reset (
     uuid_value varchar(200) PRIMARY KEY,
     user_id int REFERENCES users(user_id),

@@ -40,10 +40,6 @@ public class MealController {
     @Autowired
     private IngredientDao ingredientDao;
 
-    @GetMapping(path="/test")
-    public void test() {
-//        emailService.sendEmail("barnardwill@gmail.com", "test", "test");
-    }
 
     @GetMapping(path = "/{mealId}")
     public Meal getMealById(@PathVariable int mealId, Principal principal) {
