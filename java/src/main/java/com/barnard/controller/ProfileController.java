@@ -20,7 +20,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin
-@PreAuthorize("permitAll")
+@PreAuthorize("permitAll()")
 @RequestMapping(path = "/profile")
 public class ProfileController {
 
@@ -71,7 +71,7 @@ public class ProfileController {
         return updatedProfile;
     }
 
-    @GetMapping(path = "/{userId}")
+    @GetMapping(path = "/feed/{userId}")
     public UserFeedDto getUserFeed(@PathVariable int userId) {
         UserFeedDto feed = new UserFeedDto();
         try {
