@@ -1,8 +1,11 @@
 <template>
     <div>
+        <TopBanner />
         <Transition name="fade">
-            <div v-if="showProfile">
-                <UserProfile :profile="profile" :allowEditing="allowEdit" @reload="reload"/>
+            <div v-if="show">
+                <div v-if="showProfile">
+                    <UserProfile :profile="profile" :allowEditing="allowEdit" @reload="reload"/>
+                </div>
             </div>
         </Transition>
     </div>
@@ -11,14 +14,16 @@
 <script>
 import UserProfile from '../components/UserProfile.vue';
 import ProfileService from '../services/ProfileService';
+import TopBanner from '../components/TopBanner.vue';
 
 export default {
-    components: {UserProfile},
+    components: {UserProfile, TopBanner},
     data() {
         return {
             showProfile: false,
             allowEdit: false,
-            profile: {}
+            profile: {},
+            show: false
         }
     },
     created() {
@@ -38,6 +43,9 @@ export default {
                 }
             )
         }
+        setTimeout(() => {
+            this.show = true;
+        }, 10); 
     },
     methods: {
         loadingTick() {

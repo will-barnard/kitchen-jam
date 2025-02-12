@@ -45,7 +45,7 @@ export default {
     justify-content: center;
   }
   .icon img {
-    width: 40vw;
+    width: 60vw; /* Adjusted width */
   }
   .home {
     text-align: center;

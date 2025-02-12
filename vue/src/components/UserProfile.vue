@@ -9,14 +9,25 @@
             </div>
             <div class="main bg" v-if="!editing">
                 <h2>{{ profile.headline }}</h2>
-                <div class="single-row" >
-                    <h3>Meals logged: {{ profile.countMeals }}</h3>
-                    <h3>Recipes: {{ profile.countRecipes }}</h3>
+                <div class="single-row">
+                    <h3><i class="fas fa-utensils icon"></i>&nbsp;Meals: {{ profile.countMeals }}</h3>
+                    <h3><i class="fas fa-book icon"></i>&nbsp;Recipes: {{ profile.countRecipes }}</h3>
                 </div>
-                <p>{{ profile.location }}</p>
-                <p>Favorite foods: {{ profile.favoriteFoods }}</p>
-                <p>Favorite cuisines: {{ profile.favoriteCuisines }}</p>
-                <p>{{ profile.bio }}</p>
+                <hr class="separator" />
+                <p><i class="fas fa-map-marker-alt icon"></i>&nbsp;{{ profile.location }}</p>
+                <hr class="separator" />
+                <div class="single-row">
+                    <i class="fas fa-star icon"></i>&nbsp;
+                    <div>
+                        <p class="favorite"><b>Favorite foods:</b>&nbsp;{{ profile.favoriteFoods }}</p>
+                        <p class="favorite"><b>Favorite cuisines:</b>&nbsp;{{ profile.favoriteCuisines }}</p>
+                    </div>
+                </div>
+                <hr class="separator" />
+                <div class="single-row">
+                    <i class="fas fa-user icon"></i>
+                    <p>{{ profile.bio }}</p>
+                </div>
             </div>
         </div>
         <div v-if="allowEditing && editing">
@@ -49,7 +60,6 @@
                     <p>Bio:</p>
                     <textarea v-model="newProfile.bio"></textarea>
                 </div>
-                
             </div>
         </div>
         <div class="controls" v-if="allowEditing">
@@ -175,95 +185,168 @@ export default {
     }
 }
 </script>
-<style scoped>
-    .profile-img {
-        width: 50vw;
-        height: 50vw;
-    }
-    .profile-img img {
-        height: 100%;
-        width: 100%;
-        object-fit: cover;
-        border-radius: 100%;
-    }
-    .top {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-    .main {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-    }
-    h1, h2, h3, p {
-        margin: 5px;
-        text-align: center;
-    }
-    .controls {
-        text-align: center;
-        display: flex;
-        flex-direction: row;
-        justify-content: end;
-        align-items: center;
-        margin-right: 5px;
-        margin-top: 10px;
-    }
-    .controls img {
-        height: 5vh;
-    }
-    .controls:hover {
-        cursor: pointer;
-    }
-    .button {
-        width: 15vw;
-        border-radius: 10px;
-        padding: 5px;
-        margin-right: 5px;
-    }
-    .edit-button {
-        background-color: var(--edit);
-    }
-    .trash {
-        background-color: var(--light-3);
-    }
-    .check {
-        background-color: var(--light-4);
-    }
-    .undo {
-        background-color: var(--edit);
-    }
-    .link-button {
-        background-color: var(--light-7);
-        margin-left: 10px;
-    }
-    .edit-row {
-        display: flex;
-        margin-bottom: 5px;
 
-    }
-    .edit-row input {
-        width: 100%;
-    }
-    .edit-column {
-        display: flex;
-        flex-direction: column;
-        align-items: start;
-        justify-content: start;
-    }
-    .edit-column textarea {
-        flex-grow: 1;
-        width: 85vw;
-        margin-left: 5px;
-    }
-    .bg {
-        background-color: var(--light-1);
-        padding: 5px;
-        border-radius: 10px;
-        margin-bottom: 10px;
-    }
-    .main-edit {
-        padding: 10px;
-    }
+<style scoped>
+.profile-img {
+    width: 50vw;
+    height: 50vw;
+    margin-bottom: 20px;
+}
+
+.profile-img img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    border-radius: 100%;
+}
+
+.top {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background-color: var(--light-1);
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.separator {
+    width: 80%;
+    border: 1px solid var(--dark-2);
+    margin: 5px 0;
+}
+
+.icon {
+    width: 1em;
+    height: 1em;
+    vertical-align: middle;
+}
+
+h1 {
+    margin: 5px;
+    text-align: center;
+    font-size: 2em;
+    font-weight: bold;
+    color: var(--primary);
+}
+
+h2 {
+    margin: 5px;
+    text-align: center;
+    font-size: 1.5em;
+    font-weight: bold;
+    color: var(--secondary);
+}
+
+h3 {
+    margin: 5px;
+    text-align: center;
+    font-size: 1.2em;
+    font-style: italic;
+    color: var(--tertiary);
+}
+
+p {
+    margin: 5px;
+    text-align: center;
+    font-size: 1em;
+    font-weight: 100;
+    line-height: 1.5;
+}
+
+.controls {
+    text-align: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+    align-items: center;
+    margin-right: 5px;
+    margin-top: 10px;
+}
+
+.controls img {
+    height: 5vh;
+}
+
+.controls:hover {
+    cursor: pointer;
+}
+
+.button {
+    width: 15vw;
+    border-radius: 10px;
+    padding: 5px;
+    margin-right: 5px;
+}
+
+.edit-button {
+    background-color: var(--edit);
+}
+
+.trash {
+    background-color: var(--light-3);
+}
+
+.check {
+    background-color: var(--light-4);
+}
+
+.undo {
+    background-color: var(--edit);
+}
+
+.link-button {
+    background-color: var(--light-7);
+    margin-left: 10px;
+}
+
+.edit-row {
+    display: flex;
+    margin-bottom: 5px;
+}
+
+.edit-row input {
+    width: 100%;
+    border-radius: 5px;
+    border: 1px solid var(--border-color);
+}
+
+.edit-column {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    justify-content: start;
+}
+
+.edit-column textarea {
+    flex-grow: 1;
+    width: 85vw;
+    margin-left: 5px;
+    height: 20vh;
+    border-radius: 5px;
+    border: 1px solid var(--border-color);
+}
+
+.bg {
+    background-color: var(--light-1);
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.main-edit {
+    padding: 10px;
+}
+
+.favorite {
+    text-align: left;
+}
 </style>

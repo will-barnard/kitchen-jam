@@ -20,6 +20,9 @@ import PublicRecipeView from '../views/PublicRecipeView.vue';
 import UpdatesView from '../views/UpdatesView.vue';
 import ProfileView from '../views/ProfileView.vue';
 import DashboardView from '../views/DashboardView.vue';
+import FriendsView from '../views/FriendsView.vue';
+import SettingsView from '../views/SettingsView.vue';
+import NotificationsView from '../views/NotificationsView.vue';
 
 const routes = [
   {
@@ -161,6 +164,30 @@ const routes = [
     path: '/dashboard',
     name: 'dashboard',
     component: DashboardView,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/friends',
+    name: 'friends',
+    component: FriendsView,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/settings',
+    name: 'settings',
+    component: SettingsView,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/notifications',
+    name: 'notifications',
+    component: NotificationsView,
     meta: {
       requiresAuth: true
     }
