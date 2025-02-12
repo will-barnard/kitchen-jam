@@ -560,7 +560,7 @@ export default {
                 console.error('Unable to copy to clipboard', err);
             }
             document.body.removeChild(textArea);
-            }
+        }
     }
 }
 </script>

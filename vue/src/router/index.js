@@ -18,6 +18,8 @@ import WalkthroughView from '../views/WalkthroughView.vue';
 import PublicMealView from '../views/PublicMealView.vue';
 import PublicRecipeView from '../views/PublicRecipeView.vue';
 import UpdatesView from '../views/UpdatesView.vue';
+import ProfileView from '../views/ProfileView.vue';
+import DashboardView from '../views/DashboardView.vue';
 
 const routes = [
   {
@@ -145,6 +147,22 @@ const routes = [
     component: UpdatesView,
     meta: {
       requiresAuth: false
+    }
+  },
+  {
+    path: '/profile/:userId',
+    name: 'profile',
+    component: ProfileView,
+    meta: {
+      requiresAuth: false
+    }
+  },
+  {
+    path: '/dashboard',
+    name: 'dashboard',
+    component: DashboardView,
+    meta: {
+      requiresAuth: true
     }
   }
 ];

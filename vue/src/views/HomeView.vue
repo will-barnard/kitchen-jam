@@ -16,7 +16,7 @@
         <h3 v-if="this.$store.state.token == ''" class="button" @click="$router.push({ name: 'register' })">Create Free Account</h3>
         <h3 v-if="this.$store.state.token != ''" class="button" @click="$router.push({ name: 'meal-log' })">Meal Log</h3>
         <h3 v-if="this.$store.state.token != ''" class="button" @click="$router.push({  name: 'cookbook'})">Cookbook</h3>
-        <h3 class="button2" @click="$router.push({  name: 'updates'})">Updates</h3>
+        <h3 v-if="this.$store.state.token != ''" class="button2" @click="$router.push({  name: 'dashboard'})">Dashboard</h3>
       </div>
       
     </div>

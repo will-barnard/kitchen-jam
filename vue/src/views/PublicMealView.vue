@@ -15,7 +15,7 @@ import MealService from '../services/MealService';
 import ImageService from '../services/ImageService';
 import LoadingWidget from '../components/LoadingWidget.vue';
 import MealDetailCard from '../components/MealDetailCard.vue';
-import TopBanner from './TopBanner.vue';
+import TopBanner from '../components/TopBanner.vue';
 
 export default {
     components: {LoadingWidget, MealDetailCard, TopBanner},

@@ -4,6 +4,7 @@ import axios from 'axios';
 import MealService from '../services/MealService';
 import RecipeService from '../services/RecipeService';
 import ImageService from '../services/ImageService';
+import ProfileService from '../services/ProfileService';
 
 
 export function createStore(currentToken, currentUser) {
@@ -11,6 +12,8 @@ export function createStore(currentToken, currentUser) {
     state: {
       token: currentToken || '',
       user: currentUser || {},
+      userProfile: {},
+      loadedProfile: false,
       userMeals: [],
       loadedMeals: false,
       userRecipes: [],
@@ -34,6 +37,25 @@ export function createStore(currentToken, currentUser) {
         state.token = '';
         state.user = {};
         axios.defaults.headers.common = {};
+      },
+      GET_USER_PROFILE(state) {
+        ProfileService.getPrincipalProfile().then(
+          (response) => {
+            state.userProfile = response.data;
+            state.loadedProfile = true;
+          }
+        )
+      },
+      UPDATE_PROFILE(state, payload) {
+        state.userProfile = payload;
+        if (state.userProfile.imageId != null && state.userProfile.imageId > 0) {
+          ImageService.getImage(state.userProfile.imageId).then(
+              (response) => {
+                  const base64 = ImageService.parseImg(response);
+                  state.userProfile.img = "data:image/png;base64," + base64;
+              }
+          )
+      }
       },
       GET_USER_MEALS(state) {
         MealService.getMealsByUser().then(

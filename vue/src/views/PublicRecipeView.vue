@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import TopBanner from './TopBanner.vue';
+import TopBanner from '../components/TopBanner.vue';
 import LoadingWidget from '../components/LoadingWidget.vue';
 import ImageService from '../services/ImageService';
 import RecipeService from '../services/RecipeService';

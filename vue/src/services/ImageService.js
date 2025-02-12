@@ -30,6 +30,11 @@ export default {
       responseType: 'arraybuffer'
     })
   },
+  addImageToProfile(imageId) {
+    return axios.post('/image/profile/' + imageId, {
+      responseType: 'arraybuffer'
+    })
+  },
   updateMealImage(mealId, imageId) {
     return axios.put('/image/meal/' + mealId + '/' + imageId, {
       responseType: 'arraybuffer'
@@ -40,11 +45,19 @@ export default {
       responseType: 'arraybuffer'
     })
   },
+  updateProfileImage(imageId) {
+    return axios.put('/image/profile/' + imageId, {
+      responseType: 'arraybuffer'
+    })
+  },
   removeMealImage(mealId, imageId) {
     return axios.delete('/image/meal/' + mealId + '/' + imageId)
   },
   removeRecipeImage(recipeId, imageId) {
     return axios.delete('/image/recipe/' + recipeId + '/' + imageId)
+  },
+  removeProfileImage() {
+    return axios.delete('/image/profile')
   },
   parseImg(res) {
     const base64 = btoa(
