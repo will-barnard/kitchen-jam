@@ -110,6 +110,20 @@ public class JdbcImageDao implements ImageDao {
     }
 
     @Override
+    public void addImageToProfile(int userId, int imageId) {
+        String sql = "UPDATE user_attributes " +
+                "SET image_id = ? " +
+                "WHERE user_id = ?;";
+        try {
+            jdbcTemplate.update(sql, imageId, userId);
+        } catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Unable to connect to server or database", e);
+        } catch (DataIntegrityViolationException e) {
+            throw new DaoException("Data integrity violation", e);
+        }
+    }
+
+    @Override
     public void updateMealImage(int mealId, int imageId) {
         String sql = "UPDATE meal " +
                 "SET image_id = ? " +
@@ -138,6 +152,20 @@ public class JdbcImageDao implements ImageDao {
     }
 
     @Override
+    public void updateProfileImage(int userId, int imageId) {
+        String sql = "UPDATE user_attributes " +
+                "SET image_id = ? " +
+                "WHERE user_id = ?;";
+        try {
+            jdbcTemplate.update(sql, imageId, userId);
+        } catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Unable to connect to server or database", e);
+        } catch (DataIntegrityViolationException e) {
+            throw new DaoException("Data integrity violation", e);
+        }
+    }
+
+    @Override
     public void removeImageFromMeal(int mealId) {
         String sql = "UPDATE meal " +
                 "SET image_id = NULL " +
@@ -158,6 +186,20 @@ public class JdbcImageDao implements ImageDao {
                 "WHERE recipe_id = ?;";
         try {
             jdbcTemplate.update(sql, recipeId);
+        } catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Unable to connect to server or database", e);
+        } catch (DataIntegrityViolationException e) {
+            throw new DaoException("Data integrity violation", e);
+        }
+    }
+
+    @Override
+    public void removeImageFromProfile(int userId) {
+        String sql = "UPDATE user_attributes " +
+                "SET image_id = NULL " +
+                "WHERE user_id = ?;";
+        try {
+            jdbcTemplate.update(sql, userId);
         } catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database", e);
         } catch (DataIntegrityViolationException e) {

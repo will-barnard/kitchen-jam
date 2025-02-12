@@ -77,11 +77,15 @@ public class JdbcProfileDao implements ProfileDao {
     @Override
     public UserProfile updateUserProfile(UserProfile userProfile) {
 
+        if (userProfile.getImageId() == 0) {
+            userProfile.setImageId(null);
+        }
+
         UserProfile updatedProfile;
         String sql = "UPDATE user_attributes " +
                 "SET display_name = ?, is_public = ?, default_public = ?, " +
                 "image_id = ?, headline = ?, bio = ?, user_location = ?, " +
-                "favorite_foods = ?, favorite_cuisine = ? " +
+                "favorite_foods = ?, favorite_cuisines = ? " +
                 "WHERE user_id = ?;";
 
         try {

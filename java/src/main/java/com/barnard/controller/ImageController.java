@@ -1,6 +1,8 @@
 package com.barnard.controller;
 
 import com.barnard.dao.ImageDao;
+import com.barnard.dao.UserDao;
+import com.barnard.model.User;
 import com.barnard.service.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -12,6 +14,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
+import java.security.Principal;
 import java.util.UUID;
 
 @RestController
@@ -24,7 +27,12 @@ public class ImageController {
     private ImageService imageService;
     @Autowired
     private ImageDao imageDao;
+    @Autowired
+    private UserDao userDao;
     private final String imageDirectory = "/volume/";
+
+    // todo add auth, this is unsecured
+    // todo add deleting from volume
 
     @PostMapping(path = "/create")
     public int createImage(@RequestParam("image") MultipartFile[] image) {
@@ -93,6 +101,19 @@ public class ImageController {
         return image;
     }
 
+    @PostMapping(path = "/profile/{imageId}")
+    public byte[] addImageToProfile(@PathVariable int imageId, Principal principal) {
+        int userId = userDao.getUserByUsername(principal.getName()).getId();
+        imageDao.addImageToProfile(userId, imageId);
+        byte[] image = null;
+        try {
+            image = imageService.getImage(imageDirectory, imageDao.getImagePathById(imageId));
+        } catch (Exception e) {
+            System.out.println("Something went wrong adding an image to profile");
+        }
+        return image;
+    }
+
     @PutMapping(path = "/meal/{mealId}/{imageId}")
     public byte[] updateMealImage(@PathVariable int imageId, @PathVariable int mealId) {
         imageDao.updateMealImage(mealId, imageId);
@@ -117,6 +138,19 @@ public class ImageController {
         return image;
     }
 
+    @PutMapping(path = "/profile/{imageId}")
+    public byte[] updateProfileImage(@PathVariable int imageId, Principal principal) {
+        int userId = userDao.getUserByUsername(principal.getName()).getId();
+        imageDao.updateProfileImage(userId, imageId);
+        byte[] image = null;
+        try {
+            image = imageService.getImage(imageDirectory, imageDao.getImagePathById(imageId));
+        } catch (Exception e) {
+            System.out.println("Something went wrong updating an image to recipe");
+        }
+        return image;
+    }
+
     @DeleteMapping(path = "/meal/{mealId}/{imageId}")
     public void removeImageFromMeal(@PathVariable int imageId, @PathVariable int mealId) {
         imageDao.removeImageFromMeal(mealId);
@@ -125,5 +159,12 @@ public class ImageController {
     @DeleteMapping(path = "/recipe/{recipeId}/{imageId}")
     public void removeImageFromRecipe(@PathVariable int imageId, @PathVariable int recipeId) {
         imageDao.removeImageFromRecipe(recipeId);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @DeleteMapping(path = "/profile")
+    public void removeImageFromProfile(Principal principal) {
+        int userId = userDao.getUserByUsername(principal.getName()).getId();
+        imageDao.removeImageFromRecipe(userId);
     }
 }

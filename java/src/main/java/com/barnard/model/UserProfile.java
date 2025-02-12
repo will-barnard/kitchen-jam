@@ -8,7 +8,7 @@ public class UserProfile {
     private String displayName;
     private boolean isPublic;
     private boolean defaultPublic;
-    private int imageId;
+    private Integer imageId;
     private String headline;
     private String bio;
     private String location;
@@ -50,11 +50,11 @@ public class UserProfile {
         this.displayName = displayName;
     }
 
-    public int getImageId() {
+    public Integer getImageId() {
         return imageId;
     }
 
-    public void setImageId(int imageId) {
+    public void setImageId(Integer imageId) {
         this.imageId = imageId;
     }
 

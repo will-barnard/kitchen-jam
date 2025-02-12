@@ -2,14 +2,11 @@ package com.barnard.controller;
 
 import com.barnard.dao.ProfileDao;
 import com.barnard.dao.UserDao;
-import com.barnard.exception.DaoException;
 import com.barnard.model.UserFeedDto;
 import com.barnard.model.UserProfile;
 import com.barnard.model.UserProfilePrimitive;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
-import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -38,6 +35,19 @@ public class ProfileController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
         }
         return result;
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping(path = "/principal")
+    public UserProfile getPrincipalUserProfile(Principal principal) {
+        UserProfile profile;
+        try {
+            int userId = userDao.getUserByUsername(principal.getName()).getId();
+            profile = profileDao.getUserProfile(userId);
+        } catch(Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
+        }
+        return profile;
     }
 
     @GetMapping(path = "/{userId}")
