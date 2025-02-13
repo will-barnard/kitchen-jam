@@ -83,13 +83,13 @@ public class JdbcProfileDao implements ProfileDao {
 
         UserProfile updatedProfile;
         String sql = "UPDATE user_attributes " +
-                "SET display_name = ?, is_public = ?, default_public = ?, " +
+                "SET display_name = ?, " +
                 "image_id = ?, headline = ?, bio = ?, user_location = ?, " +
                 "favorite_foods = ?, favorite_cuisines = ? " +
                 "WHERE user_id = ?;";
 
         try {
-            jdbcTemplate.update(sql, userProfile.getDisplayName(), userProfile.isPublic(), userProfile.isDefaultPublic(),
+            jdbcTemplate.update(sql, userProfile.getDisplayName(),
                     userProfile.getImageId(), userProfile.getHeadline(), userProfile.getBio(), userProfile.getLocation(),
                     userProfile.getFavoriteFoods(), userProfile.getFavoriteCuisines(), userProfile.getUserId());
             updatedProfile = getUserProfile(userProfile.getUserId());
