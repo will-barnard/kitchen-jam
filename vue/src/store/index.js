@@ -57,6 +57,12 @@ export function createStore(currentToken, currentUser) {
           )
       }
       },
+      UPDATE_PROFILE_VISIBILITY(state, isPublic) {
+        state.userProfile.public = isPublic;
+      },
+      UPDATE_POSTS_VISIBILITY(state, defaultPublic) {
+        state.userProfile.defaultPublic = defaultPublic;
+      },
       GET_USER_MEALS(state) {
         MealService.getMealsByUser().then(
           (response) => {
