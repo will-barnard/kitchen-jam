@@ -43,6 +43,14 @@ export function createStore(currentToken, currentUser) {
           (response) => {
             state.userProfile = response.data;
             state.loadedProfile = true;
+            if (state.userProfile.imageId != null && state.userProfile.imageId > 0) {
+              ImageService.getImage(state.userProfile.imageId).then(
+                  (res) => {
+                      const base64 = ImageService.parseImg(res);
+                      state.userProfile.img = "data:image/png;base64," + base64;
+                  }
+              )
+            }
           }
         )
       },

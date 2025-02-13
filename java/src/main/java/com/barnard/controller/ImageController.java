@@ -104,9 +104,9 @@ public class ImageController {
     @PostMapping(path = "/profile/{imageId}")
     public byte[] addImageToProfile(@PathVariable int imageId, Principal principal) {
         int userId = userDao.getUserByUsername(principal.getName()).getId();
-        imageDao.addImageToProfile(userId, imageId);
         byte[] image = null;
         try {
+            imageDao.addImageToProfile(userId, imageId);
             image = imageService.getImage(imageDirectory, imageDao.getImagePathById(imageId));
         } catch (Exception e) {
             System.out.println("Something went wrong adding an image to profile");

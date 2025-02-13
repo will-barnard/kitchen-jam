@@ -123,46 +123,40 @@ export default {
         updateProfile() {
             ProfileService.updateProfile(this.newProfile).then(
                 (response) => {
-                    this.$store.commit('UPDATE_PROFILE', response.data);
-                    this.$emit('reload');
+                    if (response.data.imageId != null && response.data.imageId > 0 && response.data.imageId != this.profile.imageId) {
+                        ImageService.addImageToProfile(response.data.imageId).then(
+                            (r) => {
+                                const base64 = ImageService.parseImg(r);
+                                let imgPath = "data:image/png;base64," + base64;
+                                this.showImage = true;
+                                response.data.img = imgPath;
+                                this.$store.commit('UPDATE_PROFILE', response.data);
+                                this.$emit('reload');
+                            }
+                        );
+                    } else {
+                        this.$store.commit('UPDATE_PROFILE', response.data);
+                        this.$emit('reload');
+                    }
+                    
+                    
                 }
             )
         },
         uploadImage(event){
             this.showImage = false;
-            
-            if (this.meal.imageId == 0 || this.meal.imageId == null) {
+            if (this.profile.imageId == 0 || this.profile.imageId == null) {
                 ImageService.createImage(event.target.files[0]).then(
                     (response) => {
                         let id = response.data;
-                        ImageService.addImageToProfile(id).then(
-                            () => {
-                                ImageService.getImage(id).then(
-                                    (r) => {
-                                        const base64 = ImageService.parseImg(r);
-                                        this.imgPath = "data:image/png;base64," + base64;
-                                        this.showImage = true;
-                                    }
-                                )
-                            }
-                        );
+                        this.newProfile.imageId = id;
                     }
                 ) 
             } else {
                 ImageService.createImage(event.target.files[0]).then(
                     (response) => {
                         let id = response.data;
-                        ImageService.updateProfileImage(id).then(
-                            () => {
-                                ImageService.getImage(id).then(
-                                    (r) => {
-                                        const base64 = ImageService.parseImg(r);
-                                        this.imgPath = "data:image/png;base64," + base64;
-                                        this.showImage = true;
-                                    }
-                                )
-                            }
-                        );
+                        this.newProfile.imageId = id;
                     }
                 ) 
             }

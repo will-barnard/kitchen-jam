@@ -143,16 +143,17 @@ public class RecipeController {
         recipe.setUserId(userId);
         try {
             recipeDao.createRecipe(recipe);
-            if (recipe.getIngredientList() == null) {
-                // do nothing
-            } else if (recipe.isUpdateSteps()) {
+            if (recipe.isUpdateSteps()) {
                 for (Step step : recipe.getStepList()) {
                     stepDao.createStep(step);
                 }
             }
-            if (!recipe.getIngredientList().isEmpty()) {
-                ingredientDao.addIngredientsToRecipe(recipe.getIngredientList(), recipe);
+            if (recipe.getIngredientList() != null) {
+                if (!recipe.getIngredientList().isEmpty()) {
+                    ingredientDao.addIngredientsToRecipe(recipe.getIngredientList(), recipe);
+                }
             }
+
         } catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
         }

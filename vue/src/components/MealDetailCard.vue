@@ -6,14 +6,14 @@
                     <img :src="img" />
                 </div>
             </div>
-            <div class="details">
-                <div class="single-row" v-show="showUser">
+            <div class="single-row" v-show="showUser">
                     <div class="spacer"></div>
                     <div class="single-row user-field">
                         <p>cooked by </p>
                         <p class="username">{{ meal.userName }}</p>
                     </div>
                 </div>
+            <div class="details">
                 <div class="title">
                     <h2 >{{ meal.mealName }}</h2>
                     <h3 v-if="meal.recipeId" >{{ meal.recipeName }}</h3>
