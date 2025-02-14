@@ -1,36 +1,42 @@
 <template>
     <div>
         <div>
-            <div class="top">
+            <div class="top" v-if="!editing">
                 <div class="profile-img">
                     <img :src="profile.img ? profile.img : '../img/placeholder.jpeg'" />
                 </div>
-                <h1 v-if="!editing">{{ profile.displayName }}</h1>
+                <h1>{{ profile.displayName }}</h1>
             </div>
             <div class="main bg" v-if="!editing">
-                <h2>{{ profile.headline }}</h2>
+                <h2 v-if="profile.headline">{{ profile.headline }}</h2>
                 <div class="single-row">
                     <h3><i class="fas fa-utensils icon"></i>&nbsp;Meals: {{ profile.countMeals }}</h3>
                     <h3><i class="fas fa-book icon"></i>&nbsp;Recipes: {{ profile.countRecipes }}</h3>
                 </div>
                 <hr class="separator" />
-                <p><i class="fas fa-map-marker-alt icon"></i>&nbsp;{{ profile.location }}</p>
-                <hr class="separator" />
-                <div class="single-row">
+                <p v-if="profile.location"><i class="fas fa-map-marker-alt icon"></i>&nbsp;{{ profile.location }}</p>
+                <hr class="separator" v-if="profile.location"/>
+                <div class="single-row" v-if="profile.favoriteFoods || profile.favoriteCuisines">
                     <i class="fas fa-star icon"></i>&nbsp;
                     <div>
-                        <p class="favorite"><b>Favorite foods:</b>&nbsp;{{ profile.favoriteFoods }}</p>
-                        <p class="favorite"><b>Favorite cuisines:</b>&nbsp;{{ profile.favoriteCuisines }}</p>
+                        <p class="favorite" v-if="profile.favoriteFoods"><b>Favorite foods:</b>&nbsp;{{ profile.favoriteFoods }}</p>
+                        <p class="favorite" v-if="profile.favoriteCuisines"><b>Favorite cuisines:</b>&nbsp;{{ profile.favoriteCuisines }}</p>
                     </div>
                 </div>
-                <hr class="separator" />
-                <div class="single-row">
+                <hr class="separator" v-if="profile.favoriteFoods || profile.favoriteCuisines"/>
+                <div class="single-row" v-if="profile.bio">
                     <i class="fas fa-user icon"></i>
                     <p>{{ profile.bio }}</p>
                 </div>
             </div>
         </div>
         <div v-if="allowEditing && editing">
+            <div class="top">
+                <div class="profile-img">
+                    <img :src="profile.img ? profile.img : '../img/placeholder.jpeg'" v-if="!showNewPhoto"/>
+                    <img :src="newPhoto" v-if="showNewPhoto"/>
+                </div>
+            </div>
             <div class="bg">
                 <h3>Profile picture:</h3>
                 <input type="file" name="file" accept="image/*" @change="uploadImage">
@@ -99,20 +105,14 @@ export default {
         return {
             copiedURL: false,
             editing: false,
-            newProfile: {}
+            newProfile: {},
+            newPhoto: false,
+            showNewPhoto: false
         }
     },
     created() {
         if (this.allowEditing) {
             this.newProfile = cloneProfile(this.profile);
-        }
-        if (this.profile.imageId != null && this.profile.imageId > 0 && !this.allowEditing) {
-            ImageService.getImage(this.profile.imageId).then(
-                (response) => {
-                    const base64 = ImageService.parseImg(response);
-                    profile.img = "data:image/png;base64," + base64;
-                }
-            )
         }
     },
     methods: {
@@ -150,6 +150,8 @@ export default {
                     (response) => {
                         let id = response.data;
                         this.newProfile.imageId = id;
+                        this.newPhoto = URL.createObjectURL(event.target.files[0]);
+                        this.showNewPhoto = true;
                     }
                 ) 
             } else {
@@ -157,6 +159,8 @@ export default {
                     (response) => {
                         let id = response.data;
                         this.newProfile.imageId = id;
+                        this.newPhoto = URL.createObjectURL(event.target.files[0]);
+                        this.showNewPhoto = true;
                     }
                 ) 
             }

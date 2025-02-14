@@ -9,9 +9,14 @@
         </div>
             <div :class="menu">
                 <div class="spacer"></div>
-                <p @click="push({ name: 'home' })" >Home</p>
-                <p @click="push({ name: 'meal-log' })" v-if="$store.state.token != ''">Meal Log</p>
-                <p @click="push({ name: 'cookbook' })" v-if="$store.state.token != ''">Cookbook</p>
+                <p @click="push({ name: 'home' })" v-if="$store.state.token == ''">Home</p>
+                <div class="single-row">
+                    <p @click="push({ name: 'meal-log' })" v-if="$store.state.token != ''">Meal Log</p>
+                    <p @click="push({ name: 'cookbook' })" v-if="$store.state.token != ''">Cookbook</p>
+                </div>
+                <p @click="push({ name: 'home' })" v-if="$store.state.token != ''">Home</p>
+
+                <p @click="push({ name: 'dashboard' })" v-if="$store.state.token != ''">Dashboard</p>
                 <p @click="push({ name: 'logout' })" v-if="$store.state.token != ''">Logout</p>
             <div :class="white"></div>
             </div>
@@ -82,6 +87,12 @@ export default {
     }
     .global p:hover {
         background-color: var(--light-orange);
+    }
+    .single-row  p {
+        display: flex;
+        justify-content: space-around;
+        width: 34vw;
+        margin: 8px;
     }
     .nav {
 

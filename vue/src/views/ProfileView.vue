@@ -1,6 +1,7 @@
 <template>
     <div>
         <TopBanner />
+        <LoadingWidget v-if="!show"/>
         <Transition name="fade">
             <div v-if="show">
                 <div v-if="showProfile">
@@ -15,9 +16,11 @@
 import UserProfile from '../components/UserProfile.vue';
 import ProfileService from '../services/ProfileService';
 import TopBanner from '../components/TopBanner.vue';
+import ImageService from '../services/ImageService';
+import LoadingWidget from '../components/LoadingWidget.vue';
 
 export default {
-    components: {UserProfile, TopBanner},
+    components: {UserProfile, TopBanner, LoadingWidget},
     data() {
         return {
             showProfile: false,
@@ -38,8 +41,20 @@ export default {
         } else {
             ProfileService.getProfile(this.$route.params.userId).then(
                 (response) => {
-                    this.profile = response.data;
-                    this.showProfile = true;
+                    if (response.data.imageId != null && response.data.imageId > 0) {
+                        ImageService.getImage(response.data.imageId).then(
+                            (r) => {
+                                const base64 = ImageService.parseImg(r);
+                                let imgPath = "data:image/png;base64," + base64;
+                                response.data.img = imgPath;
+                                this.profile = response.data;
+                                this.showProfile = true;
+                            }
+                        )
+                    } else {
+                        this.profile = response.data;
+                        this.showProfile = true;
+                    }
                 }
             )
         }
