@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import java.util.Properties;
 
 @Service
-@Component
 public class EmailService {
 
     private EmailSecret emailSecret;

@@ -7,6 +7,7 @@ src/main/resources/application.properties
 
 .env
 src/main/java/com/barnard/service/EmailSecret.java
+src/main/java/com/barnard/controller/TestController.java
 
 ### STS ###
 .apt_generated
