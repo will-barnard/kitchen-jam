@@ -148,16 +148,17 @@ public class JdbcMealDao implements MealDao {
     @Override
     public Meal createMeal(Meal meal) {
 
+        String uuid = UUID.randomUUID().toString();
         String sql = "INSERT into meal (user_id, recipe_id, meal_name, meal_comment, date_cooked, " +
-                "cook_time, notes, ingredients, rating, date_created, last_modified) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) " +
+                "cook_time, notes, ingredients, rating, date_created, last_modified, public_url, is_public) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, (SELECT default_public FROM user_attributes WHERE user_id = ?)) " +
                 "RETURNING meal_id;";
 
         try {
 
             int mealId = jdbcTemplate.queryForObject(sql, int.class, meal.getUserId(), meal.getRecipeId(),
                     meal.getMealName(), meal.getMealComment(), meal.getDateCooked(), meal.getCookTime(),
-                    meal.getNotes(), meal.getIngredients(), meal.getRating(), meal.getDateCreated(), meal.getLastModified());
+                    meal.getNotes(), meal.getIngredients(), meal.getRating(), meal.getDateCreated(), meal.getLastModified(), uuid, meal.getUserId());
             meal.setMealId(mealId);
 
         } catch (CannotGetJdbcConnectionException e) {
