@@ -134,7 +134,7 @@ public class JdbcUserDao implements UserDao {
         String insertUserSql = "INSERT INTO users (username, password_hash, role) values (?, ?, ?) RETURNING user_id";
         String password_hash = new BCryptPasswordEncoder().encode(user.getPassword());
         String ssRole = user.getRole().toUpperCase().startsWith("ROLE_") ? user.getRole().toUpperCase() : "ROLE_" + user.getRole().toUpperCase();
-        String sql2 = "INSERT INTO user_attributes (user_id, email, display_name, nurture_state) VALUES (?, ?, ?, ?)";
+        String sql2 = "INSERT INTO user_attributes (user_id, email, display_name, nurture_state, is_public, default_public) VALUES (?, ?, ?, ?, true, true)";
 
         int newUserNurtureState = 0;
 

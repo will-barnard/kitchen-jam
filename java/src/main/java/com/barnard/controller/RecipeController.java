@@ -137,8 +137,6 @@ public class RecipeController {
     @ResponseStatus(HttpStatus.CREATED)
     public Recipe createRecipe(@RequestBody Recipe recipe, Principal principal) {
 
-        recipe.setPublic(false);
-
         int userId = userDao.getUserByUsername(principal.getName()).getId();
         recipe.setUserId(userId);
         try {

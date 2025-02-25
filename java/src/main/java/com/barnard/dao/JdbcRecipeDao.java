@@ -154,11 +154,12 @@ public class JdbcRecipeDao implements RecipeDao {
     public Recipe createRecipe(Recipe recipe) {
 
         String sql = "INSERT INTO recipe (user_id, recipe_name, description, category_id, is_public) " +
-                "VALUES (?, ?, ?, ?, ?) " +
+                "VALUES (?, ?, ?, ?, (SELECT default_public FROM user_attributes WHERE user_id = ?)) " +
                 "RETURNING recipe_id;";
 
         try {
-            int recipeId = jdbcTemplate.queryForObject(sql, int.class, recipe.getUserId(), recipe.getRecipeName(), recipe.getDescription(), recipe.getCategoryId(), recipe.isPublic());
+            int recipeId = jdbcTemplate.queryForObject(sql, int.class, recipe.getUserId(),
+                    recipe.getRecipeName(), recipe.getDescription(), recipe.getCategoryId(), recipe.getUserId());
             recipe.setRecipeId(recipeId);
         } catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database", e);
@@ -220,7 +221,10 @@ public class JdbcRecipeDao implements RecipeDao {
 
     @Override
     public String makePublic(Recipe recipe) {
+
+
         // todo refactor this into one sql query
+
         String uuid = UUID.randomUUID().toString();
 
         String sql = "SELECT public_url " +
