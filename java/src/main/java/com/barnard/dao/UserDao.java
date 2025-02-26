@@ -15,6 +15,12 @@ public interface UserDao {
     UserAttributes getAttributesByUser(int userId);
     String getUsernameByEmail(LoginDto loginDto);
     User createUser(RegisterUserDto user);
+    String createResetPasswordLink(int userId);
+    void clearPasswordResetToken(int userId);
+    void updatePassword(int userId, String password);
+    String getUserEmail(int userId);
+    int getUserIdByEmail(String email);
+    int getUserIdByUuid(String uuid);
 
 
 }

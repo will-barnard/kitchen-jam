@@ -1,8 +1,10 @@
 package com.barnard.dao;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 import com.barnard.exception.DaoException;
 import com.barnard.model.LoginDto;
@@ -150,6 +152,97 @@ public class JdbcUserDao implements UserDao {
 
 
         return newUser;
+    }
+
+    @Override
+    public String createResetPasswordLink(int userId) {
+        String uuid = UUID.randomUUID().toString();
+        String sql = "INSERT INTO password_reset (user_id, uuid_value, time_generated) VALUES (?, ?, ?)";
+        try {
+            jdbcTemplate.update(sql, userId, uuid, LocalDateTime.now());
+        } catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Unable to connect to server or database", e);
+        } catch (DataIntegrityViolationException e) {
+            throw new DaoException("Data integrity violation", e);
+        }
+
+        return uuid;
+    }
+
+    @Override
+    public void clearPasswordResetToken(int userId) {
+        String sql = "DELETE FROM password_reset WHERE user_id = ?";
+        try {
+            jdbcTemplate.update(sql, userId);
+        } catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Unable to connect to server or database", e);
+        } catch (DataIntegrityViolationException e) {
+            throw new DaoException("Data integrity violation", e);
+        }
+    }
+
+    @Override
+    public void updatePassword(int userId, String password) {
+        String sql = "UPDATE users SET password_hash = ? WHERE user_id = ?";
+        String password_hash = new BCryptPasswordEncoder().encode(password);
+        try {
+            jdbcTemplate.update(sql, password_hash, userId);
+        } catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Unable to connect to server or database", e);
+        } catch (DataIntegrityViolationException e) {
+            throw new DaoException("Data integrity violation", e);
+        }
+    }
+
+    @Override
+    public String getUserEmail(int userId) {
+        String email = null;
+        String sql = "SELECT email FROM user_attributes WHERE user_id = ?";
+        try {
+            SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, userId);
+            if (rowSet.next()) {
+                email = rowSet.getString("email");
+            }
+        } catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Unable to connect to server or database", e);
+        } catch (DataIntegrityViolationException e) {
+            throw new DaoException("Data integrity violation", e);
+        }
+        return email;
+    }
+
+    @Override
+    public int getUserIdByEmail(String email) {
+        int userId = 0;
+        String sql = "SELECT user_id FROM user_attributes WHERE email = ?";
+        try {
+            SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, email);
+            if (rowSet.next()) {
+                userId = rowSet.getInt("user_id");
+            }
+        } catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Unable to connect to server or database", e);
+        } catch (DataIntegrityViolationException e) {
+            throw new DaoException("Data integrity violation", e);
+        }
+        return userId;
+    }
+
+    @Override
+    public int getUserIdByUuid(String uuid) {
+        int userId = 0;
+        String sql = "SELECT user_id FROM password_reset WHERE uuid_value = ?";
+        try {
+            SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, uuid);
+            if (rowSet.next()) {
+                userId = rowSet.getInt("user_id");
+            }
+        } catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Unable to connect to server or database", e);
+        } catch (DataIntegrityViolationException e) {
+            throw new DaoException("Data integrity violation", e);
+        }
+        return userId;
     }
 
     private User mapRowToUser(SqlRowSet rs) {

@@ -36,8 +36,6 @@ public class MealController {
     @Autowired
     private ImageDao imageDao;
     @Autowired
-    private EmailService emailService;
-    @Autowired
     private IngredientDao ingredientDao;
 
 
