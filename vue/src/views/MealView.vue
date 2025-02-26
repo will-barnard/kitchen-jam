@@ -8,7 +8,9 @@
                     <MealLog :mealList="$store.state.userMeals"/>
                 </body>
             </Transition>
-
+            <div v-show="$store.state.loadedMeals && $store.state.userMeals.length < 1">
+                <h3>You haven't logged any meals yet</h3>
+            </div>
         </div>
 </template>
 
@@ -44,7 +46,7 @@ export default {
     },
     computed: {
         showLoading() {
-            if (!this.$store.state.loadedRecipes) {
+            if (!this.$store.state.loadedMeals) {
                 return false;
             }
             else {

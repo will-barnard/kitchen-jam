@@ -93,8 +93,10 @@ public class RecipeController {
         int userId = userDao.getUserByUsername(principal.getName()).getId();
         try {
             recipes = recipeDao.getRecipesByUserId(userId);
-            recipes = stepDao.getSteplist(recipes);
-            recipes = ingredientDao.getIngredientsByRecipes(recipes);
+            if (recipes.size() > 0) {
+                recipes = stepDao.getSteplist(recipes);
+                recipes = ingredientDao.getIngredientsByRecipes(recipes);
+            }
         } catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
         }

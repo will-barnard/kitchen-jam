@@ -7,6 +7,9 @@
                 <RecipeBook :recipeList="$store.state.userRecipes"/>
             </div>
         </Transition>
+        <div v-show="$store.state.loadedRecipes && $store.state.userRecipes.length < 1">
+                <h3>You haven't logged any recipes yet</h3>
+        </div>
     </div>
 </template>
 

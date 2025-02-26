@@ -89,7 +89,9 @@ public class MealController {
         for (Meal meal : result) {
             meal.setTags(tagsDao.getTagsByMealId(meal.getMealId()));
         }
-        result = ingredientDao.getIngredientsByMeals(result);
+        if (result.size() > 0) {
+            result = ingredientDao.getIngredientsByMeals(result);
+        }
         return result;
     }
 

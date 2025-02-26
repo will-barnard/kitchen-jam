@@ -55,6 +55,7 @@ export default {
             this.$store.commit("SET_USER", response.data.user);
             this.$store.commit('GET_USER_MEALS');
             this.$store.commit('GET_USER_RECIPES');
+            this.$store.commit('GET_USER_PROFILE');
             this.$router.push("/");
           }
         })
