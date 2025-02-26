@@ -21,6 +21,7 @@ public interface UserDao {
     String getUserEmail(int userId);
     int getUserIdByEmail(String email);
     int getUserIdByUuid(String uuid);
+    boolean checkUuid(String uuid);
 
 
 }

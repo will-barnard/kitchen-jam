@@ -245,6 +245,20 @@ public class JdbcUserDao implements UserDao {
         return userId;
     }
 
+    @Override
+    public boolean checkUuid(String uuid) {
+        boolean exists = false;
+        String sql = "SELECT EXISTS(SELECT 1 FROM password_reset WHERE uuid_value = ?)";
+        try {
+            exists = jdbcTemplate.queryForObject(sql, boolean.class, uuid);
+        } catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Unable to connect to server or database", e);
+        } catch (DataIntegrityViolationException e) {
+            throw new DaoException("Data integrity violation", e);
+        }
+        return exists;
+    }
+
     private User mapRowToUser(SqlRowSet rs) {
         User user = new User();
 

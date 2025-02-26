@@ -20,7 +20,12 @@
       </div>
       <button type="submit">Sign in</button>
       <p>
-      <router-link v-bind:to="{ name: 'register' }">New user? Sign up for a free account</router-link></p>
+        <router-link v-bind:to="{ name: 'register' }">New user? Sign up for a free account</router-link>
+      </p>
+      <p>
+        <router-link v-bind:to="{ name: 'password-reset-request' }">Password Reset</router-link>
+      </p>
+
     </form>
   </div>
 

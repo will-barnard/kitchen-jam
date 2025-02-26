@@ -91,13 +91,14 @@ public class AuthenticationController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not retrieve email.");
 
         }
-        EmailParams emailParams = new EmailParams(email, "Password Reset", "Click the link to reset your password: http://kitchen-jam.com/resetPassword?token=" + token);
+        EmailParams emailParams = new EmailParams(email, "Password Reset", "Click the link to reset your password: http://kitchen-jam.com/resetPassword/" + token);
         emailService.sendEmail(emailParams);
     }
 
     @PostMapping(path = "/requestPasswordReset")
-    public void requestPasswordReset(@RequestBody String email) {
+    public void requestPasswordReset(@RequestBody EmailDto emailDto) {
         String token;
+        String email = emailDto.getEmail();
         try {
 
             int userId = userDao.getUserIdByEmail(email);
@@ -107,7 +108,7 @@ public class AuthenticationController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not retrieve email.");
 
         }
-        EmailParams emailParams = new EmailParams(email, "Password Reset", "Click the link to reset your password: http://kitchen-jam.com/resetPassword?token=" + token);
+        EmailParams emailParams = new EmailParams(email, "Password Reset", "Click the link to reset your password: http://kitchen-jam.com/resetPassword/" + token);
         emailService.sendEmail(emailParams);
     }
 
@@ -119,6 +120,15 @@ public class AuthenticationController {
             userDao.clearPasswordResetToken(userId);
         } catch (DaoException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not update password.");
+        }
+    }
+
+    @GetMapping(path = "/checkUuid/{uuid}")
+    public boolean checkUuid(@PathVariable String uuid) {
+        try {
+            return userDao.checkUuid(uuid);
+        } catch (DaoException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not check uuid.");
         }
     }
 

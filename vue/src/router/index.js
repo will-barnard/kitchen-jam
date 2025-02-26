@@ -23,6 +23,8 @@ import DashboardView from '../views/DashboardView.vue';
 import FriendsView from '../views/FriendsView.vue';
 import SettingsView from '../views/SettingsView.vue';
 import NotificationsView from '../views/NotificationsView.vue';
+import RequestPasswordResetView from '../views/RequestPasswordResetView.vue';
+import PasswordResetView from '../views/PasswordResetView.vue';
 
 const routes = [
   {
@@ -190,6 +192,22 @@ const routes = [
     component: NotificationsView,
     meta: {
       requiresAuth: true
+    }
+  },
+  {
+    path: "/passwordResetRequest",
+    name: "password-reset-request",
+    component: RequestPasswordResetView,
+    meta: {
+      requiresAuth: false
+    }
+  },
+  {
+    path: "/resetPassword/:uuid",
+    name: "password-reset",
+    component: PasswordResetView,
+    meta: {
+      requiresAuth: false
     }
   }
 ];
