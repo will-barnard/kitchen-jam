@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h1>Kitchen Jam</h1>
+        <h1 @click="$router.push({name: 'home'})">Kitchen Jam</h1>
     </div>
 </template>
 <script>

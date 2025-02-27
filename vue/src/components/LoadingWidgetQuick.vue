@@ -1,7 +1,7 @@
 vue/src/components/LoadingWidget.vue<template>
     <div>
         <Transition>
-            <h2 v-show="show">Loading{{ tickValue }}</h2>
+            <h2>Loading{{ tickValue }}</h2>
         </Transition>
     </div>
 </template>
@@ -13,12 +13,6 @@ export default {
             show: false,
             tickCounter: 0
         }
-    },
-    created() {
-        setTimeout(() => {
-            this.show = true;
-            this.tick()
-        }, 2000)
     },
     methods: {
         tick() {

@@ -2,7 +2,6 @@
     <div>
         <TopBanner />
         <div class="password-reset-container">
-            <h1>Reset Password</h1>
             <div v-if="show">
                 <form v-on:submit.prevent="resetPassword">
                     <h2>Reset Password</h2>
@@ -63,7 +62,10 @@ export default {
                     this.$router.push({ name: 'login' });
                 } 
             }
-        );
+        ).catch(error => {
+            console.clear();
+            this.$router.push({ name: 'login' });
+        });
     
     },
     data() {

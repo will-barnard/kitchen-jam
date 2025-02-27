@@ -85,6 +85,7 @@ public class AuthenticationController {
         try {
 
             email = userDao.getUserEmail(user.getId());
+            userDao.clearPasswordResetToken(user.getId());
             token = userDao.createResetPasswordLink(user.getId());
 
         } catch (DaoException e) {
@@ -102,11 +103,11 @@ public class AuthenticationController {
         try {
 
             int userId = userDao.getUserIdByEmail(email);
+            userDao.clearPasswordResetToken(userId);
             token = userDao.createResetPasswordLink(userId);
 
         } catch (DaoException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not retrieve email.");
-
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Could not retrieve email.");
         }
         EmailParams emailParams = new EmailParams(email, "Password Reset", "Click the link to reset your password: http://kitchen-jam.com/resetPassword/" + token);
         emailService.sendEmail(emailParams);
