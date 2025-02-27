@@ -259,6 +259,16 @@ public class JdbcUserDao implements UserDao {
         return exists;
     }
 
+    @Override
+    public void deleteOldPasswordResets() {
+        String sql = "DELETE FROM password_reset WHERE time_generated < NOW() - INTERVAL 1 DAY";
+        try {
+            jdbcTemplate.update(sql);
+        } catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Unable to connect to server or database", e);
+        }
+    }
+
     private User mapRowToUser(SqlRowSet rs) {
         User user = new User();
 

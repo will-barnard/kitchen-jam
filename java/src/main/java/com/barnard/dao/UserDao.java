@@ -22,6 +22,6 @@ public interface UserDao {
     int getUserIdByEmail(String email);
     int getUserIdByUuid(String uuid);
     boolean checkUuid(String uuid);
-
+    void deleteOldPasswordResets();
 
 }
