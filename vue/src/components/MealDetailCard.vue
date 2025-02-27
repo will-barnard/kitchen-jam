@@ -16,7 +16,14 @@
             <div class="details">
                 <div class="title">
                     <h2 >{{ meal.mealName }}</h2>
-                    <h3 v-if="meal.recipeId" >{{ meal.recipeName }}</h3>
+                    <div class="single-row">
+                        <h3 class="recipe" v-if="meal.recipeId" @click="showGoToRecipe = !showGoToRecipe">
+                        <i class="fas fa-book"></i>&nbsp;{{ meal.recipeName }}
+                        </h3>
+                        <div v-if="showGoToRecipe" class="recipe-button-spacer">
+                            <h3><i class="fas fa-share" @click="goToRecipe"></i></h3>
+                        </div>
+                    </div>
                     <div class="subtitle">
                         <h4 class="comment" v-show="meal.mealComment">{{ meal.mealComment }}</h4>
                         <h4 class="date" v-show="meal.dateCooked">{{ formatDate(meal.dateCooked) }}</h4>
@@ -71,9 +78,17 @@ import IngredientList from './IngredientList.vue';
 export default {
     components: {IngredientList},
     props: ['meal', 'editable', 'img', 'showUser'],
+    data() {
+        return {
+            showGoToRecipe: false
+        }
+    },
     methods: {
         formatDate(date) {
             return UtilityService.formatDate(date);
+        },
+        goToRecipe() {
+            this.$router.push({name: 'recipe-detail', params: {recipeId: this.meal.recipeId}});
         }
     }
 }
@@ -310,11 +325,15 @@ export default {
         background-color: var(--light-1);
         border-radius: 10px;
         display: flex;
+        flex-grow: 1;
         align-items: center;
+        justify-content: center;
         padding: 5px;
         margin-top: 5px;
     }
-
+    .recipe-button-spacer {
+        margin-left: 5px;
+    }
     .recipe img {
         height: .9em;
     }
@@ -362,7 +381,8 @@ export default {
         padding: 10px;
         margin: 0px;
         margin-top: 5px;
-
+        display: flex;
+        align-items: center;
     }
     .title h4{
         margin-top: 5px;

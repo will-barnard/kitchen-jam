@@ -30,7 +30,7 @@ export default {
         }
     },
     created() {
-        this.updates = Updates.patches;
+        this.updates = Updates.patches.reverse();
         for (let patch of this.updates) {
             if (patch.type == 0) {
                 patch.typeDisplay = "Major Deployment"

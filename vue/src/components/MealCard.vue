@@ -14,7 +14,7 @@
                         <h2 class="name">{{ meal.mealName }}</h2>
                     </div>
                     <div class="recipe" v-if="meal.recipeId">
-                        <h3>{{ meal.recipeName }}</h3>
+                        <h3><i class="fas fa-book"></i> {{ meal.recipeName }}</h3>
                     </div>
                     <div class="subheader" v-if="meal.mealComment">
                         <p>{{ meal.mealComment }}</p>
