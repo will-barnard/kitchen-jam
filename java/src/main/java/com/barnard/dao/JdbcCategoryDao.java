@@ -130,17 +130,13 @@ public class JdbcCategoryDao implements CategoryDao{
     @Override
     public void deleteCategory(int categoryId) {
 
-        String sql = "DELETE FROM recipe_category " +
-                "WHERE category_id = ?;";
-        String sql2 = "DELETE FROM category " +
+        String sql = "UPDATE recipe SET category_id = null " +
+                "WHERE category_id = ?;" +
+                "DELETE FROM category " +
                 "WHERE category_id = ?;";
 
         try {
-            jdbcTemplate.update(sql, categoryId);
-            int rowsAffected = jdbcTemplate.update(sql2, categoryId);
-            if (rowsAffected == 0) {
-                throw new DaoException();
-            }
+            jdbcTemplate.update(sql, categoryId, categoryId);
         } catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database", e);
         } catch (DataIntegrityViolationException e) {
