@@ -49,9 +49,6 @@ public class JdbcCategoryDao implements CategoryDao{
         List<Category> categories = new ArrayList<>();
         String sql = "SELECT * " +
                 "FROM category " +
-                "JOIN recipe_category ON category.category_id = recipe_category.category_id " +
-                "JOIN recipe ON recipe_category.recipe_id = recipe.recipe_id " +
-                "JOIN users ON recipe.user_id = user.user_id " +
                 "WHERE user_id = ?;";
 
         try {
