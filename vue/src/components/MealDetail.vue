@@ -55,7 +55,7 @@
             <div class="edit-recipe edit-block">
                 <h3>Recipe</h3>
                 <div v-if="newMeal.recipeId" class="current-recipe">
-                    <img src="/img/minus.png" class="minus mini-button" @click="removeRecipe()">
+                    <i class="fas fa-minus minus mini-button" @click="removeRecipe()"></i>
                     <div class="tag-spacer"></div>
                     <h4>{{ newMeal.recipeName }}</h4>
                 </div>
@@ -65,7 +65,7 @@
                 </div>
                 <div class="recipe-search-results">
                     <div v-for="recipe in searchRecipe" class="recipe">
-                        <img src="/img/plus.png" class="plus mini-button" @click="addRecipe(recipe)"/>
+                        <i class="fas fa-plus plus mini-button" @click="addRecipe(recipe)"></i>
                         <div class="tag-spacer"></div>
                         <p>{{ recipe.recipeName }}</p>
                     </div>
@@ -83,7 +83,7 @@
                             <div class="tag-item">
                                 <p>{{tag.tagName}}</p>
                                 <div class="tag-spacer"></div>
-                                <img class="delete-tag mini-button" src="/img/trash.png" @click="removeTag(tag.tagId)"/>
+                                <i class="far fa-trash-alt delete-tag mini-button" @click="removeTag(tag.tagId)"></i>
                             </div>    
                         </div>
                     </div>    
@@ -100,9 +100,7 @@
                         <p>{{ tag.tagName }}</p>
                         
                         <div class="tag-spacer"></div>
-                        <img class="add-tag mini-button" src="/img/check.png" @click="addTag(tag)"/>
-                        <div class="tag-spacer"></div>
-                        <img class="edit-tag mini-button" src="/img/edit.png" />
+                        <i class="fas fa-plus add-tag mini-button" @click="addTag(tag)"></i>
                     </div>
                 </div>
                 
@@ -131,32 +129,31 @@
 
                     <div class="edit-widgets">
                         
-                        <div class="edit-rating">
-                            <label>Rating</label>
-                            <select v-model="newMeal.rating">
-                                <option value="0">0</option>
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                                <option value="5">5</option>
-                                <option value="6">6</option>
-                                <option value="7">7</option>
-                                <option value="8">8</option>
-                                <option value="9">9</option>
-                                <option value="10">10</option>
-                            </select>
-                        </div> 
-
                         <div class="">
                             <label>Cook time (min)</label>
                             <input type="number" v-model="newMeal.cookTime"/>
                         </div>
 
+                        <div class="edit-rating">
+                            <label>Rating</label>
+                            <div class="rating-container">
+                                <div class="stars">
+                                    <i v-for="n in 5" :key="n" :class="{
+                                        'fas fa-star': newMeal.rating >= n * 2,
+                                        'fas fa-star-half-alt': newMeal.rating >= (n * 2) - 1 && newMeal.rating < n * 2,
+                                        'far fa-star': newMeal.rating < (n * 2) - 1
+                                    }" style="color: yellow;"></i>
+                                </div>
+                                <input type="range" min="0" max="10" step="0.5" v-model="newMeal.rating"/>
+                            </div>
+                        </div> 
+
+                        
+
                     </div> 
                     
                 </div>
-            </form>
+       </form>
             <div class="edit-form">
                    <div class="input-area">
                         <h3>Ingredients</h3>
@@ -171,13 +168,13 @@
                             </div>
                             <div class="single-row">
                                 <div class="arrow small-button" @click="moveIngredient(-1, ingredient)">
-                                    &#8593;
+                                    <i class="fas fa-arrow-up"></i>
                                 </div>
                                 <div class="arrow small-button" @click="moveIngredient(1, ingredient)">
-                                    &darr;
+                                    <i class="fas fa-arrow-down"></i>
                                 </div>
                                 <div @click="deleteIngredient(ingredient)">
-                                    <img src="/img/trash.png" class="small-button minus"/>
+                                    <i class="far fa-trash-alt small-button minus"></i>
                                 </div>
                             </div> 
                        </div>
@@ -205,20 +202,20 @@
 
         <div class="controls" v-show="!deleting">
             <div class="link-button button" v-show="staticMeal.public" @click="unsecuredCopyToClipboard(newMeal.publicUrl)">
-                <img src="/img/link-symbol.svg" />
+                <i class="fas fa-link"></i>
             </div>
             <div class="spacer"><p v-show="copiedURL">Link copied!</p></div>
             <div class="edit-button button" v-if="!editing" v-on:click="editing=true">
-                <img src="/img/edit.png" />
+                <i class="fas fa-edit"></i>
             </div>
             <div class="trash button" v-if="!editing" v-on:click="deleteButton()">
-                <img src="/img/trash.png" />
+                <i class="far fa-trash-alt"></i>
             </div>
             <div class="undo button" v-if="editing" v-on:click="cancelEdit()">
-                <img src="/img/undo.png" />
+                <i class="fas fa-undo"></i>
             </div>
             <div class="check button" v-if="editing" v-on:click="saveEdit()">
-                <img src="/img/check.png" />
+                <i class="fas fa-check"></i>
             </div>
         </div>
 
@@ -354,24 +351,25 @@ export default {
             TagService.createTag(this.newTag).then(
                 (response) => {
                     this.staticMeal.tags.push(response.data)
-                    TagService.addTagToMeal(this.meal.mealId, response.data.tagId)
+                    TagService.addTagToMeal(this.meal.mealId, response.data.tagId);
+                    $store.state.commit('ADD_TAG', response.data);
+                    this.newTag.tagName = "";
                 }
             )
         },
         addTag(tag) {
             this.staticMeal.tags.push(tag);
             TagService.addTagToMeal(this.meal.mealId, tag.tagId);
+            this.newTag.tagName = "";
         },
         searchForTags() {
             if (this.newTag.tagName) {
-                TagService.searchTags(this.newTag).then(
-                    (response) => {
-                        this.searchTags = response.data;
-                    }
+                const searchTerm = this.newTag.tagName.toLowerCase();
+                this.searchTags = this.$store.state.userTags.filter(tag => 
+                    tag.tagName.toLowerCase().includes(searchTerm)
                 );
             } else {
                 this.searchTags = [];
-                console.log(this.searchTags);
             }
         },
 
@@ -599,8 +597,9 @@ export default {
         margin-right: 5px;
         margin-top: 10px;
     }
-    .controls img {
-        height: 5vh;
+    .controls i {
+        font-size: 2em; /* Increase the size of the icons */
+        margin: 0 10px; /* Add some margin for spacing */
     }
     .controls:hover {
         cursor: pointer;
@@ -611,6 +610,10 @@ export default {
         border-radius: 10px;
         padding: 5px;
         margin-right: 5px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center; /* Center the icons */
     }
     .edit-button {
         background-color: var(--edit);
@@ -693,6 +696,7 @@ export default {
     }
     .edit-widgets {
         display: flex;
+        flex-direction: column;
         justify-content: space-between;
         margin-top: 5px;
         margin-bottom: 5px;
@@ -734,22 +738,14 @@ export default {
         align-items: center;
         justify-content: center;
     }
-    .tag-list img {
+    .tag-list i {
         height: .9em;
     }
-    .tag-item img:hover {
+    .tag-item i:hover {
         filter: opacity(50%);
     }
-    .search-tags {
-        display: flex;
-        white-space: nowrap;
-        flex-wrap: wrap;
-    }
-    .search-tags img {
-        height: .9em;
-    }
-    .tag-spacer {
-        width: 5px;
+    .tag-search-item i:hover {
+        filter: opacity(50%);
     }
     .tag-item {
         display: flex;
@@ -788,10 +784,7 @@ export default {
     .tag-search-item:hover {
         cursor: pointer;
     }
-    .tag-search-item img:hover {
-        filter: opacity(50%);
-    }
-    .tag-search-item img {
+    .tag-search-item i {
         border: 1px solid var(--border-color);
     }
     .add-tag {
@@ -1001,7 +994,26 @@ export default {
     .border {
         border: 1px solid;
         padding: 10px;
-        border-radius: 10px;;
+        border-radius: 10px;;    
+    }
+    .rating-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 70%;
+        background-color: var(--rating);
+        border-radius: 10px;
+        padding: 5px;
+    }
+    .stars {
+        margin-right: 10px;
+    }
+    .edit-rating {
+        margin-top: 10px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
     }
 
 </style>

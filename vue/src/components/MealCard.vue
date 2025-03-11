@@ -34,14 +34,23 @@
                     <Transition name="control">
 
                         <div class="info" v-show="showMore">
-                            <div class="row">
-                                <div class="widget" v-if="meal.cookTime > 0">
-                                    <p>{{ meal.cookTime }} min</p>
-                                </div>
-                            <div class="widget" v-if="meal.rating > 0">
-                                <p>{{ meal.rating }} / 10 Rating</p>
+                            <div class="widget cooktime" v-if="meal.cookTime > 0">
+                                <p>Cooktime:&nbsp;{{ meal.cookTime }} min</p>
                             </div>
-                        </div>
+                            <div class="row">
+                                <div class="widget" v-if="meal.rating > 0">
+                                    <div class="stars">
+                                        <div class="star-container">
+                                            <span v-for="n in 5" :key="n" class="star">
+                                                <i v-if="meal.rating >= n * 2" class="fas fa-star"></i>
+                                                <i v-else-if="meal.rating >= (n * 2) - 1" class="fas fa-star-half-alt"></i>
+                                                <i v-else class="far fa-star"></i>
+                                            </span>
+                                        </div>
+                                        <p class="rating-label">Rating</p>
+                                    </div>
+                                </div>
+                            </div>
                             <div v-if="meal.ingredients">
                                 <h3>Ingredients:</h3>
                                 <p >{{ meal.ingredients }}</p>
@@ -270,5 +279,33 @@ export default {
 .control-leave-to {
   opacity: 0;
   transition: opacity 0s ease;
+}
+.stars {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--light-1);
+    border-radius: 10px;
+    padding: 5px;
+}
+.star-container {
+    display: flex;
+    flex-direction: row;
+}
+.star {
+    color: gold;
+    margin: 0 2px;
+}
+.rating-label {
+    text-align: center;
+    margin-top: 5px;
+    font-weight: bold;
+}
+.cooktime {
+    background-color: var(--light-1);
+    border-radius: 10px;
+    padding: 5px;
+    margin: 3px 0;
 }
 </style>

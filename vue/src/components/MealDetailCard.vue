@@ -47,7 +47,16 @@
                         <p>{{ meal.cookTime }} min</p>
                     </div>
                     <div class="rating" v-show="meal.rating">
-                        <p>{{ meal.rating }} / 10 Rating</p>
+                        <div class="stars">
+                            <div>
+                                <span v-for="n in 5" :key="n" class="star">
+                                <i v-if="meal.rating >= n * 2" class="fas fa-star"></i>
+                                <i v-else-if="meal.rating >= (n * 2) - 1" class="fas fa-star-half-alt"></i>
+                                <i v-else class="far fa-star"></i>
+                            </span>
+                            </div>
+                            <p class="rating-label">Rating</p>
+                        </div>
                     </div>
                 </div>
 
@@ -484,4 +493,23 @@ export default {
         margin-left: 5px;
         margin-bottom: 5px;
     }
+    .stars {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-color: var(--rating);
+        border-radius: 10px;
+        padding: 5px;
+    }
+    .star {
+        color: gold;
+        margin: 0 2px;
+    }
+    .rating-label {
+        text-align: center;
+        margin-top: 5px;
+        font-weight: bold;
+    }
+
 </style>
