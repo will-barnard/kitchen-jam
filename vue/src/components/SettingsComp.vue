@@ -23,8 +23,8 @@
         <div class="main">
             <h2>Attributes&nbsp;<i class="fas fa-external-link-alt"></i></h2>
             <div class="attributes-row">
-                <h3 class="attributes-child"><i class="fas fa-tags"></i> Tags</h3>
-                <h3 class="attributes-child"><i class="fas fa-list"></i> Categories</h3>
+                <h3 class="attributes-child" @click="$router.push({name: 'edit-tags'})"><i class="fas fa-tags"></i> Tags</h3>
+                <h3 class="attributes-child" @click="$router.push({name: 'edit-categories'})"><i class="fas fa-list"></i> Categories</h3>
             </div>
         </div>
     </div>

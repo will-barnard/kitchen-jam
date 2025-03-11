@@ -307,7 +307,16 @@ export default {
         saveEdit() {
             MealService.updateMeal(this.newMeal).then(
                 (response) => {
-                    this.$store.commit('UPDATE_MEAL', response.data)
+                    let newMeal = response.data;
+                    if (newMeal.imageId) {
+                        ImageService.getImage(newMeal.imageId).then(
+                            (r) => {
+                                const base64 = ImageService.parseImg(r);
+                                newMeal.img = "data:image/png;base64," + base64;
+                            }
+                        )
+                    }
+                    this.$store.commit('UPDATE_MEAL', newMeal);
                     this.staticMeal = cloneMeal(response.data);
                     this.newMeal = cloneMeal(this.staticMeal);
                     this.editing = false;

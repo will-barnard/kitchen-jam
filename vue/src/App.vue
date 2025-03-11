@@ -23,9 +23,7 @@ export default {
   components: {NavComp},
   created() {
     if (this.$store.state.token) {
-      this.$store.commit('GET_USER_MEALS');
-      this.$store.commit('GET_USER_RECIPES');
-      this.$store.commit('GET_USER_PROFILE');
+      this.$store.commit('INITIALIZE_USER');
     }
   }
 }

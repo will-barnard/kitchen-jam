@@ -25,6 +25,8 @@ import SettingsView from '../views/SettingsView.vue';
 import NotificationsView from '../views/NotificationsView.vue';
 import RequestPasswordResetView from '../views/RequestPasswordResetView.vue';
 import PasswordResetView from '../views/PasswordResetView.vue';
+import EditTagsView from '../views/EditTagsView.vue';
+import EditCategoriesView from '../views/EditCategoriesView.vue';
 
 const routes = [
   {
@@ -208,6 +210,22 @@ const routes = [
     component: PasswordResetView,
     meta: {
       requiresAuth: false
+    }
+  },
+  {
+    path: '/tags/edit',
+    name: 'edit-tags',
+    component: EditTagsView,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/categories/edit',
+    name: 'edit-categories',
+    component: EditCategoriesView,
+    meta: {
+      requiresAuth: true
     }
   }
 ];

@@ -271,7 +271,16 @@ export default {
 
             RecipeService.updateRecipe(this.newRecipe).then(
                 (response) => {
-                    this.$store.commit('UPDATE_RECIPE', response.data)
+                    let newRecipe = response.data;
+                    if (newRecipe.imageId) {
+                        ImageService.getImage(newRecipe.imageId).then(
+                            (r) => {
+                                const base64 = ImageService.parseImg(r);
+                                newRecipe.img = "data:image/png;base64," + base64;
+                            }
+                        )
+                    }
+                    this.$store.commit('UPDATE_RECIPE', newRecipe)
                     this.staticRecipe = cloneRecipe(response.data);
                     this.newRecipe = cloneRecipe(this.staticRecipe);
                     this.editing = false;

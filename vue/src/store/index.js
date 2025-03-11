@@ -5,6 +5,8 @@ import MealService from '../services/MealService';
 import RecipeService from '../services/RecipeService';
 import ImageService from '../services/ImageService';
 import ProfileService from '../services/ProfileService';
+import TagService from '../services/TagService';
+import CategoryService from '../services/CategoryService';
 
 
 export function createStore(currentToken, currentUser) {
@@ -18,6 +20,10 @@ export function createStore(currentToken, currentUser) {
       loadedMeals: false,
       userRecipes: [],
       loadedRecipes: false,
+      userTags: [],
+      loadedTags: false,
+      userCategories: [],
+      loadedCategories: false,
       subMenu: {},
       publicMealGallery: []
     },
@@ -37,6 +43,13 @@ export function createStore(currentToken, currentUser) {
         state.token = '';
         state.user = {};
         axios.defaults.headers.common = {};
+      },
+      INITIALIZE_USER() {
+        this.commit('GET_USER_MEALS');
+        this.commit('GET_USER_RECIPES');
+        this.commit('GET_USER_PROFILE');
+        this.commit('LOAD_USER_TAGS');
+        this.commit('LOAD_USER_CATEGORIES');
       },
       GET_USER_PROFILE(state) {
         ProfileService.getPrincipalProfile().then(
@@ -176,6 +189,66 @@ export function createStore(currentToken, currentUser) {
             state.userRecipes = state.userRecipes.filter(
               (recipe) => {
                 return recipe.recipeId != payload;
+              }
+            )
+          }
+        )
+      },
+      LOAD_USER_TAGS(state) {
+        TagService.getTagsByUser().then(
+          (response) => {
+            state.userTags = response.data;
+            state.loadedTags = true;
+          }
+        )
+      },
+      ADD_TAG(state, payload) {
+        state.userTags.unshift(payload);
+      },
+      EDIT_TAG(state, payload) {
+        let i = state.userTags.findIndex(
+          (tag) => {
+            return tag.tagId == payload.tagId;
+          }
+        );
+        state.userTags[i] = payload;
+      },
+      DELETE_TAG(state, payload) {
+        TagService.deleteTag(payload).then(
+          () => {
+            state.userTags = state.userTags.filter(
+              (tag) => {
+                return tag.tagId != payload;
+              }
+            )
+          }
+        )
+      },
+      LOAD_USER_CATEGORIES(state) {
+        CategoryService.getCategoriesByUser().then(
+          (response) => {
+            state.userCategories = response.data;
+            state.loadedCategories = true;
+          }
+        )
+      },
+      ADD_CATEGORY(state, payload) {
+        state.userCategories.unshift(payload);
+      },
+      EDIT_CATEGORY(state, payload) {
+        let i = state.userCategories.findIndex(
+          (category) => {
+            return category.categoryId == payload.categoryId;
+          }
+        );
+        state.userCategories[i] = payload;
+      },
+      DELETE_CATEGORY(state, payload) {
+        CategoryService.deleteCategory(payload).then(
+          () => {
+            state.userCategories = state.userCategories.filter(
+              (category) => {
+                return category.categoryId != payload;
               }
             )
           }

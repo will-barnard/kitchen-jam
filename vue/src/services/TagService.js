@@ -5,6 +5,9 @@ export default {
   getTag(tagId) {
     return axios.get('/tag/' + tagId)
   },
+  getTagsByUser() {
+    return axios.get('/tag/user')
+  },
   searchTags(search) {
     return axios.post('/tag/search', search)
   },
@@ -19,6 +22,9 @@ export default {
   },
   removeTagFromMeal(mealId, tagId) {
     return axios.delete('/tag/meal/' + mealId + '/' + tagId)
+  },
+  deleteTag(tagId) {
+    return axios.delete('/tag/' + tagId)
   }
 
 }

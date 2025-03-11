@@ -1,11 +1,11 @@
 <template>
-    <div class="tag-main">
-        <div class="tag-name">
-            <p v-show="!editing">{{ tag.tagName }}</p>
-            <input v-show="editing" v-model="tagName" />
+    <div class="category-main">
+        <div class="category-name">
+            <p v-show="!editing">{{ category.categoryName }}</p>
+            <input v-show="editing" v-model="categoryName" />
         </div>
         <div class="spacer"></div>
-        <div class="tag-actions">
+        <div class="category-actions">
             <div v-show="!isDeleting && !editing">
                 <button @click="editing = true">Edit</button>
                 <button @click="isDeleting = true">Delete</button>
@@ -13,7 +13,7 @@
             <div v-show="isDeleting">
                 <p>Are you sure? this is permanent</p>
                 <button @click="isDeleting = false">No, cancel</button>
-                <button @click="$emit('delete', tag)">Yes, delete</button>
+                <button @click="$emit('delete', category)">Yes, delete</button>
             </div>
             <div v-show="editing">
                 <button @click="saveEdit">Save</button>
@@ -21,38 +21,37 @@
             </div>
         </div>
     </div>
-    
 </template>
 
 <script>
-import TagService from '../services/TagService';
+import CategoryService from '../services/CategoryService';
 
 export default {
-    props: ['tag', 'edit'],
+    props: ['category', 'edit'],
     data() {
         return {
             editing: false,
-            tagName: "",
+            categoryName: "",
             isDeleting: false
         }
     },
     created() {
-        this.tagName = this.tag.tagName;
+        this.categoryName = this.category.categoryName;
     },
     methods: {
-        deleteTag() {
+        deleteCategory() {
             this.isDeleting = true;
         },
-        editTag() {
+        editCategory() {
             this.editing = !this.editing;
-            this.tagName = this.tag.tagName;
+            this.categoryName = this.category.categoryName;
         },
         saveEdit() {
-            let newTag = {
-                tagId: this.tag.tagId,
-                tagName: this.tagName
+            let newCategory = {
+                categoryId: this.category.categoryId,
+                categoryName: this.categoryName
             }
-            TagService.updateTag(newTag).then(
+            CategoryService.updateCategory(newCategory).then(
                 (response) => {
                     this.$emit('edit', response.data);
                     this.editing = false;
@@ -74,7 +73,7 @@ export default {
     div {
         display: flex;
     }
-    .tag-main {
+    .category-main {
         display: flex;
         flex-direction: row;
         justify-content: space-between;
@@ -83,5 +82,4 @@ export default {
         border-radius: 10px;
         padding: 5px;
     }
-
 </style>
