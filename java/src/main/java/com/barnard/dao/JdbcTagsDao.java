@@ -66,6 +66,26 @@ public class JdbcTagsDao implements TagsDao{
     }
 
     @Override
+    public List<Tag> getTagsByUserId(int userId) {
+        List<Tag> tags = new ArrayList<>();
+        String sql = "SELECT * " +
+                "FROM tags " +
+                "WHERE user_id = ?;";
+
+        try {
+            SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, userId);
+            while (rowSet.next()) {
+                tags.add(mapRowToTag(rowSet));
+            }
+        } catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Unable to connect to server or database", e);
+        } catch (DataIntegrityViolationException e) {
+            throw new DaoException("Data integrity violation", e);
+        }
+        return tags;
+    }
+
+    @Override
     public List<Tag> searchLikeTags(int userId, String search) {
         search = "%" + search.toLowerCase() + "%";
         List<Tag> taglist = new ArrayList<>();
