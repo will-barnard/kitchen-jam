@@ -27,6 +27,7 @@ import RequestPasswordResetView from '../views/RequestPasswordResetView.vue';
 import PasswordResetView from '../views/PasswordResetView.vue';
 import EditTagsView from '../views/EditTagsView.vue';
 import EditCategoriesView from '../views/EditCategoriesView.vue';
+import JamView from '../views/JamView.vue';
 
 const routes = [
   {
@@ -224,6 +225,14 @@ const routes = [
     path: '/categories/edit',
     name: 'edit-categories',
     component: EditCategoriesView,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/jam',
+    name: 'jam',
+    component: JamView,
     meta: {
       requiresAuth: true
     }

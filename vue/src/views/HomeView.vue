@@ -3,12 +3,18 @@
     <div class="home" v-show="show">
       <h1>Kitchen Jam</h1>
 
-      <div class="icon">
+      <div class="icon" v-if="this.$store.state.token == ''">
         <img src="/img/kitchen-jam.jpeg" />
       </div>
-      <div class="title">
+      <div v-if="this.$store.state.token != ''">
+        <RecipeJam :compact="true"/>
+      </div>
+      <div class="title" v-if="this.$store.state.token == ''">
         <h2>Improvise, Iterate, Improve!</h2>
         <p>Welcome to Kitchen Jam - log your meals, discover your own recipes, and beome a better chef.</p>
+      </div>
+      <div class="title" v-if="this.$store.state.token != '' && this.$store.state.loadedProfile">
+        <h3>Welcome back, {{ $store.state.userProfile.displayName }}!</h3>
       </div>
       <div class="buttons">
         <h3 v-if="this.$store.state.token == ''" class="button" @click="$router.push({ name: 'about' })">About</h3>
@@ -24,7 +30,10 @@
 </template>
 
 <script>
+import RecipeJam from '../components/RecipeJam.vue';
+
 export default {
+  components: {RecipeJam},
   data() {
     return {
       show: false

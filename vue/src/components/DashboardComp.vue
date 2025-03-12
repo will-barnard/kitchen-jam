@@ -9,6 +9,10 @@
                 <i class="fas fa-book"></i>
                 <span>Cookbook</span>
             </h3>
+            <h3 class="child" @click="$router.push({ name: 'jam' })">
+                <i class="fas fa-guitar"></i>
+                <span>Jam Page</span>
+            </h3>
             <h3 class="child" @click="$router.push({ name: 'profile' , params: {userId: $store.state.user.id}})">
                 <i class="fas fa-user"></i>
                 <span>Profile</span>

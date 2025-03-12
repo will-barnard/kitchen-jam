@@ -21,7 +21,7 @@
         <h3 class="button" @click="$router.push('walkthrough')">How does it work?</h3>
         <h3 class="button" @click="$router.push('register')">Sign up for a free account</h3>
 
-        <p>Created by Will Barnard 2024</p>
+        <p>Created by Will Barnard 2023-2025</p>
 
     </div>
 </template>
