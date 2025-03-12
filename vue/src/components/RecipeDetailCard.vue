@@ -30,25 +30,28 @@
             </div>
             <!-- <h3>Last made here?</h3> -->
             
+            
             <div class="widgets">
                 <div class="widgets">
                     <div class="widgets">
                         <div class="cooktime" v-show="recipe.avgCookTime > 0">
                             <img src="/img/clock.png" />
-                            <p>{{ recipe.avgCookTime }} min</p>
+                            <p>{{ Math.floor(recipe.avgCookTime) }} min</p>
                         </div>
                         <div v-show="recipe.avgCookTime == 0">
                             <p>no cooktime data available</p>
                         </div>
                     </div>
                 </div>
-                <div class="rating">
-                    <!-- <div>
-                        <p>rating / 10 Rating</p>
-                    </div> -->
-                    <div>
-                        <p>no aggregate rating available</p>
+                <div class="rating" v-show="recipe.avgRating">
+                    <div class="stars">
+                        <span v-for="n in 5" :key="n" class="star">
+                            <i v-if="recipe.avgRating >= n * 2" class="fas fa-star"></i>
+                            <i v-else-if="recipe.avgRating >= (n * 2) - 1" class="fas fa-star-half-alt"></i>
+                            <i v-else class="far fa-star"></i>
+                        </span>
                     </div>
+                    <p class="rating-label">Avg Rating</p>
                 </div>
             </div>
         </div>            
@@ -151,6 +154,24 @@ export default {
     .rating {
         width: 50%;
         text-align: center;
+    }
+    .stars {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        background-color: var(--rating);
+        border-radius: 10px;
+        padding: 5px;
+    }
+    .star {
+        color: gold;
+        margin: 0 2px;
+    }
+    .rating-label {
+        text-align: center;
+        margin-top: 5px;
+        font-weight: bold;
     }
     .meals h2 {
         margin: 10px;

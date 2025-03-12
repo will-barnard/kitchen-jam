@@ -53,7 +53,7 @@
                 <h3>Category</h3>
                 <div>
                     <div v-if="newRecipe.categoryId" class="current-category">
-                        <img src="/img/minus.png" class="minus mini-button" @click="removeCategory()">
+                        <i class="fas fa-minus minus mini-button" @click="removeCategory()"></i>
                         <div class="tag-spacer"></div>
                         <h4>{{ newRecipe.categoryName }}</h4>
                     </div>
@@ -63,7 +63,7 @@
                     </div>
                     <div class="category-search-results" v-if="searchCategory">
                         <div v-for="category in searchCategory" class="category-item">
-                            <img src="/img/plus.png" class="plus mini-button" @click="addCategory(category)"/>
+                            <i class="fas fa-plus plus mini-button" @click="addCategory(category)"></i>
                             <div class="tag-spacer"></div>
                             <p>{{ category.categoryName }}</p>
                         </div>
@@ -97,13 +97,13 @@
                             </div>
                             <div class="single-row">
                                 <div class="arrow small-button" @click="moveIngredient(-1, ingredient)">
-                                    &#8593;
+                                    <i class="fas fa-arrow-up"></i>
                                 </div>
                                 <div class="arrow small-button" @click="moveIngredient(1, ingredient)">
-                                    &darr;
+                                    <i class="fas fa-arrow-down"></i>
                                 </div>
                                 <div @click="deleteIngredient(ingredient)">
-                                    <img src="/img/trash.png" class="small-button minus"/>
+                                    <i class="far fa-trash-alt small-button minus"></i>
                                 </div>
                             </div> 
                        </div>
@@ -127,13 +127,13 @@
                             <textarea class="step-input" v-model="step.stepDescription"></textarea>
                             <div class="single-row">
                                 <div class="arrow small-button" @click="moveStep(-1, step)">
-                                    &#8593;
+                                    <i class="fas fa-arrow-up"></i>
                                 </div>
                                 <div class="arrow small-button" @click="moveStep(1, step)">
-                                    &darr;
+                                    <i class="fas fa-arrow-down"></i>
                                 </div>
                                 <div @click="deleteStep(step)">
-                                    <img src="/img/trash.png" class="small-button minus"/>
+                                    <i class="far fa-trash-alt small-button minus"></i>
                                 </div>
                             </div> 
                        </div>
@@ -153,20 +153,20 @@
        </div>
        <div class="controls" v-show="!deleting">
             <div class="link-button button" v-show="staticRecipe.public" @click="unsecuredCopyToClipboard(newRecipe.publicUrl)">
-                <img src="/img/link-symbol.svg" />
+                <i class="fas fa-link"></i>
             </div>
             <div class="spacer"><p v-show="copiedURL">Link copied!</p></div>
            <div class="edit-button button" v-if="!editing" v-on:click="editing=true">
-                <img src="/img/edit.png" />
+                <i class="fas fa-edit"></i>
             </div>
             <div class="trash button" v-if="!editing" v-on:click="deleteButton()">
-                <img src="/img/trash.png" />
+                <i class="far fa-trash-alt"></i>
             </div>
             <div class="undo button" v-if="editing" v-on:click="cancelEdit()">
-                <img src="/img/undo.png" />
+                <i class="fas fa-undo"></i>
             </div>
             <div class="check button" v-if="editing" v-on:click="saveEdit()">
-                <img src="/img/check.png" />
+                <i class="fas fa-check"></i>
             </div>
        </div> 
         <div class="meals" v-if="mealList.length > 0 && !editing">
@@ -194,6 +194,7 @@ function cloneRecipe(recipe) {
         newRecipe.recipeName = recipe.recipeName;
         newRecipe.description = recipe.description;
         newRecipe.avgCookTime = recipe.avgCookTime;
+        newRecipe.avgRating = recipe.avgRating;
         newRecipe.imageId = recipe.imageId;
         newRecipe.public = recipe.public;
         newRecipe.publicUrl = recipe.publicUrl;
@@ -577,6 +578,10 @@ export default {
         align-items: center;
         margin: 0px;
     }
+    .controls i {
+        font-size: 2em; /* Increase the size of the icons */
+        margin: 0 10px; /* Add some margin for spacing */
+    }
     .controls:hover {
         cursor: pointer;
     }
@@ -592,17 +597,6 @@ export default {
     }
     .delete h2 {
         border: 1px solid black;
-        margin: 5px;
-        padding: 5px;
-    }
-    .delete {
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        align-items: center;
-        margin: 10px;
-    }
-    .delete h2 {
         margin: 5px;
         padding: 5px;
         border-radius: 10px;
@@ -631,8 +625,9 @@ export default {
         margin-right: 5px;
         margin-top: 10px;
     }
-    .controls img {
-        height: 5vh;
+    .controls i {
+        font-size: 2em; /* Increase the size of the icons */
+        margin: 0 10px; /* Add some margin for spacing */
     }
     .controls:hover {
         cursor: pointer;
@@ -643,6 +638,10 @@ export default {
         border-radius: 10px;
         padding: 5px;
         margin-right: 5px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center; /* Center the icons */
     }
     .edit-button {
         background-color: var(--edit);
@@ -713,8 +712,8 @@ export default {
         align-items: center;
         justify-content: center;
     }
-    .cooktime img {
-        height: 80px;
+    .cooktime i {
+        font-size: 2em; /* Increase the size of the icons */
         margin-right: 5px;
     }
     .rating {
@@ -752,7 +751,7 @@ export default {
         border-radius: 5px;
         padding: 4px;
     }
-    .current-category img {
+    .current-category i {
         height: .9em;
     }
     .current-category {
@@ -785,7 +784,7 @@ export default {
         padding: 5px;
         border-radius: 10px;
     }
-    .category-item img {
+    .category-item i {
         height: .9em;
     }
     .edit-block {

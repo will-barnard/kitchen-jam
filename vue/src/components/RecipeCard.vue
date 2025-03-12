@@ -26,8 +26,20 @@
                     </div>
 
                     <div class="widget" v-show="recipe.avgCookTime > 0">
-                        <p>{{ recipe.avgCookTime }} min</p>
+                        <p>Avg Cook TIme: {{ Math.floor(recipe.avgCookTime) }} min</p>
                     </div>
+                    
+                    <div class="rating" v-show="recipe.avgRating">
+                        <div class="stars">
+                            <p class="rating-label">Avg Rating</p>
+                            <span v-for="n in 5" :key="n" class="star">
+                                <i v-if="recipe.avgRating >= n * 2" class="fas fa-star"></i>
+                                <i v-else-if="recipe.avgRating >= (n * 2) - 1" class="fas fa-star-half-alt"></i>
+                                <i v-else class="far fa-star"></i>
+                            </span>
+                        </div>
+                    </div>
+                    
                     <div v-if="showMore && recipe.stepList">
                         <StepList :stepList="recipe.stepList" />
                     </div>
@@ -159,6 +171,17 @@ export default {
     }
     .widget {
         flex-grow: 1;
+        background-color: var(--light-1);
+        margin-top: 5px;
+        margin-bottom: 5px;
+        padding: 5px;
+        border-radius: 10px;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+    }
+    .widget p {
+        margin: 0px;
     }
     #controls {
         display: flex;
@@ -186,8 +209,27 @@ export default {
         margin-top: 5px;
         border-radius: 10px;
     }
-
-
+    .stars {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        background-color: var(--light-1);
+        border-radius: 10px;
+        padding: 5px;
+    }
+    .stars p {
+        margin: 0px;
+    }
+    .star {
+        color: gold;
+        margin: 0 2px;
+    }
+    .rating-label {
+        text-align: center;
+        margin-top: 5px;
+        font-weight: bold;
+    }
     .v-enter-active,
 .v-leave-active {
   transition: opacity 0.5s ease;

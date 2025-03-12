@@ -115,6 +115,7 @@ export function createStore(currentToken, currentUser) {
       GET_USER_RECIPES(state) {
         RecipeService.getRecipesByUser().then(
           (response) => {
+            response.data.sort((a, b) => a.recipeName.localeCompare(b.recipeName));
             state.userRecipes = response.data;
             for (let recipe of state.userRecipes) {
               if (!recipe.ingredientList) {
