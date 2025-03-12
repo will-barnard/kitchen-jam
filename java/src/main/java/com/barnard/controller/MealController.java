@@ -137,9 +137,6 @@ public class MealController {
                 newMeal = ingredientDao.addIngredientsToMeal(meal.getIngredientList(), newMeal);
             }
 
-            if (meal.getRecipeId() != null) {
-                recipeDao.aggregateRecipeData(meal.getRecipeId());
-            }
         } catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
         }
@@ -171,18 +168,6 @@ public class MealController {
                 updatedMeal = ingredientDao.addIngredientsToMeal(meal.getIngredientList(), meal);
             }
 
-            if (meal.getRecipeId() != null) {
-                if (meal.getRecipeId().equals(oldRecipeId)) {
-                    recipeDao.aggregateRecipeData(meal.getRecipeId());
-                } else {
-                    if (oldRecipeId != null) {
-                        recipeDao.aggregateRecipeData(oldRecipeId);
-                    }
-                    recipeDao.aggregateRecipeData(meal.getRecipeId());
-                }
-            } else if (oldRecipeId != null) {
-                recipeDao.aggregateRecipeData(oldRecipeId);
-            }
             updatedMeal.setTags(tagsDao.getTagsByMealId(meal.getMealId()));
         } catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
@@ -236,9 +221,7 @@ public class MealController {
             Integer recipeId = mealDao.getMeal(mealId).getRecipeId();
             ingredientDao.deleteAllIngredientsFromMeal(mealId);
             mealDao.deleteMealById(mealId);
-            if (recipeId != null) {
-                recipeDao.aggregateRecipeData(recipeId);
-            }
+
         } catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
         }

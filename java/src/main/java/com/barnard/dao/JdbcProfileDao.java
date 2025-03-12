@@ -130,7 +130,9 @@ public class JdbcProfileDao implements ProfileDao {
     public List<Recipe> getUserFeedRecipes(int userId) {
 
         List<Recipe> recipes = new ArrayList<>();
-        String sql = "SELECT recipe.*, category.category_name, user_attributes.display_name " +
+        String sql = "SELECT recipe.*, category.category_name, user_attributes.display_name, " +
+                "(SELECT AVG(rating) FROM meal WHERE meal.recipe_id = recipe.recipe_id) AS avg_rating, " +
+                "(SELECT AVG(cook_time) FROM meal WHERE meal.recipe_id = recipe.recipe_id) AS avg_cook_time " +
                 "FROM recipe " +
                 "LEFT JOIN category ON recipe.category_id = category.category_id " +
                 "JOIN user_attributes ON recipe.user_id = user_attributes.user_id " +
@@ -220,7 +222,8 @@ public class JdbcProfileDao implements ProfileDao {
         recipe.setUserId(rs.getInt("user_id"));
         recipe.setUserName(rs.getString("display_name"));
         recipe.setRecipeName(rs.getString("recipe_name"));
-        recipe.setAvgCookTime(rs.getInt("avg_cook_time"));
+        recipe.setAvgCookTime(rs.getBigDecimal("avg_cook_time"));
+        recipe.setAvgRating(rs.getBigDecimal("avg_rating"));
         recipe.setDescription(rs.getString("description"));
         recipe.setImageId(rs.getInt("image_id"));
         recipe.setPublic(rs.getBoolean("is_public"));

@@ -1,5 +1,6 @@
 package com.barnard.model;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class Recipe {
@@ -8,7 +9,8 @@ public class Recipe {
     private int userId;
     private String userName;
     private String recipeName;
-    private Integer avgCookTime;
+    private BigDecimal avgCookTime;
+    private BigDecimal avgRating;
     private String description;
     private Integer imageId;
     private boolean isPublic;
@@ -49,8 +51,16 @@ public class Recipe {
         this.recipeName = recipeName;
     }
 
-    public Integer getAvgCookTime() {
+    public BigDecimal getAvgCookTime() {
         return avgCookTime;
+    }
+
+    public BigDecimal getAvgRating() {
+        return avgRating;
+    }
+
+    public void setAvgRating(BigDecimal avgRating) {
+        this.avgRating = avgRating;
     }
 
     public String getDescription() {
@@ -81,7 +91,7 @@ public class Recipe {
         this.recipeId = recipeId;
     }
 
-    public void setAvgCookTime(Integer avgCookTime) {
+    public void setAvgCookTime(BigDecimal avgCookTime) {
         this.avgCookTime = avgCookTime;
     }
 

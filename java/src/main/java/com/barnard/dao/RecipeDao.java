@@ -20,6 +20,5 @@ public interface RecipeDao {
     void makePrivate(Recipe recipe);
     void deleteRecipeById(int recipeId);
     boolean verifyRecipeOwner(int userId, int recipeId);
-    void aggregateRecipeData(int recipeId);
 
 }
