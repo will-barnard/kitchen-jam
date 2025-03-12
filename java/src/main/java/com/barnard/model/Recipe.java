@@ -1,6 +1,7 @@
 package com.barnard.model;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 public class Recipe {
@@ -17,6 +18,7 @@ public class Recipe {
     private Integer categoryId;
     private String categoryName;
     private Category category;
+    private LocalDate lastCreated;
     private List<Meal> mealList;
     private List<Step> stepList;
     private boolean updateSteps = false;
@@ -157,5 +159,13 @@ public class Recipe {
 
     public void setIngredientList(List<Ingredient> ingredientList) {
         this.ingredientList = ingredientList;
+    }
+
+    public LocalDate getLastCreated() {
+        return lastCreated;
+    }
+
+    public void setLastCreated(LocalDate lastCreated) {
+        this.lastCreated = lastCreated;
     }
 }

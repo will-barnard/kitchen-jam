@@ -132,7 +132,8 @@ public class JdbcProfileDao implements ProfileDao {
         List<Recipe> recipes = new ArrayList<>();
         String sql = "SELECT recipe.*, category.category_name, user_attributes.display_name, " +
                 "(SELECT AVG(rating) FROM meal WHERE meal.recipe_id = recipe.recipe_id) AS avg_rating, " +
-                "(SELECT AVG(cook_time) FROM meal WHERE meal.recipe_id = recipe.recipe_id) AS avg_cook_time " +
+                "(SELECT AVG(cook_time) FROM meal WHERE meal.recipe_id = recipe.recipe_id) AS avg_cook_time, " +
+                "(SELECT MAX(date_cooked) FROM meal WHERE meal.recipe_id = recipe.recipe_id) as lastCreated " +
                 "FROM recipe " +
                 "LEFT JOIN category ON recipe.category_id = category.category_id " +
                 "JOIN user_attributes ON recipe.user_id = user_attributes.user_id " +
@@ -230,6 +231,9 @@ public class JdbcProfileDao implements ProfileDao {
         recipe.setCategoryId(rs.getInt("category_id"));
         recipe.setPublicUrl(rs.getString("public_url"));
         recipe.setCategoryName(rs.getString("category_name"));
+        if (rs.getDate("last_created") != null) {
+            recipe.setLastCreated(rs.getDate("last_created").toLocalDate());
+        }
 
         return recipe;
     }

@@ -26,7 +26,8 @@ public class JdbcRecipeDao implements RecipeDao {
         Recipe recipe = null;
         String sql = "SELECT recipe.*, category.category_name, user_attributes.display_name, " +
                 "(SELECT AVG(rating) FROM meal WHERE recipe_id = ?) AS avg_rating, " +
-                "(SELECT AVG(cook_time) FROM meal WHERE recipe_id = ?) AS avg_cook_time " +
+                "(SELECT AVG(cook_time) FROM meal WHERE recipe_id = ?) AS avg_cook_time, " +
+                "(SELECT MAX(date_cooked) FROM meal WHERE recipe_id = ?) as last_created " +
                 "FROM recipe " +
                 "LEFT JOIN category ON recipe.category_id = category.category_id " +
                 "JOIN user_attributes ON recipe.user_id = user_attributes.user_id " +
@@ -54,7 +55,8 @@ public class JdbcRecipeDao implements RecipeDao {
         List<Recipe> recipes = new ArrayList<>();
         String sql = "SELECT recipe.*, category.category_name, user_attributes.display_name, " +
                 "(SELECT AVG(rating) FROM meal WHERE meal.recipe_id = recipe.recipe_id) AS avg_rating, " +
-                "(SELECT AVG(cook_time) FROM meal WHERE meal.recipe_id = recipe.recipe_id) AS avg_cook_time " +
+                "(SELECT AVG(cook_time) FROM meal WHERE meal.recipe_id = recipe.recipe_id) AS avg_cook_time, " +
+                "(SELECT MAX(date_cooked) FROM meal WHERE meal.recipe_id = recipe.recipe_id) as last_created " +
                 "FROM recipe " +
                 "LEFT JOIN category ON recipe.category_id = category.category_id " +
                 "JOIN user_attributes ON recipe.user_id = user_attributes.user_id " +
@@ -82,7 +84,8 @@ public class JdbcRecipeDao implements RecipeDao {
         List<Recipe> recipes = new ArrayList<>();
         String sql = "SELECT recipe.*, category.category_name, user_attributes.display_name, " +
                 "(SELECT AVG(rating) FROM meal WHERE meal.recipe_id = recipe.recipe_id) AS avg_rating, " +
-                "(SELECT AVG(cook_time) FROM meal WHERE meal.recipe_id = recipe.recipe_id) AS avg_cook_time " +
+                "(SELECT AVG(cook_time) FROM meal WHERE meal.recipe_id = recipe.recipe_id) AS avg_cook_time, " +
+                "(SELECT MAX(date_cooked) FROM meal WHERE meal.recipe_id = recipe.recipe_id) as last_created " +
                 "FROM recipe " +
                 "LEFT JOIN category ON recipe.category_id = category.category_id " +
                 "JOIN user_attributes ON recipe.user_id = user_attributes.user_id " +
@@ -109,7 +112,8 @@ public class JdbcRecipeDao implements RecipeDao {
         List<Recipe> recipes = new ArrayList<>();
         String sql = "SELECT recipe.*, category.category_name, user_attributes.display_name, " +
                 "(SELECT AVG(rating) FROM meal WHERE meal.recipe_id = recipe.recipe_id) AS avg_rating, " +
-                "(SELECT AVG(cook_time) FROM meal WHERE meal.recipe_id = recipe.recipe_id) AS avg_cook_time " +
+                "(SELECT AVG(cook_time) FROM meal WHERE meal.recipe_id = recipe.recipe_id) AS avg_cook_time, " +
+                "(SELECT MAX(date_cooked) FROM meal WHERE meal.recipe_id = recipe.recipe_id) as last_created " +
                 "FROM recipe " +
                 "LEFT JOIN category on recipe.category_id = category.category_id " +
                 "JOIN user_attributes ON recipe.user_id = user_attributes.user_id " +
@@ -138,7 +142,8 @@ public class JdbcRecipeDao implements RecipeDao {
         Recipe recipe = null;
         String sql = "SELECT recipe.*, category.category_name, user_attributes.display_name, " +
                 "(SELECT AVG(rating) FROM meal WHERE meal.recipe_id = recipe.recipe_id) AS avg_rating, " +
-                "(SELECT AVG(cook_time) FROM meal WHERE meal.recipe_id = recipe.recipe_id) AS avg_cook_time " +
+                "(SELECT AVG(cook_time) FROM meal WHERE meal.recipe_id = recipe.recipe_id) AS avg_cook_time, " +
+                "(SELECT MAX(date_cooked) FROM meal WHERE meal.recipe_id = recipe.recipe_id) as last_created " +
                 "FROM recipe " +
                 "JOIN meal on recipe.recipe_id = meal.recipe_id " +
                 "LEFT JOIN category on recipe.category_id = category.category_id " +
@@ -216,7 +221,10 @@ public class JdbcRecipeDao implements RecipeDao {
                 "WHERE recipe.public_url = ?) AS avg_rating, " +
                 "(SELECT AVG(cook_time) FROM meal " +
                 "JOIN recipe ON meal.recipe_id = recipe.recipe_id " +
-                "WHERE recipe.public_url = ?) AS avg_cook_time " +
+                "WHERE recipe.public_url = ?) AS avg_cook_time, " +
+                "(SELECT MAX(date_cooked) FROM meal " +
+                "JOIN recipe ON meal.recipe_id = recipe.recipe_id " +
+                "WHERE recipe.public_url = ?) as last_created " +
                 "FROM recipe " +
                 "LEFT JOIN category ON recipe.category_id = category.category_id " +
                 "JOIN user_attributes ON recipe.user_id = user_attributes.user_id " +
@@ -321,32 +329,6 @@ public class JdbcRecipeDao implements RecipeDao {
         }
     }
 
-//    // todo make this use SQL aggregates and simplify
-//    @Override
-//    public void aggregateRecipeData(int recipeId) {
-//        String sql = "SELECT cook_time FROM meal " +
-//                "WHERE recipe_id = ?;";
-//        String sql2 = "UPDATE recipe SET avg_cook_time = ? " +
-//                "WHERE recipe_id = ?;";
-//        int count = 0;
-//        int cookTime = 0;
-//        int avgTime = 0;
-//        try {
-//            SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, recipeId);
-//            while(rowSet.next()) {
-//                cookTime += rowSet.getInt("cook_time");
-//                count++;
-//            }
-//            if (count != 0) {
-//                avgTime = cookTime / count;
-//            }
-//            jdbcTemplate.update(sql2, avgTime, recipeId);
-//        } catch (CannotGetJdbcConnectionException e) {
-//            throw new DaoException("Unable to connect to server or database", e);
-//        } catch (DataIntegrityViolationException e) {
-//            throw new DaoException("Data integrity violation", e);
-//        }
-//    }
 
     private Recipe mapRowToRecipe(SqlRowSet rs, boolean isCategory) {
         Recipe recipe = new Recipe();
@@ -364,6 +346,9 @@ public class JdbcRecipeDao implements RecipeDao {
         recipe.setPublicUrl(rs.getString("public_url"));
         if (isCategory) {
             recipe.setCategoryName(rs.getString("category_name"));
+        }
+        if (rs.getDate("last_created") != null) {
+            recipe.setLastCreated(rs.getDate("last_created").toLocalDate());
         }
 
         return recipe;
