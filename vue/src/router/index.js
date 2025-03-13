@@ -28,6 +28,7 @@ import PasswordResetView from '../views/PasswordResetView.vue';
 import EditTagsView from '../views/EditTagsView.vue';
 import EditCategoriesView from '../views/EditCategoriesView.vue';
 import JamView from '../views/JamView.vue';
+import TagView from '../views/TagView.vue';
 
 const routes = [
   {
@@ -236,6 +237,11 @@ const routes = [
     meta: {
       requiresAuth: true
     }
+  },
+  {
+    path: '/tag/:tagId',
+    name: 'TagView',
+    component: TagView
   }
 ];
 

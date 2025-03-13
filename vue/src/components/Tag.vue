@@ -1,7 +1,7 @@
 <template>
     <div class="tag-main">
         <div class="tag-name">
-            <p v-show="!editing">{{ tag.tagName }}</p>
+            <p v-show="!editing" @click="$router.push({ name: 'TagView', params: { tagId: tag.tagId } })">{{ tag.tagName }}</p>
             <input v-show="editing" v-model="tagName" />
         </div>
         <div class="spacer"></div>
@@ -83,5 +83,7 @@ export default {
         border-radius: 10px;
         padding: 5px;
     }
-
+    .tag-name p {
+        text-decoration: underline;
+    }
 </style>
