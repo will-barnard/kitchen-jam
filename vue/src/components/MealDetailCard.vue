@@ -26,6 +26,7 @@
                     </div>
                     <div class="subtitle">
                         <h4 class="comment" v-show="meal.mealComment">{{ meal.mealComment }}</h4>
+                        <div class="spacer"></div>
                         <h4 class="date" v-show="meal.dateCooked">{{ formatDate(meal.dateCooked) }}</h4>
                     </div>
                 </div>

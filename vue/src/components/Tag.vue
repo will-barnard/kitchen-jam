@@ -1,7 +1,7 @@
 <template>
     <div class="tag-main">
         <div class="tag-name">
-            <p v-show="!editing" @click="$router.push({ name: 'TagView', params: { tagId: tag.tagId } })">{{ tag.tagName }}</p>
+            <p v-show="!editing" @click="$router.push({ name: 'tag-detail', params: { tagId: tag.tagId } })">{{ tag.tagName }}</p>
             <input v-show="editing" v-model="tagName" />
         </div>
         <div class="spacer"></div>

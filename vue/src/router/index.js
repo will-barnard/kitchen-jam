@@ -240,7 +240,7 @@ const routes = [
   },
   {
     path: '/tag/:tagId',
-    name: 'TagView',
+    name: 'tag-detail',
     component: TagView
   }
 ];

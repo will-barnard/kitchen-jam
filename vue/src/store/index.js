@@ -200,8 +200,39 @@ export function createStore(currentToken, currentUser) {
           (response) => {
             state.userTags = response.data;
             state.loadedTags = true;
+            const waitForMealsToLoad = () => {
+              if (state.loadedMeals) {
+                for (let meal of state.userMeals) {
+                  if (meal.tags) {
+                    for (let mealTag of meal.tags) {
+                      let tag = state.userTags.find(tag => tag.tagId === mealTag.tagId);
+                      if (tag) {
+                        tag.timesUsed = (tag.timesUsed || 0) + 1;
+                        if (tag.lastUsed) {
+                          if (new Date(meal.dateCooked) > new Date(tag.lastUsed) || !tag.lastUsed) {
+                            tag.lastUsed = meal.dateCooked;
+                            tag.lastUsedMeal = meal.mealId;
+                          }
+                        } else {
+                          tag.lastUsed = meal.dateCooked;
+                          tag.lastUsedMeal = meal.mealId;
+                        }
+                      }
+                    }
+                  }
+                }
+                for (let tag of state.userTags) {
+                  if (!tag.timesUsed) {
+                    tag.timesUsed = 0;
+                  }
+                }
+              } else {
+                setTimeout(waitForMealsToLoad, 100); // Check again after 100ms
+              }
+            };
+            waitForMealsToLoad();
           }
-        )
+        );
       },
       ADD_TAG(state, payload) {
         state.userTags.unshift(payload);

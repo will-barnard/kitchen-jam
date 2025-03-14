@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="block" v-show="!compact || compactShow == 'oldRecipes'">
+        <div class="jam-block" v-show="!compact || compactShow == 'oldRecipes'">
             <div class="single-row">
                 <h3 class="jam-title">Recipes not made recently:</h3>
                 <div class="spacer"></div>
@@ -12,7 +12,7 @@
                 <h4 class="jam-link" @click="$router.push({name: 'jam'})">Jam Page <i class="fas fa-arrow-right"></i></h4>
             </div>
         </div>
-        <div class="block " v-show="!compact || compactShow == 'improveRecipes'">
+        <div class="jam-block " v-show="!compact || compactShow == 'improveRecipes'">
             <div class="single-row">
                 <h3 class="jam-title">Recipes to try for improvement:</h3>
                 <div class="spacer"></div>

@@ -144,7 +144,7 @@
                                         'far fa-star': newMeal.rating < (n * 2) - 1
                                     }" style="color: yellow;"></i>
                                 </div>
-                                <input type="range" min="0" max="10" step="0.5" v-model="newMeal.rating"/>
+                                <input type="range" min="0" max="10" step="1" v-model="newMeal.rating"/>
                             </div>
                         </div> 
 
