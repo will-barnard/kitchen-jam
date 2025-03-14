@@ -34,7 +34,7 @@ public class JdbcRecipeDao implements RecipeDao {
                 "WHERE recipe.recipe_id = ?;";
 
         try {
-            SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, recipeId, recipeId);
+            SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, recipeId, recipeId, recipeId, recipeId);
 
             if (rowSet.next()) {
                 recipe = mapRowToRecipe(rowSet, true);
@@ -232,7 +232,7 @@ public class JdbcRecipeDao implements RecipeDao {
                 "AND recipe.is_public = true;";
 
         try {
-            SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, uuid, uuid);
+            SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, uuid, uuid, uuid, uuid);
             if (rowSet.next()) {
                 recipe = mapRowToRecipe(rowSet, true);
             }
@@ -268,11 +268,11 @@ public class JdbcRecipeDao implements RecipeDao {
     @Override
     public void makePrivate(Recipe recipe) {
         String sql = "UPDATE recipe " +
-                "SET is_public = false, public_url = ? " +
+                "SET is_public = false " +
                 "WHERE recipe_id = ?;";
         try {
             int rowsAffected = 0;
-            rowsAffected = jdbcTemplate.update(sql, null, recipe.getRecipeId());
+            rowsAffected = jdbcTemplate.update(sql, recipe.getRecipeId());
             if (rowsAffected == 0) {
                 throw new DaoException("Something went wrong, no rows affected");
             }
@@ -350,7 +350,6 @@ public class JdbcRecipeDao implements RecipeDao {
         if (rs.getDate("last_created") != null) {
             recipe.setLastCreated(rs.getDate("last_created").toLocalDate());
         }
-
         return recipe;
     }
 }

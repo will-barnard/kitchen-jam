@@ -32,9 +32,11 @@ public class WillController {
     @Autowired
     private EmailService emailService;
 
+    // todo - remove this endpoint
+
     @GetMapping(path = "")
     public List<Meal> getMealsByUser(Principal principal) {
-        // Will's account ID
+        // Will's account ID 1001
         int userId = 1001;
         List<Meal> result = mealDao.getMealsByUserId(userId);
         for (Meal meal : result) {
