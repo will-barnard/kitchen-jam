@@ -12,18 +12,28 @@
                 <h3 :class="{ selected: control === 'categories' }" @click="updateControl('categories')">Categories</h3>
             </div>
         </div>
-        <div v-show="control === 'recipes'">
-            <RecipeJam v-if="validRecipes"/>
-            <h3 v-if="!validRecipes && $store.state.loadedRecipes">Log more recipes to generate insights</h3>
-        </div>
-        <div v-show="control === 'tags'">
-            <TagJam v-show="validTags"/>
-            <h3 v-if="!validTags && $store.state.loadedTags">Create more tags to generate insights</h3>
-        </div>
-        <div v-show="control === 'categories'">
-            <CategoryJam v-show="validCategories"/>
-            <h3 v-if="!validCategories && $store.state.loadedCategories">Create more categories to generate insights</h3>
-        </div>
+        <Transition name="fade">
+            <div v-if="show">
+                <Transition name="fade">
+                    <div v-show="control === 'recipes'">
+                        <RecipeJam v-if="validRecipes"/>
+                        <h3 v-if="!validRecipes && $store.state.loadedRecipes">Log more recipes to generate insights</h3>
+                    </div>
+                </Transition>
+                <Transition name="fade">
+                    <div v-show="control === 'tags'">
+                        <TagJam v-show="validTags"/>
+                        <h3 v-if="!validTags && $store.state.loadedTags">Create more tags to generate insights</h3>
+                    </div>
+                </Transition>
+                <Transition name="fade">
+                    <div v-show="control === 'categories'">
+                        <CategoryJam v-show="validCategories"/>
+                        <h3 v-if="!validCategories && $store.state.loadedCategories">Create more categories to generate insights</h3>
+                    </div>
+                </Transition>
+            </div>
+        </Transition>
     </div>
 </template>
 
@@ -39,6 +49,7 @@ export default {
     data() {
         return {
             control: this.$route.query.tab || "recipes",
+            show: false
         }
     },
     watch: {
@@ -62,6 +73,11 @@ export default {
         validCategories() {
             return this.$store.state.userCategories.length > 2 ? true : false;
         }
+    },
+    created() {
+        setTimeout(
+            () => {this.show = true}
+            , 10)
     }
 }
 </script>

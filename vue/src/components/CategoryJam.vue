@@ -160,6 +160,9 @@ export default {
 </script>
 
 <style scoped>
+    h3 {
+        text-align: left;
+    }
     .jam-link {
         cursor: pointer;
         padding: 5px;
