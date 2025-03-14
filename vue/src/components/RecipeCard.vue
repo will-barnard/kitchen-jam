@@ -222,7 +222,7 @@ export default {
         margin: 0px;
     }
     .star {
-        color: gold;
+        color: var(--light-5);
         margin: 0 2px;
     }
     .rating-label {

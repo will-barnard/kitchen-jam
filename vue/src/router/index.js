@@ -29,6 +29,7 @@ import EditTagsView from '../views/EditTagsView.vue';
 import EditCategoriesView from '../views/EditCategoriesView.vue';
 import JamView from '../views/JamView.vue';
 import TagView from '../views/TagView.vue';
+import CategoryView from '../views/CategoryView.vue';
 
 const routes = [
   {
@@ -241,7 +242,18 @@ const routes = [
   {
     path: '/tag/:tagId',
     name: 'tag-detail',
-    component: TagView
+    component: TagView,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/category/:categoryId',
+    name: 'category-detail',
+    component: CategoryView,
+    meta: {
+      requiresAuth: true
+    }
   }
 ];
 

@@ -142,7 +142,7 @@
                                         'fas fa-star': newMeal.rating >= n * 2,
                                         'fas fa-star-half-alt': newMeal.rating >= (n * 2) - 1 && newMeal.rating < n * 2,
                                         'far fa-star': newMeal.rating < (n * 2) - 1
-                                    }" style="color: yellow;"></i>
+                                    }"></i>
                                 </div>
                                 <input type="range" min="0" max="10" step="1" v-model="newMeal.rating"/>
                             </div>
@@ -1007,6 +1007,7 @@ export default {
     }
     .stars {
         margin-right: 10px;
+        color: var(--light-5)
     }
     .edit-rating {
         margin-top: 10px;

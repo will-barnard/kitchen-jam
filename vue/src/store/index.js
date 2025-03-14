@@ -261,6 +261,50 @@ export function createStore(currentToken, currentUser) {
           (response) => {
             state.userCategories = response.data;
             state.loadedCategories = true;
+
+            const waitForDataToLoad = () => {
+              if (state.loadedRecipes && state.loadedMeals) {
+                for (let category of state.userCategories) {
+                  category.countRecipes = 0;
+                  category.avgRating = 0;
+                  category.lastCreated = null;
+                  category.countMeals = 0;
+                  let totalRating = 0;
+                  let ratingCount = 0;
+
+                  for (let recipe of state.userRecipes) {
+                    if (recipe.categoryId === category.categoryId) {
+                      category.countRecipes++;
+                      if (recipe.avgRating) {
+                        totalRating += recipe.avgRating;
+                        ratingCount++;
+                      }
+                      if (!category.lastCreated || new Date(recipe.lastCreated) > new Date(category.lastCreated)) {
+                        category.lastCreated = recipe.lastCreated;
+                        const lastCreatedMeal = state.userMeals
+                          .filter(meal => meal.recipeId === recipe.recipeId)
+                          .sort((a, b) => new Date(b.dateCooked) - new Date(a.dateCooked))[0];
+                        if (lastCreatedMeal) {
+                          category.lastCreatedMeal = lastCreatedMeal.mealId;
+                        }
+                      }
+                      for (let meal of state.userMeals) {
+                        if (meal.recipeId === recipe.recipeId) {
+                          category.countMeals++;
+                        }
+                      }
+                    }
+                  }
+
+                  if (ratingCount > 0) {
+                    category.avgRating = totalRating / ratingCount;
+                  }
+                }
+              } else {
+                setTimeout(waitForDataToLoad, 100); // Check again after 100ms
+              }
+            };
+            waitForDataToLoad();
           }
         )
       },

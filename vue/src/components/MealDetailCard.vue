@@ -504,7 +504,7 @@ export default {
         padding: 5px;
     }
     .star {
-        color: gold;
+        color: var(--light-5);
         margin: 0 2px;
     }
     .rating-label {

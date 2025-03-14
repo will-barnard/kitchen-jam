@@ -294,7 +294,7 @@ export default {
     flex-direction: row;
 }
 .star {
-    color: gold;
+    color: var(--light-5);
     margin: 0 2px;
 }
 .rating-label {
