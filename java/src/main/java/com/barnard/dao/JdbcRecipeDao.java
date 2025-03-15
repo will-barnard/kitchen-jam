@@ -167,7 +167,7 @@ public class JdbcRecipeDao implements RecipeDao {
 
     @Override
     public Recipe createRecipe(Recipe recipe) {
-
+        Recipe newRecipe = new Recipe();
         String uuid = UUID.randomUUID().toString();
         String sql = "INSERT INTO recipe (user_id, recipe_name, description, category_id, is_public, public_url) " +
                 "VALUES (?, ?, ?, ?, (SELECT default_public FROM user_attributes WHERE user_id = ?), ?) " +
@@ -177,13 +177,13 @@ public class JdbcRecipeDao implements RecipeDao {
             int recipeId = jdbcTemplate.queryForObject(sql, int.class, recipe.getUserId(),
                     recipe.getRecipeName(), recipe.getDescription(), recipe.getCategoryId(), recipe.getUserId(), uuid);
             recipe.setRecipeId(recipeId);
+            newRecipe = getRecipe(recipeId);
         } catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database", e);
         } catch (DataIntegrityViolationException e) {
             throw new DaoException("Data integrity violation", e);
         }
-
-        return recipe;
+        return newRecipe;
 
     }
 

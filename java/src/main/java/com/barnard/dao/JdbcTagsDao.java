@@ -147,6 +147,8 @@ public class JdbcTagsDao implements TagsDao{
 
     }
 
+    // todo remove this method
+
     @Override
     public List<Tag> addTagToMeal(int tagId, int mealId) {
 
@@ -167,6 +169,35 @@ public class JdbcTagsDao implements TagsDao{
         }
         return tags;
     }
+
+    @Override
+    public List<Tag> updateMealTagList(int mealId, List<Tag> tags) {
+        List<Tag> updatedTags = new ArrayList<>();
+        String sql = "DELETE FROM tags_meal " +
+                "WHERE meal_id = ?; ";
+        if (!tags.isEmpty()) {
+            String sql2 = "INSERT INTO tags_meal (tag_id, meal_id) " +
+                    "VALUES ";
+            for (Tag tag : tags) {
+                sql2 += "(" + tag.getTagId() + ", " + mealId + "), ";
+            }
+            sql2 = sql2.substring(0, sql2.length() - 2) + ";";
+            sql += sql2;
+        }
+
+
+        try {
+            jdbcTemplate.update(sql, mealId);
+            updatedTags = getTagsByMealId(mealId);
+        } catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Unable to connect to server or database", e);
+        } catch (DataIntegrityViolationException e) {
+            throw new DaoException("Data integrity violation", e);
+        }
+        return updatedTags;
+    }
+
+    // todo remove this method
 
     @Override
     public List<Tag> deleteTagFromMeal(int tagId, int mealId) {

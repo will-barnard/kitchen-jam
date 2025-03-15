@@ -127,14 +127,18 @@ public class MealController {
         meal.setUserId(userId);
         meal.setDateCreated(LocalDateTime.now());
         meal.setLastModified(LocalDateTime.now());
-        meal.setPublic(false);
         Meal newMeal = null;
         try {
             newMeal = mealDao.createMeal(meal);
-            if (meal.getIngredientList() == null) {
-                // do nothing
-            } else if (!meal.getIngredientList().isEmpty()) {
-                newMeal = ingredientDao.addIngredientsToMeal(meal.getIngredientList(), newMeal);
+            if (meal.getTags() != null) {
+                if (!meal.getTags().isEmpty()) {
+                    tagsDao.updateMealTagList(newMeal.getMealId(), meal.getTags());                }
+            }
+
+            if (meal.getIngredientList() != null) {
+                if (!meal.getIngredientList().isEmpty()) {
+                    newMeal = ingredientDao.addIngredientsToMeal(meal.getIngredientList(), newMeal);
+                }
             }
 
         } catch(Exception e) {
@@ -159,8 +163,8 @@ public class MealController {
             if (getMeal.getUserId() != userId) {
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
             }
-            Integer oldRecipeId = getMeal.getRecipeId();
             updatedMeal = mealDao.updateMeal(meal);
+            tagsDao.updateMealTagList(meal.getMealId(), meal.getTags());
             ingredientDao.deleteAllIngredientsFromMeal(meal.getMealId());
             if (meal.getIngredientList() == null) {
                 // do nothing

@@ -13,8 +13,14 @@ public interface TagsDao {
     List<Tag> searchLikeTags(int userId, String search);
     Tag createTag(Tag tag, int userId);
     Tag updateTag(Tag tag);
+
+    // todo remove these methods
     List<Tag> addTagToMeal(int tagId, int mealId);
     List<Tag> deleteTagFromMeal(int tagId, int mealId);
+
+    List<Tag> updateMealTagList(int mealId, List<Tag> tags);
+
+
     void deleteTag(int tagId);
 
 }

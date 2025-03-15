@@ -116,6 +116,8 @@ public class TagController {
         return newTag;
     }
 
+    // todo remove this endpoint
+
     @PostMapping(path = "/meal/{mealId}/{tagId}")
     public List<Tag> addTagToMeal(@PathVariable int mealId, @PathVariable int tagId, Principal principal) {
         List<Tag> tags = null;
@@ -131,6 +133,8 @@ public class TagController {
         }
         return tags;
     }
+
+    // todo remove this endpoint
 
     @DeleteMapping(path = "/meal/{mealId}/{tagId}")
     public List<Tag> deleteTagFromMeal(@PathVariable int mealId, @PathVariable int tagId, Principal principal) {

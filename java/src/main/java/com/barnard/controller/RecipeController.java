@@ -138,26 +138,35 @@ public class RecipeController {
     @PostMapping(path = "")
     @ResponseStatus(HttpStatus.CREATED)
     public Recipe createRecipe(@RequestBody Recipe recipe, Principal principal) {
-
+        Recipe newRecipe = null;
         int userId = userDao.getUserByUsername(principal.getName()).getId();
         recipe.setUserId(userId);
         try {
-            recipeDao.createRecipe(recipe);
-            if (recipe.isUpdateSteps()) {
-                for (Step step : recipe.getStepList()) {
-                    stepDao.createStep(step);
+            newRecipe = recipeDao.createRecipe(recipe);
+            if (recipe.getStepList() != null) {
+                if (!recipe.getStepList().isEmpty()) {
+                    // todo change how this is implemented to be like ingredients?
+                    for (Step step : recipe.getStepList()) {
+                        step.setUserId(userId);
+                        step.setRecipeId(newRecipe.getRecipeId());
+                        stepDao.createStep(step);
+                    }
+                    newRecipe.setStepList(stepDao.getStepsByRecipe(newRecipe.getRecipeId()));
                 }
+
             }
             if (recipe.getIngredientList() != null) {
                 if (!recipe.getIngredientList().isEmpty()) {
                     ingredientDao.addIngredientsToRecipe(recipe.getIngredientList(), recipe);
+                    newRecipe.setIngredientList(ingredientDao.getIngredientsByRecipe(newRecipe.getRecipeId()));
                 }
             }
+
 
         } catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
         }
-        return recipe;
+        return newRecipe;
     }
 
     @PutMapping(path = "")
