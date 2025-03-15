@@ -499,7 +499,7 @@ export default {
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        background-color: var(--rating);
+        background-color: var(--light-2);
         border-radius: 10px;
         padding: 5px;
     }

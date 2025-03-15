@@ -79,7 +79,7 @@
                     <p v-if="!newMeal.tags">no tags</p>
 
                     <div class="tag-list">
-                        <div  v-for="tag in staticMeal.tags">
+                        <div  v-for="tag in newMeal.tags">
                             <div class="tag-item">
                                 <p>{{tag.tagName}}</p>
                                 <div class="tag-spacer"></div>
@@ -337,30 +337,26 @@ export default {
         // TAG methods
 
         removeTag(id) {
-            TagService.removeTagFromMeal(this.meal.mealId, id).then(
-                () => {
-                    this.staticMeal.tags = this.staticMeal.tags.filter(
-                        (tag) => {
-                            return tag.tagId != id;
-                        }
-                    );
+            this.newMeal.tags = this.newMeal.tags.filter(
+                (tag) => {
+                    return tag.tagId != id;
                 }
-            )
+            );
         },
         createTag() {
             TagService.createTag(this.newTag).then(
                 (response) => {
-                    this.staticMeal.tags.push(response.data)
-                    TagService.addTagToMeal(this.meal.mealId, response.data.tagId);
+                    this.newMeal.tags.push(response.data)
                     $store.state.commit('ADD_TAG', response.data);
                     this.newTag.tagName = "";
+                    this.searchTags = [];
                 }
             )
         },
         addTag(tag) {
-            this.staticMeal.tags.push(tag);
-            TagService.addTagToMeal(this.meal.mealId, tag.tagId);
+            this.newMeal.tags.push(tag);
             this.newTag.tagName = "";
+            this.searchTags = [];
         },
         searchForTags() {
             if (this.newTag.tagName) {
@@ -377,11 +373,9 @@ export default {
 
         searchForRecipes() {
             if (this.newRecipe.recipeName) {
-                RecipeService.searchRecipes(this.newRecipe).then(
-                    (response) => {
-                        this.searchRecipe = response.data;
-                    }
-                )
+                this.searchRecipe = this.$store.state.userRecipes.filter(recipe => 
+                    recipe.recipeName.toLowerCase().includes(this.newRecipe.recipeName.toLowerCase())
+                );
             } else {
                 this.searchRecipe = [];
             }
@@ -787,6 +781,13 @@ export default {
     .tag-search-item i {
         border: 1px solid var(--border-color);
     }
+    .search-tags {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+    }
     .add-tag {
         background-color: var(--light-4);
     }
@@ -1001,7 +1002,7 @@ export default {
         flex-direction: column;
         align-items: center;
         width: 70%;
-        background-color: var(--rating);
+        background-color: var(--light-2);
         border-radius: 10px;
         padding: 5px;
     }

@@ -596,7 +596,6 @@ export default {
         justify-content: center;
     }
     .delete h2 {
-        border: 1px solid black;
         margin: 5px;
         padding: 5px;
         border-radius: 10px;
