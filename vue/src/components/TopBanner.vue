@@ -38,7 +38,9 @@ h1 {
     justify-content: center;
     position: relative;
 }
-
+.top-banner:hover {
+    cursor: pointer;
+}
 .icon-left, .icon-right {
     font-size: 24px;
     opacity: 0;

@@ -169,8 +169,7 @@ export default {
                         newMeal.imageId = this.newImgId;
                         ImageService.addImageToMeal(response.data.mealId, this.newImgId).then(
                             (res) => {
-                                const base64 = ImageService.parseImg(res);
-                                newMeal.img = "data:image/png;base64," + base64;
+                                newMeal.img = this.imgPath;
                                 this.$store.commit('CREATE_MEAL', newMeal);
                                 this.$router.push({ name: 'meal-detail', params: {mealId: response.data.mealId}})
                             }
@@ -377,11 +376,7 @@ export default {
         margin-bottom: 3px;
     }
     .submit {
-        background-color: white;
-        border: 1px solid var(--border-color);
-        border-radius: 3px;
         width: 100%;
-        white-space: nowrap; /* Ensure text does not wrap */
     }
     .image-block {
         background-color: var(--light-1);

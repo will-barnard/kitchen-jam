@@ -134,8 +134,7 @@ export default {
                         newRecipe.imageId = this.newImgId;
                         ImageService.addImageToRecipe(newRecipe.recipeId, this.newImgId).then(
                             (res) => {
-                                const base64 = ImageService.parseImg(res);
-                                newRecipe.img = "data:image/png;base64," + base64;
+                                newRecipe.img = this.imgPath;
                                 this.$store.commit('CREATE_RECIPE', newRecipe);
                                 this.$router.push({name: 'recipe-detail', params: {recipeId: newRecipe.recipeId}})
                             }
