@@ -407,6 +407,8 @@ export default {
     .comment {
         margin-left: 0px;
         padding: 10px;
+        width: 100%;
+        height: 100%;
         background-color: var(--light-1);
         border-radius: 10px;
         flex-grow: 1;

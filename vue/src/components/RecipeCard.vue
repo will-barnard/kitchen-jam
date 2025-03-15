@@ -170,7 +170,7 @@ export default {
         justify-content: space-between;
     }
     .widget {
-        flex-grow: 1;
+        flex-grow: 0;
         background-color: var(--light-1);
         margin-top: 5px;
         margin-bottom: 5px;

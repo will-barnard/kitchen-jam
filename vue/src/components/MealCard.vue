@@ -16,9 +16,11 @@
                     <div class="recipe" v-if="meal.recipeId">
                         <h3><i class="fas fa-book"></i> {{ meal.recipeName }}</h3>
                     </div>
+                    <div class="date-box" v-if="meal.dateCooked">
+                        <p class="date"><i class="fas fa-calendar-alt"></i> {{ formatDate(meal.dateCooked) }}</p>
+                    </div>
                     <div class="subheader" v-if="meal.mealComment">
                         <p>{{ meal.mealComment }}</p>
-                        <p class="date" v-if="meal.dateCooked">{{ formatDate(meal.dateCooked) }}</p>
                     </div>
 
                     <div class="tags" v-if="meal.tags.length > 0">
@@ -197,7 +199,7 @@ export default {
         justify-content: center;
         align-items: end;
         border-radius: 10px;
-        background-color: var(--light-1);
+        background-color: var(--light-8);
 
     }
     .recipe {
@@ -240,6 +242,7 @@ export default {
         background-color: var(--light-1);
         padding: 5px;
         border-radius: 10px;
+        margin-top: 5px;
     }
     .tag-item {
         padding: 5px;
@@ -255,10 +258,32 @@ export default {
         display: flex;
         flex-direction: row;
         justify-content: space-between;
+        padding: 5px;
+        background-color: var(--light-2);
+        border-radius: 10px;
+        margin: 0px;
+        margin-top: 5px;
+    }
+    .subheader p {
+        margin: 0px;
     }
     .date {
-        text-align: right;
+        text-align: center;
     }
+    .date-box p {
+        padding: 5px;
+        background-color: var(--light-1);
+        border-radius: 10px;
+        margin: 0px;
+        margin-top: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .date-box p i {
+        margin-right: 5px;
+    }
+   
 
     .v-enter-active,
 .v-leave-active {
