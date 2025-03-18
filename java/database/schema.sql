@@ -135,6 +135,50 @@ CREATE TABLE tags_meal (
 	CONSTRAINT PK_tags_meal PRIMARY KEY (tag_id, meal_id)
 );
 
+CREATE TABLE tag_type (
+    tag_type_id serial PRIMARY KEY,
+    -- so on so forth
+);
+
+INSERT INTO tag_type (tag_type_name, tag_category) VALUES
+
+-- Proteins
+('Proteins', 'Proteins'), ('Beef', 'Proteins'), ('Pork', 'Proteins'), ('Chicken', 'Proteins'), ('Turkey', 'Proteins'), ('Lamb', 'Proteins'), ('Fish', 'Proteins'), ('Shellfish', 'Proteins'), ('Tofu', 'Proteins'), ('Tempeh', 'Proteins'), ('Seitan', 'Proteins'), ('Eggs', 'Proteins'), ('Game Meat', 'Proteins'), ('Plant-Based Protein', 'Proteins'),
+
+-- Vegetables
+('Vegetables', 'Vegetables'), ('Leafy Greens', 'Vegetables'), ('Root Vegetables', 'Vegetables'), ('Cruciferous', 'Vegetables'), ('Nightshades', 'Vegetables'), ('Squash', 'Vegetables'), ('Alliums', 'Vegetables'), ('Mushrooms', 'Vegetables'), ('Sea Vegetables', 'Vegetables'),
+
+-- Fruits
+('Fruits', 'Fruits'), ('Citrus', 'Fruits'), ('Berries', 'Fruits'), ('Stone Fruits', 'Fruits'), ('Tropical Fruits', 'Fruits'), ('Pome Fruits', 'Fruits'), ('Melons', 'Fruits'), ('Dried Fruits', 'Fruits'),
+
+-- Grains & Starches
+('Grains & Starches', 'Grains & Starches'), ('Rice', 'Grains & Starches'), ('Pasta & Noodles', 'Grains & Starches'), ('Bread & Baked Goods', 'Grains & Starches'), ('Quinoa', 'Grains & Starches'), ('Barley', 'Grains & Starches'), ('Oats', 'Grains & Starches'), ('Corn', 'Grains & Starches'), ('Potatoes & Sweet Potatoes', 'Grains & Starches'), ('Legumes', 'Grains & Starches'),
+
+-- Dairy & Alternatives
+('Dairy & Alternatives', 'Dairy & Alternatives'), ('Milk', 'Dairy & Alternatives'), ('Cheese', 'Dairy & Alternatives'), ('Yogurt', 'Dairy & Alternatives'), ('Cream & Butter', 'Dairy & Alternatives'), ('Plant-Based Milks', 'Dairy & Alternatives'),
+
+-- Fats & Oils
+('Fats & Oils', 'Fats & Oils'), ('Animal Fats', 'Fats & Oils'), ('Vegetable Oils', 'Fats & Oils'), ('Nut & Seed Oils', 'Fats & Oils'),
+
+-- Sweeteners
+('Sweeteners', 'Sweeteners'), ('Sugar', 'Sweeteners'), ('Honey', 'Sweeteners'), ('Maple Syrup', 'Sweeteners'), ('Artificial & Natural Sweeteners', 'Sweeteners'),
+
+-- Spices & Seasonings
+('Spices & Seasonings', 'Spices & Seasonings'), ('Herbs', 'Spices & Seasonings'), ('Spices', 'Spices & Seasonings'), ('Salt & Pepper', 'Spices & Seasonings'), ('Sauces & Condiments', 'Spices & Seasonings'),
+
+-- Beverages
+('Beverages', 'Beverages'), ('Coffee & Tea', 'Beverages'), ('Alcohol', 'Beverages'), ('Juices & Smoothies', 'Beverages'),
+
+-- Cookware
+('Cookware', 'Cookware'), ('Skillet', 'Cookware'), ('Saucepan', 'Cookware'), ('Dutch Oven', 'Cookware'), ('Baking Sheet', 'Cookware'), ('Mixing Bowl', 'Cookware'), ('Grill Pan', 'Cookware'), ('Casserole Dish', 'Cookware'),
+
+-- Appliances
+('Appliances', 'Appliances'), ('Oven', 'Appliances'), ('Microwave', 'Appliances'), ('Blender', 'Appliances'), ('Food Processor', 'Appliances'), ('Air Fryer', 'Appliances'), ('Slow Cooker', 'Appliances'), ('Instant Pot', 'Appliances'),
+
+-- Preparation Technique
+('Preparation Technique', 'Preparation Technique'), ('Chopping', 'Preparation Technique'), ('Sautéing', 'Preparation Technique'), ('Grilling', 'Preparation Technique'), ('Baking', 'Preparation Technique'), ('Roasting', 'Preparation Technique'), ('Boiling', 'Preparation Technique'), ('Steaming', 'Preparation Technique');
+
+
 CREATE TABLE meal_image (
 	meal_id int REFERENCES meal(meal_id),
 	image_id int REFERENCES image(image_id),

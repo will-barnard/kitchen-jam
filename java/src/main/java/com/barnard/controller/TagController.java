@@ -6,6 +6,7 @@ import com.barnard.dao.UserDao;
 import com.barnard.exception.AuthException;
 import com.barnard.model.Meal;
 import com.barnard.model.Tag;
+import com.barnard.model.TagCategory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -116,42 +118,6 @@ public class TagController {
         return newTag;
     }
 
-    // todo remove this endpoint
-
-    @PostMapping(path = "/meal/{mealId}/{tagId}")
-    public List<Tag> addTagToMeal(@PathVariable int mealId, @PathVariable int tagId, Principal principal) {
-        List<Tag> tags = null;
-        int userId = userDao.getUserByUsername(principal.getName()).getId();
-        try {
-            if (!mealDao.verifyMealOwner(userId, mealId)) {
-                throw new AuthException("Unauthorized");
-            } else {
-                tags = tagsDao.addTagToMeal(tagId, mealId);
-            }
-        } catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
-        }
-        return tags;
-    }
-
-    // todo remove this endpoint
-
-    @DeleteMapping(path = "/meal/{mealId}/{tagId}")
-    public List<Tag> deleteTagFromMeal(@PathVariable int mealId, @PathVariable int tagId, Principal principal) {
-        List<Tag> tags = null;
-        int userId = userDao.getUserByUsername(principal.getName()).getId();
-        try {
-            if (!mealDao.verifyMealOwner(userId, mealId)) {
-                throw new AuthException("Unauthorized");
-            } else {
-                tags = tagsDao.deleteTagFromMeal(tagId, mealId);
-            }
-        } catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
-        }
-        return tags;
-    }
-
     @ResponseStatus(HttpStatus.ACCEPTED)
     @DeleteMapping(path = "/{tagId}")
     public void deleteTag(@PathVariable int tagId, Principal principal) {
@@ -166,6 +132,17 @@ public class TagController {
         } catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
         }
+    }
+
+    @GetMapping(path = "/categories")
+    public List<TagCategory> getTagCategories() {
+        List<TagCategory> result = new ArrayList<>();
+        try {
+            result = tagsDao.getTagCategories();
+        } catch(Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
+        }
+        return result;
     }
 
 

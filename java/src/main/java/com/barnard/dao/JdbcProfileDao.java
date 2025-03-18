@@ -101,6 +101,7 @@ public class JdbcProfileDao implements ProfileDao {
         return updatedProfile;
     }
 
+    // todo move these to appropriate daos not here
     @Override
     public List<Meal> getUserFeedMeals(int userId) {
 

@@ -3,6 +3,8 @@ package com.barnard.dao;
 
 import com.barnard.exception.DaoException;
 import com.barnard.model.Tag;
+import com.barnard.model.TagCategory;
+import com.barnard.model.TagType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.CannotGetJdbcConnectionException;
@@ -25,6 +27,7 @@ public class JdbcTagsDao implements TagsDao{
         Tag tag = null;
         String sql = "SELECT * " +
                 "FROM tags " +
+                "LEFT JOIN tag_type on tags.tag_type_id = tag_type.tag_type_id " +
                 "WHERE tag_id = ?;";
 
         try {
@@ -49,6 +52,7 @@ public class JdbcTagsDao implements TagsDao{
         String sql = "SELECT * " +
                 "FROM tags " +
                 "JOIN tags_meal ON tags.tag_id = tags_meal.tag_id " +
+                "LEFT JOIN tag_type on tags.tag_type_id = tag_type.tag_type_id " +
                 "WHERE meal_id = ?;";
 
         try {
@@ -70,6 +74,7 @@ public class JdbcTagsDao implements TagsDao{
         List<Tag> tags = new ArrayList<>();
         String sql = "SELECT * " +
                 "FROM tags " +
+                "LEFT JOIN tag_type on tags.tag_type_id = tag_type.tag_type_id " +
                 "WHERE user_id = ?;";
 
         try {
@@ -90,6 +95,7 @@ public class JdbcTagsDao implements TagsDao{
         search = "%" + search.toLowerCase() + "%";
         List<Tag> taglist = new ArrayList<>();
         String sql = "SELECT * FROM tags " +
+                "LEFT JOIN tag_type on tags.tag_type_id = tag_type.tag_type_id " +
                 "WHERE LOWER (tag_name) LIKE ? " +
                 "AND user_id = ?";
         try {
@@ -108,12 +114,19 @@ public class JdbcTagsDao implements TagsDao{
     @Override
     public Tag createTag(Tag tag, int userId) {
 
-        String sql = "INSERT INTO tags (tag_name, user_id) " +
-                "VALUES (?, ?) " +
+        Integer tagTypeId = null;
+        if (tag.getTagType() != null) {
+            if (tag.getTagType().getTagTypeId() != 0) {
+                tagTypeId = tag.getTagType().getTagTypeId();
+            }
+        }
+
+        String sql = "INSERT INTO tags (tag_name, user_id, tag_type_id) " +
+                "VALUES (?, ?, ?) " +
                 "RETURNING tag_id;";
 
         try {
-            int tagId = jdbcTemplate.queryForObject(sql, int.class, tag.getTagName(), userId);
+            int tagId = jdbcTemplate.queryForObject(sql, int.class, tag.getTagName(), userId, tagTypeId);
             tag.setTagId(tagId);
         }  catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database", e);
@@ -128,11 +141,19 @@ public class JdbcTagsDao implements TagsDao{
     @Override
     public Tag updateTag(Tag tag) {
 
+        Integer tagTypeId = null;
+        if (tag.getTagType() != null) {
+            if (tag.getTagType().getTagTypeId() != null) {
+                if (tag.getTagType().getTagTypeId() != 0) {
+                    tagTypeId = tag.getTagType().getTagTypeId();
+                }
+            }
+        }
         Tag updateTag = null;
-        String sql = "UPDATE tags SET tag_name = ? WHERE tag_id = ?;";
+        String sql = "UPDATE tags SET tag_name = ?, tag_type_id = ? WHERE tag_id = ?;";
 
         try {
-            jdbcTemplate.update(sql, tag.getTagName(), tag.getTagId());
+            jdbcTemplate.update(sql, tag.getTagName(), tagTypeId, tag.getTagId());
             updateTag = getTag(tag.getTagId());
             if (!tag.getTagName().equals(updateTag.getTagName())) {
                 throw new DaoException();
@@ -145,29 +166,6 @@ public class JdbcTagsDao implements TagsDao{
 
         return updateTag;
 
-    }
-
-    // todo remove this method
-
-    @Override
-    public List<Tag> addTagToMeal(int tagId, int mealId) {
-
-        List<Tag> tags = new ArrayList<>();
-        String sql = "INSERT INTO tags_meal (tag_id, meal_id) " +
-                "VALUES (?, ?);";
-
-        try {
-            int rowsAffected = jdbcTemplate.update(sql, tagId, mealId);
-            if (rowsAffected != 1) {
-                throw new DaoException();
-            }
-            tags = getTagsByMealId(mealId);
-        } catch (CannotGetJdbcConnectionException e) {
-            throw new DaoException("Unable to connect to server or database", e);
-        } catch (DataIntegrityViolationException e) {
-            throw new DaoException("Data integrity violation", e);
-        }
-        return tags;
     }
 
     @Override
@@ -197,30 +195,6 @@ public class JdbcTagsDao implements TagsDao{
         return updatedTags;
     }
 
-    // todo remove this method
-
-    @Override
-    public List<Tag> deleteTagFromMeal(int tagId, int mealId) {
-
-        List<Tag> tags = new ArrayList<>();
-        String sql = "DELETE FROM tags_meal " +
-                "WHERE tag_id = ? " +
-                "AND meal_id = ?;";
-
-        try {
-            int rowsAffected = jdbcTemplate.update(sql, tagId, mealId);
-            if (rowsAffected != 1) {
-                throw new DaoException();
-            }
-            tags = getTagsByMealId(mealId);
-        } catch (CannotGetJdbcConnectionException e) {
-            throw new DaoException("Unable to connect to server or database", e);
-        } catch (DataIntegrityViolationException e) {
-            throw new DaoException("Data integrity violation", e);
-        }
-        return tags;
-    }
-
     @Override
     public void deleteTag(int tagId) {
 
@@ -244,12 +218,50 @@ public class JdbcTagsDao implements TagsDao{
 
     }
 
+    @Override
+    public List<TagCategory> getTagCategories() {
+        List<TagCategory> tagCategories = new ArrayList<>();
+        String sql = "SELECT * FROM tag_type;";
+
+        try {
+            String currentCategory = "";
+            SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql);
+            while (rowSet.next()) {
+                if (currentCategory.equals(rowSet.getString("tag_category"))) {
+                    TagType tagType = new TagType(rowSet.getInt("tag_type_id"), rowSet.getString("tag_type_name"), currentCategory);
+                    tagCategories.get(tagCategories.size() - 1).getTagTypes().add(tagType);
+                } else {
+                    currentCategory = rowSet.getString("tag_category");
+                    TagCategory tagCategory = new TagCategory();
+                    tagCategory.setTagCategoryName(currentCategory);
+                    tagCategory.setTagTypes(new ArrayList<>());
+                    tagCategories.add(tagCategory);
+
+                    TagType tagType = new TagType(rowSet.getInt("tag_type_id"), rowSet.getString("tag_type_name"), currentCategory);
+                    tagCategories.get(tagCategories.size() - 1).getTagTypes().add(tagType);
+                }
+            }
+        } catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Unable to connect to server or database", e);
+        } catch (DataIntegrityViolationException e) {
+            throw new DaoException("Data integrity violation", e);
+        }
+        return tagCategories;
+    }
+
     private Tag mapRowToTag(SqlRowSet rs) {
         Tag tag = new Tag();
 
         tag.setTagId(rs.getInt("tag_id"));
         tag.setTagName(rs.getString("tag_name"));
         tag.setUserId(rs.getInt("user_id"));
+        if (rs.getString("tag_type_name") != null) {
+            TagType tagType = new TagType();
+            tagType.setTagTypeId(rs.getInt("tag_type_id"));
+            tagType.setTagTypeName(rs.getString("tag_type_name"));
+            tagType.setTagCategory(rs.getString("tag_category"));
+            tag.setTagType(tagType);
+        }
 
         return tag;
     }

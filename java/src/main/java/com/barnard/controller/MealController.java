@@ -132,7 +132,7 @@ public class MealController {
             newMeal = mealDao.createMeal(meal);
             if (meal.getTags() != null) {
                 if (!meal.getTags().isEmpty()) {
-                    tagsDao.updateMealTagList(newMeal.getMealId(), meal.getTags());                }
+                    newMeal.setTags(tagsDao.updateMealTagList(newMeal.getMealId(), meal.getTags()));                }
             }
 
             if (meal.getIngredientList() != null) {
@@ -164,7 +164,7 @@ public class MealController {
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
             }
             updatedMeal = mealDao.updateMeal(meal);
-            tagsDao.updateMealTagList(meal.getMealId(), meal.getTags());
+            updatedMeal.setTags(tagsDao.updateMealTagList(meal.getMealId(), meal.getTags()));
             ingredientDao.deleteAllIngredientsFromMeal(meal.getMealId());
             if (meal.getIngredientList() == null) {
                 // do nothing

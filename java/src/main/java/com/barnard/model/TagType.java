@@ -2,14 +2,24 @@ package com.barnard.model;
 
 public class TagType {
 
-    private int tagTypeId;
+    private Integer tagTypeId;
     private String tagTypeName;
+    private String tagCategory;
 
-    public int getTagTypeId() {
+    public TagType() {
+    }
+
+    public TagType(int tagTypeId, String tagTypeName, String tagCategory) {
+        this.tagTypeId = tagTypeId;
+        this.tagTypeName = tagTypeName;
+        this.tagCategory = tagCategory;
+    }
+
+    public Integer getTagTypeId() {
         return tagTypeId;
     }
 
-    public void setTagTypeId(int tagTypeId) {
+    public void setTagTypeId(Integer tagTypeId) {
         this.tagTypeId = tagTypeId;
     }
 
@@ -21,4 +31,11 @@ public class TagType {
         this.tagTypeName = tagTypeName;
     }
 
+    public String getTagCategory() {
+        return tagCategory;
+    }
+
+    public void setTagCategory(String tagCategory) {
+        this.tagCategory = tagCategory;
+    }
 }
