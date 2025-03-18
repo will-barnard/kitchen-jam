@@ -25,7 +25,8 @@ export function createStore(currentToken, currentUser) {
       userCategories: [],
       loadedCategories: false,
       subMenu: {},
-      publicMealGallery: []
+      publicMealGallery: [],
+      tagCategories: []
     },
     mutations: {
       SET_AUTH_TOKEN(state, token) {
@@ -196,6 +197,11 @@ export function createStore(currentToken, currentUser) {
         )
       },
       LOAD_USER_TAGS(state) {
+        TagService.getTagCategories().then(
+          (response) => {
+            state.tagCategories = response.data;
+          }
+        )
         TagService.getTagsByUser().then(
           (response) => {
             state.userTags = response.data;

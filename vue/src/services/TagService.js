@@ -17,14 +17,11 @@ export default {
   updateTag(tag) {
     return axios.put('/tag', tag)
   },
-  addTagToMeal(mealId, tagId) {
-    return axios.post('/tag/meal/' + mealId + '/' + tagId)
-  },
-  removeTagFromMeal(mealId, tagId) {
-    return axios.delete('/tag/meal/' + mealId + '/' + tagId)
-  },
   deleteTag(tagId) {
     return axios.delete('/tag/' + tagId)
+  },
+  getTagCategories() {
+    return axios.get('/tag/categories')
   }
 
 }
