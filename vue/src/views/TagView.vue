@@ -9,10 +9,10 @@
                 <div v-if="tag.tagType && tag.tagType.tagTypeName" class="tag-type">
                     <h3>{{ tag.tagType.tagCategory }} - {{ tag.tagType.tagTypeName }}</h3>
                 </div>
+                <i class="fas fa-edit edit-icon" @click="this.$router.push({ name: 'edit-tags' });"></i>
                 <div class="single-row">
                     <h3 class="used-in">Tag used in:</h3>
                     <div class="spacer"></div>
-                    <i class="fas fa-edit edit-icon" @click="this.$router.push({ name: 'edit-tags' });"></i>
                 </div>
                 <MealCard v-for="meal in mealList" :key="meal.mealId" :meal="meal" />
             </div>

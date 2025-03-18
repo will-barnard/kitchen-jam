@@ -1,7 +1,7 @@
 <template>
     <div class="category-main">
         <div class="category-name">
-            <p v-show="!editing">{{ category.categoryName }}</p>
+            <p v-show="!editing" @click="$router.push({name: 'category-detail', params: {categoryId: category.categoryId}})">{{ category.categoryName }}</p>
             <input v-show="editing" v-model="categoryName" />
         </div>
         <div class="spacer"></div>
@@ -69,6 +69,7 @@ export default {
     p {
         margin: 2px;
         padding: 2px;
+        text-decoration: underline;
     }
     div {
         display: flex;
