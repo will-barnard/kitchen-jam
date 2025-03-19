@@ -40,6 +40,26 @@ public class JdbcFriendshipDao implements FriendshipDao {
     }
 
     @Override
+    public List<Friend> getPendingRequests(int userId) {
+        List<Friend> pendingRequests = new ArrayList<>();
+        List<Friend> result = null;
+        String sql = "SELECT * FROM friendships " +
+                "WHERE user_id1 = ? AND status = 'pending';";
+        try {
+            SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, userId);
+            while (rowSet.next()) {
+                pendingRequests.add(mapRowToFriend(rowSet, userId));
+            }
+            result = getFriendUsernames(pendingRequests);
+        } catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Unable to connect to server or database", e);
+        } catch (DataIntegrityViolationException e) {
+            throw new DaoException("Data integrity violation", e);
+        }
+        return result;
+    }
+
+    @Override
     public void createFriendRequest(int userId1, int userId2) {
         String sql = "INSERT INTO friendships (user_id1, user_id2, status, created_at) " +
                 "VALUES (?, ?, 'pending', NOW())";

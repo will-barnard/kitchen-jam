@@ -38,6 +38,11 @@ public class FriendshipController {
         }
     }
 
+    @GetMapping(path = "/pending")
+    public List<Friend> getPendingRequests(Principal principal) {
+        return friendshipDao.getPendingRequests(userDao.getUserByUsername(principal.getName()).getId());
+    }
+
     @GetMapping(path = "/blocked")
     public List<Friend> getBlockedUsers(Principal principal) {
         return friendshipDao.getBlockedUsers(userDao.getUserByUsername(principal.getName()).getId());

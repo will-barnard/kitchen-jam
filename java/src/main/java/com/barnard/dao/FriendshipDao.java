@@ -11,6 +11,7 @@ public interface FriendshipDao {
     List<Friend> getFriendList(int userId);
     List<Friend> getFriendRequests(int userId);
     List<Friend> getBlockedUsers(int userId);
+    List<Friend> getPendingRequests(int userId);
     void rejectFriendRequest(int userId1, int userId2);
     void removeFriend(int userId1, int userId2);
     void blockFriend(int userId1, int userId2);
