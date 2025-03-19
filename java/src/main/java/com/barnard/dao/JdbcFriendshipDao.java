@@ -88,8 +88,7 @@ public class JdbcFriendshipDao implements FriendshipDao {
 
     @Override
     public void rejectFriendRequest(int userId1, int userId2) {
-        String sql = "UPDATE friendships " +
-                "SET status = 'rejected'" +
+        String sql = "DELETE from friendships " +
                 "WHERE user_id1 = ? AND user_id2 = ? AND status = 'pending';";
         try {
             jdbcTemplate.update(sql, userId1, userId2);

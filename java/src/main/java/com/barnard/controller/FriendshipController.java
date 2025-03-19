@@ -62,7 +62,7 @@ public class FriendshipController {
     public void acceptFriendRequest(Principal principal, @PathVariable int friendId) {
         int userId = userDao.getUserByUsername(principal.getName()).getId();
         try {
-            friendshipDao.acceptFriendRequest(userId, friendId);
+            friendshipDao.acceptFriendRequest(friendId, userId);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
         }
@@ -77,7 +77,7 @@ public class FriendshipController {
     public void rejectFriendRequest(Principal principal, @PathVariable int friendId) {
         int userId = userDao.getUserByUsername(principal.getName()).getId();
         try {
-            friendshipDao.rejectFriendRequest(userId, friendId);
+            friendshipDao.rejectFriendRequest(friendId, userId);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
         }
