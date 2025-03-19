@@ -19,16 +19,16 @@ public class JdbcProfileDao implements ProfileDao {
     private JdbcTemplate jdbcTemplate;
 
     @Override
-    public List<UserProfilePrimitive> searchUsers(String search) {
+    public List<UserProfilePrimitive> searchUsers(String search, int userId) {
 
         search = "%" + search.toLowerCase() + "%";
         List<UserProfilePrimitive> list = new ArrayList<>();
         String sql = "SELECT * FROM user_attributes " +
-                "WHERE LOWER (tag_name) LIKE ? " +
-                "AND user_id = ?";
-
+                "WHERE LOWER (display_name) LIKE ? " +
+                "AND is_public = true " +
+                "AND user_id != ?;";
         try {
-            SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, search);
+            SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, search, userId);
             while (rowSet.next()) {
                 list.add(mapRowToProfilePrimitive(rowSet));
             }

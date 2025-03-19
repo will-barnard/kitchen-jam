@@ -11,6 +11,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,10 +29,12 @@ public class ProfileController {
     private UserDao userDao;
 
     @PostMapping(path = "/search")
-    public List<UserProfilePrimitive> searchUsers(@RequestBody String search) {
+    public List<UserProfilePrimitive> searchUsers(@RequestBody String search, Principal principal) {
         List<UserProfilePrimitive> result;
+        String decodedSearch = search.substring(0, search.length() - 1);
+        int userId = userDao.getUserByUsername(principal.getName()).getId();
         try {
-            result = profileDao.searchUsers(search);
+            result = profileDao.searchUsers(decodedSearch, userId);
         } catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
         }

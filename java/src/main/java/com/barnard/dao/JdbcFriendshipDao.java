@@ -24,7 +24,7 @@ public class JdbcFriendshipDao implements FriendshipDao {
         List<Friend> friendRequests = new ArrayList<>();
         List<Friend> result = null;
         String sql = "SELECT * FROM friendships " +
-                "WHERE user_id2 = ? AND status = 'PENDING';";
+                "WHERE user_id2 = ? AND status = 'pending';";
         try {
             SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, userId);
             while (rowSet.next()) {
@@ -42,7 +42,7 @@ public class JdbcFriendshipDao implements FriendshipDao {
     @Override
     public void createFriendRequest(int userId1, int userId2) {
         String sql = "INSERT INTO friendships (user_id1, user_id2, status, created_at) " +
-                "VALUES (?, ?, 'PENDING', NOW())";
+                "VALUES (?, ?, 'pending', NOW())";
         try {
             jdbcTemplate.update(sql, userId1, userId2);
         } catch (CannotGetJdbcConnectionException e) {
@@ -55,8 +55,8 @@ public class JdbcFriendshipDao implements FriendshipDao {
     @Override
     public void acceptFriendRequest(int userId1, int userId2) {
         String sql = "UPDATE friendships " +
-            "SET status = 'ACCEPTED'" +
-            "WHERE user_id1 = ? AND user_id2 = ? AND status = 'PENDING';";
+            "SET status = 'accepted'" +
+            "WHERE user_id1 = ? AND user_id2 = ? AND status = 'pending';";
         try {
             jdbcTemplate.update(sql, userId1, userId2);
         } catch (CannotGetJdbcConnectionException e) {
@@ -69,8 +69,8 @@ public class JdbcFriendshipDao implements FriendshipDao {
     @Override
     public void rejectFriendRequest(int userId1, int userId2) {
         String sql = "UPDATE friendships " +
-                "SET status = 'REJECTED'" +
-                "WHERE user_id1 = ? AND user_id2 = ? AND status = 'PENDING';";
+                "SET status = 'rejected'" +
+                "WHERE user_id1 = ? AND user_id2 = ? AND status = 'pending';";
         try {
             jdbcTemplate.update(sql, userId1, userId2);
         } catch (CannotGetJdbcConnectionException e) {
@@ -96,7 +96,7 @@ public class JdbcFriendshipDao implements FriendshipDao {
     @Override
     public void blockFriend(int userId1, int userId2) {
         String sql = "UPDATE friendships " +
-                "SET status = 'BLOCKED'" +
+                "SET status = 'blocked'" +
                 "WHERE (user_id1 = ? AND user_id2 = ?) OR (user_id1 = ? AND user_id2 = ?);";
         try {
             jdbcTemplate.update(sql, userId1, userId2, userId2, userId1);
@@ -110,7 +110,7 @@ public class JdbcFriendshipDao implements FriendshipDao {
     @Override
     public void unblockFriend(int userId1, int userId2) {
         String sql = "UPDATE friendships " +
-                "SET status = 'ACCEPTED'" +
+                "SET status = 'accepted'" +
                 "WHERE (user_id1 = ? AND user_id2 = ?) OR (user_id1 = ? AND user_id2 = ?);";
         try {
             jdbcTemplate.update(sql, userId1, userId2, userId2, userId1);
@@ -126,7 +126,7 @@ public class JdbcFriendshipDao implements FriendshipDao {
         List<Friend> blockedUsers = new ArrayList<>();
         List<Friend> result = null;
         String sql = "SELECT * FROM friendships " +
-                "WHERE (user_id1 = ? OR user_id2 = ?) AND status = 'BLOCKED';";
+                "WHERE (user_id1 = ? OR user_id2 = ?) AND status = 'blocked';";
         try {
             SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, userId, userId);
             while (rowSet.next()) {
@@ -144,7 +144,7 @@ public class JdbcFriendshipDao implements FriendshipDao {
     @Override
     public void cancelFriendRequest(int userId1, int userId2) {
         String sql = "DELETE FROM friendships " +
-                "WHERE user_id1 = ? AND user_id2 = ? AND status = 'PENDING';";
+                "WHERE user_id1 = ? AND user_id2 = ? AND status = 'pending';";
         try {
             jdbcTemplate.update(sql, userId1, userId2);
         } catch (CannotGetJdbcConnectionException e) {
@@ -159,7 +159,7 @@ public class JdbcFriendshipDao implements FriendshipDao {
         List<Friend> friends = new ArrayList<>();
         List<Friend> result = null;
         String sql = "SELECT * FROM friendships " +
-                "WHERE (user_id1 = ? OR user_id2 = ?) AND status = 'ACCEPTED';";
+                "WHERE (user_id1 = ? OR user_id2 = ?) AND status = 'accepted';";
         try {
             SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, userId, userId);
             while (rowSet.next()) {
@@ -201,7 +201,7 @@ public class JdbcFriendshipDao implements FriendshipDao {
     @Override
     public boolean isFriend(int userId1, int userId2) {
         String sql = "SELECT * FROM friendships " +
-                "WHERE (user_id1 = ? AND user_id2 = ?) OR (user_id1 = ? AND user_id2 = ?) AND status = 'ACCEPTED';";
+                "WHERE (user_id1 = ? AND user_id2 = ?) OR (user_id1 = ? AND user_id2 = ?) AND status = 'accepted';";
         try {
             SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, userId1, userId2, userId2, userId1);
             return rowSet.next();
@@ -218,8 +218,9 @@ public class JdbcFriendshipDao implements FriendshipDao {
         friendship.setUserId1(rowSet.getInt("user_id1"));
         friendship.setUserId2(rowSet.getInt("user_id2"));
         friendship.setStatus(rowSet.getString("status"));
-        friendship.setCreatedAt(rowSet.getTimestamp("created_at").toLocalDateTime());
-
+        if (rowSet.getTimestamp("created_at") != null) {
+            friendship.setCreatedAt(rowSet.getTimestamp("created_at").toLocalDateTime());
+        }
         Friend friend = new Friend();
         if (friendship.getUserId1() == userId) {
             friend.setUserId(friendship.getUserId1());
