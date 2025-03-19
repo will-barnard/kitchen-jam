@@ -7,6 +7,7 @@ import ImageService from '../services/ImageService';
 import ProfileService from '../services/ProfileService';
 import TagService from '../services/TagService';
 import CategoryService from '../services/CategoryService';
+import FriendshipService from '../services/FriendshipService';
 
 
 export function createStore(currentToken, currentUser) {
@@ -26,7 +27,13 @@ export function createStore(currentToken, currentUser) {
       loadedCategories: false,
       subMenu: {},
       publicMealGallery: [],
-      tagCategories: []
+      tagCategories: [],
+      userFriends: [],
+      loadedFriends: false,
+      userPending: [],
+      loadedPending: false,
+      userRequests: [],
+      loadedRequests: false
     },
     mutations: {
       SET_AUTH_TOKEN(state, token) {
@@ -51,6 +58,7 @@ export function createStore(currentToken, currentUser) {
         this.commit('GET_USER_PROFILE');
         this.commit('LOAD_USER_TAGS');
         this.commit('LOAD_USER_CATEGORIES');
+        this.commit('LOAD_USER_FRIENDS');
       },
       GET_USER_PROFILE(state) {
         ProfileService.getPrincipalProfile().then(
@@ -331,6 +339,50 @@ export function createStore(currentToken, currentUser) {
             state.userCategories = state.userCategories.filter(
               (category) => {
                 return category.categoryId != payload;
+              }
+            )
+          }
+        )
+      },
+      LOAD_USER_FRIENDS(state) {
+        FriendshipService.getFriendList().then(
+          (response) => {
+            state.userFriends = response.data;
+            state.loadedFriends = true;
+          }
+        )
+        FriendshipService.getFriendRequests().then(
+          (response) => {
+            state.userRequests = response.data;
+            state.loadedRequests = true;
+          }
+        )
+        FriendshipService.getPendingRequests().then(
+          (response) => {
+            state.userPending = response.data;
+            state.loadedPending = true;
+          }
+        )
+      },
+      ADD_FRIEND(state, user) {
+        state.userFriends.push(user);
+        state.userPending = state.userPending.filter(request => request.friendId !== user.userId);
+      },
+      ADD_FRIEND_TO_PENDING(state, user) {
+        state.userPending.push({ friendId: user.userId });
+      },
+      CANCEL_FRIEND_REQUEST(state, userId) {
+        state.userPending = state.userPending.filter(request => request.friendId !== userId);
+      },
+      REJECT_FRIEND_REQUEST(state, payload) {
+        state.userRequests = state.userRequests.filter(request => request.friendId !== payload.friendId);
+      },
+      DELETE_FRIEND(state, payload) {
+        FriendshipService.removeFriend(payload).then(
+          () => {
+            state.userFriends = state.userFriends.filter(
+              (friend) => {
+                return friend.friendId != payload;
               }
             )
           }

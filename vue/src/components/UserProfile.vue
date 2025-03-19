@@ -6,6 +6,32 @@
                     <img :src="profile.img ? profile.img : '../img/placeholder.jpeg'" />
                 </div>
                 <h1>{{ profile.displayName }}</h1>
+                <div class="sub-header-area" v-if="!allowEditing">
+                    <div>
+                        <h3>Feed</h3>
+                    </div>
+                    <div class="spacer"></div>
+                    <div class="friends-area">
+                        <div>
+                            <h3 v-if="!isPending(profile.userId) && !isFriend(profile.userId) && !isRequest(profile.userId)" @click="addFriend(profile)">Add Friend</h3>
+                        </div>
+                        <div class="respond">
+                            <h3 v-if="isRequest(profile.userId)" @click="respondToRequest">Respond to Request</h3>
+                        </div>
+                        <div class="respond">
+                            <h3 v-if="isPending(profile.userId)">Requested <i class="fa fa-times" @click="cancelRequest(profile)"></i></h3>
+                        </div>
+                        <div class="friends">
+                            <div v-if="isFriend(profile.userId)" class="dropdown">
+                                <h3 @click="toggleDropdown">Friends</h3>
+                                <div v-if="showDropdown" class="dropdown-content">
+                                    <p @click="removeFriend(profile)">Remove Friend</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
             </div>
             <div class="main bg" v-if="!editing">
                 <h2 v-if="profile.headline">{{ profile.headline }}</h2>
@@ -92,6 +118,7 @@
 <script>
 import ImageService from '../services/ImageService';
 import ProfileService from '../services/ProfileService';
+import FriendshipService from '../services/FriendshipService';
 
 function cloneProfile(profile) {
     let newProfile = {};
@@ -107,7 +134,8 @@ export default {
             editing: false,
             newProfile: {},
             newPhoto: false,
-            showNewPhoto: false
+            showNewPhoto: false,
+            showDropdown: false
         }
     },
     created() {
@@ -115,7 +143,58 @@ export default {
             this.newProfile = cloneProfile(this.profile);
         }
     },
+    computed: {
+        userPending() {
+            return this.$store.state.userPending;
+        },
+        userFriends() {
+            return this.$store.state.userFriends;
+        },
+        userRequests() {
+            return this.$store.state.userRequests;
+        }
+    },
     methods: {
+        isPending(userId) {
+            return this.userPending.some(request => request.friendId === userId);
+        },
+        isFriend(userId) {
+            return this.userFriends.some(friend => friend.friendId === userId);
+        },
+        isRequest(userId) {
+            return this.userRequests.some(request => request.friendId === userId);
+        },
+        async addFriend(user) {
+            try {
+                await FriendshipService.createFriendRequest(user.userId);
+                this.$store.commit('ADD_FRIEND_TO_PENDING', user);
+            } catch (error) {
+                console.error('Error sending friend request:', error);
+            }
+        },
+        async cancelRequest(user) {
+            try {
+                await FriendshipService.cancelFriendRequest(user.userId);
+                this.$store.commit('CANCEL_FRIEND_REQUEST', user.userId);
+            } catch (error) {
+                console.error('Error cancelling friend request:', error);
+            }
+        },
+        async removeFriend(user) {
+            try {
+                await FriendshipService.removeFriend(user.userId);
+                this.$store.commit('DELETE_FRIEND', user.userId);
+                this.showDropdown = false;
+            } catch (error) {
+                console.error('Error removing friend:', error);
+            }
+        },
+        respondToRequest() {
+            this.$router.push({name: 'friends', query: {view: 'requests'}});
+        },
+        toggleDropdown() {
+            this.showDropdown = !this.showDropdown;
+        },
         undoEdit() {
             this.editing = false;
             this.newProfile = this.profile;
@@ -346,5 +425,61 @@ p {
 
 .favorite {
     text-align: left;
+}
+.sub-header-area {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+.sub-header-area h3 {
+    font-style: normal;
+    border: 2px solid var(--light-1);
+    border-radius: 10px;
+    padding: 7px;
+    margin: 0 5px;
+    cursor: pointer;
+    background-color: var(--light-2);
+}
+.spacer {
+    flex-grow: 1;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    background-color: var(--light-1);
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown-content p {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    cursor: pointer;
+}
+
+.dropdown-content p:hover {
+    background-color: var(--light-2);
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+.respond h3 {
+    background-color: var(--light-5);
+}
+.friends h3 {
+    background-color: var(--light-6);
 }
 </style>
