@@ -18,6 +18,14 @@ export default {
             headline: "Dashboard, profiles, settings, and password reset", //
             notes: "A few things have been in the works over the past few weeks. The interface for copying links has been adjusted, as well as the way public links are stored in the database. A big headline is there is now a dashboard and user profile page. You can now add a little bit of information about yourself and share your profile. Additional profile functionality, like showing your recipe book and log are forthcoming. Additionally, you can now adjust your privacy settings in the settings page, more settings are forthcoming as well. Lastly, the password reset functionality has been implemented and you can now reset your password.",
             type: 0
+        },
+        {
+            order: 2,
+            version: "1.3.2",
+            date: "03/19/2025",
+            headline: "Jam Page, Friendships, and other bug fixes and improvements",
+            notes: "The Jam Page is now implemented, where you can generate insights based on your meals and recipes logged. You can now also add friends and create friendships, a social friend feed where you can see what your friends are cooking is forthcoming. A few bugs have been fixed, and recipe/meal creation now allows all parameters to be set on creation. Also, ratings now display as stars.",
+            type: 0
         }
     ]
 }
