@@ -1,9 +1,7 @@
 <template>
-    <div>
-        <div class="recipe-img" v-if="img">
-            <div>
-                <img :src="img" />
-            </div>
+    <div ref="observerTarget">
+        <div class="recipe-img">
+            <img :src="localImg || '../img/placeholder.jpeg'" />
         </div>
         <div class="details">
             <div class="single-row" v-show="showUser">
@@ -61,11 +59,39 @@
 <script>
 import IngredientList from './IngredientList.vue';
 import StepList from './StepList.vue';
+import ImageService from '../services/ImageService';
 
 export default {
-    components: {StepList, IngredientList},
-    props: ['recipe', 'editable', 'img', 'showUser']
-}
+  components: { StepList, IngredientList },
+  props: ['recipe', 'editable', 'img', 'showUser'],
+  data() {
+    return {
+      localImg: this.img || null
+    };
+  },
+  methods: {
+    async loadImage() {
+      if (this.recipe.imageId && !this.localImg) {
+        const response = await ImageService.getImage(this.recipe.imageId);
+        const base64 = ImageService.parseImg(response);
+        this.localImg = `data:image/png;base64,${base64}`;
+        this.$store.commit('SAVE_IMAGE', { id: this.recipe.imageId, base64, type: 'recipe' });
+      }
+    },
+    observeVisibility() {
+      const observer = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting) {
+          this.loadImage();
+          observer.disconnect();
+        }
+      });
+      observer.observe(this.$refs.observerTarget);
+    }
+  },
+  mounted() {
+    this.observeVisibility();
+  }
+};
 </script>
 
 <style scoped>

@@ -1,6 +1,6 @@
 <template>
-    <div class="main">
-        <div class="recipe-img" >
+    <div class="main" ref="observerTarget">
+        <div class="recipe-img">
             <img src="../img/placeholder.jpeg" v-if="!recipe.imageId">
             <img :src="recipe.img ? recipe.img : '../img/placeholder.jpeg'" v-if="recipe.imageId"/>
         </div>
@@ -11,16 +11,36 @@
     </div>
 </template>
 
-
 <script>
+import ImageService from '../services/ImageService';
+
 export default {
     props: ['recipe'],
     methods: {
+        async loadImage() {
+            if (this.recipe.imageId && !this.recipe.img) {
+                const response = await ImageService.getImage(this.recipe.imageId);
+                const base64 = ImageService.parseImg(response);
+                this.$store.commit('SAVE_IMAGE', { id: this.recipe.imageId, base64, type: 'recipe' });
+            }
+        },
         goToRecipe() {
             this.$router.push({ name: 'recipe-detail', params: { recipeId: this.recipe.recipeId } });
+        },
+        observeVisibility() {
+            const observer = new IntersectionObserver((entries) => {
+                if (entries[0].isIntersecting) {
+                    this.loadImage();
+                    observer.disconnect();
+                }
+            });
+            observer.observe(this.$refs.observerTarget);
         }
+    },
+    mounted() {
+        this.observeVisibility();
     }
-}
+};
 </script>
 
 <style scoped>

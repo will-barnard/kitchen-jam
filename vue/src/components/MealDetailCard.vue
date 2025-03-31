@@ -1,9 +1,9 @@
 <template>
-    <div class="display">
+    <div class="display" ref="observerTarget">
         <div>
-            <div class="meal-img" v-if="img">
+            <div class="meal-img" v-if="localImg">
                 <div>
-                    <img :src="img" />
+                    <img :src="localImg" />
                 </div>
             </div>
             <div class="single-row" v-show="showUser">
@@ -83,25 +83,45 @@
 <script>
 import UtilityService from '../services/UtilityService.js';
 import IngredientList from './IngredientList.vue';
-
+import ImageService from '../services/ImageService';
 
 export default {
-    components: {IngredientList},
-    props: ['meal', 'editable', 'img', 'showUser'],
-    data() {
-        return {
-            showGoToRecipe: false
-        }
+  components: { IngredientList },
+  props: ['meal', 'editable', 'img', 'showUser'],
+  data() {
+    return {
+      localImg: this.img || null
+    };
+  },
+  methods: {
+    async loadImage() {
+      if (this.meal.imageId && !this.localImg) {
+        const response = await ImageService.getImage(this.meal.imageId);
+        const base64 = ImageService.parseImg(response);
+        this.localImg = `data:image/png;base64,${base64}`;
+        this.$store.commit('SAVE_IMAGE', { id: this.meal.imageId, base64, type: 'meal' });
+      }
     },
-    methods: {
-        formatDate(date) {
-            return UtilityService.formatDate(date);
-        },
-        goToRecipe() {
-            this.$router.push({name: 'recipe-detail', params: {recipeId: this.meal.recipeId}});
+    formatDate(date) {
+        return UtilityService.formatDate(date);
+    },
+    goToRecipe() {
+      this.$router.push({ name: 'recipe-detail', params: { recipeId: this.meal.recipeId } });
+    },
+    observeVisibility() {
+      const observer = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting) {
+          this.loadImage();
+          observer.disconnect();
         }
+      });
+      observer.observe(this.$refs.observerTarget);
     }
-}
+  },
+  mounted() {
+    this.observeVisibility();
+  }
+};
 </script>
 
 <style scoped>

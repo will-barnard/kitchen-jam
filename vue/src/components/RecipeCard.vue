@@ -1,6 +1,6 @@
 <template>
     <Transition>
-    <div @click="showMore = !showMore">
+    <div @click="showMore = !showMore" ref="observerTarget">
         <body>
 
             <div id="details" class="body-card">
@@ -61,6 +61,7 @@
 
 <script>
 import StepList from './StepList.vue';
+import ImageService from '../services/ImageService';
 
 export default {
     props: ['recipe'],
@@ -71,12 +72,31 @@ export default {
         }
     },
     methods: {
+        async loadImage() {
+            if (this.recipe.imageId && !this.recipe.img) {
+                const response = await ImageService.getImage(this.recipe.imageId);
+                const base64 = ImageService.parseImg(response);
+                this.$store.commit('SAVE_IMAGE', { id: this.recipe.imageId, base64, type: 'recipe' });
+            }
+        },
         goDetail() {
             this.$router.push( {name: 'recipe-detail', params: {recipeId: this.recipe.recipeId} })
         },
         switch() {
             this.showMore = !this.showMore;
+        },
+        observeVisibility() {
+            const observer = new IntersectionObserver((entries) => {
+                if (entries[0].isIntersecting) {
+                    this.loadImage();
+                    observer.disconnect();
+                }
+            });
+            observer.observe(this.$refs.observerTarget);
         }
+    },
+    mounted() {
+        this.observeVisibility();
     },
     created() {
 

@@ -98,55 +98,42 @@ export function createStore(currentToken, currentUser) {
       GET_USER_MEALS(state) {
         MealService.getMealsByUser().then(
           (response) => {
-            state.userMeals = response.data;
-            for (let meal of state.userMeals) {
-              if (!meal.ingredientList) {
-                meal.ingredientList = [];
-              }
-            }
+            state.userMeals = response.data.map((meal) => ({
+              ...meal,
+              img: null, // Initialize img as null for lazy loading
+              ingredientList: meal.ingredientList || [],
+            }));
             state.loadedMeals = true;
-            for (let meal of state.userMeals) {
+
+            // Public URLs are set immediately
+            state.userMeals.forEach((meal) => {
               if (meal.public) {
                 meal.publicUrl = "http://kitchen-jam.com/p/meal/" + meal.publicUrl;
               }
-              if (meal.imageId) {
-                ImageService.getImage(meal.imageId).then(
-                  (res) => {
-                    const base64 = ImageService.parseImg(res);
-                    meal.img = "data:image/png;base64," + base64;
-                  }
-                )
-              }  
-            }
+            });
           }
-        )
+        );
       },
       GET_USER_RECIPES(state) {
         RecipeService.getRecipesByUser().then(
           (response) => {
-            response.data.sort((a, b) => a.recipeName.localeCompare(b.recipeName));
-            state.userRecipes = response.data;
-            for (let recipe of state.userRecipes) {
-              if (!recipe.ingredientList) {
-                recipe.ingredientList = [];
-              }
-            }
+            state.userRecipes = response.data
+              .sort((a, b) => a.recipeName.localeCompare(b.recipeName))
+              .map((recipe) => ({
+                ...recipe,
+                img: null, // Initialize img as null for lazy loading
+                ingredientList: recipe.ingredientList || [],
+              }));
             state.loadedRecipes = true;
-            for (let recipe of state.userRecipes) {
+
+            // Public URLs are set immediately
+            state.userRecipes.forEach((recipe) => {
               if (recipe.public) {
                 recipe.publicUrl = "http://kitchen-jam.com/p/recipe/" + recipe.publicUrl;
               }
-              if (recipe.imageId) {
-                ImageService.getImage(recipe.imageId).then(
-                  (res) => {
-                    const base64 = ImageService.parseImg(res);
-                    recipe.img = "data:image/png;base64," + base64;
-                  }
-                )
-              } 
-            }
+            });
           }
-        )
+        );
       },
       CREATE_MEAL(state, payload) {
         if (payload.ingredientList == null) {
@@ -399,6 +386,15 @@ export function createStore(currentToken, currentUser) {
               }
             )
           }
+        }
+      },
+      SAVE_IMAGE(state, { id, base64, type }) {
+        if (type === 'meal') {
+          const meal = state.userMeals.find(meal => meal.imageId === id);
+          if (meal) meal.img = `data:image/png;base64,${base64}`;
+        } else if (type === 'recipe') {
+          const recipe = state.userRecipes.find(recipe => recipe.imageId === id);
+          if (recipe) recipe.img = `data:image/png;base64,${base64}`;
         }
       }
     }

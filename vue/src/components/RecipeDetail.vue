@@ -221,8 +221,8 @@ export default {
     data() {
         return {
             editing: false,
-            showImage: false,
-            imgPath: "",
+            showImage: !!this.recipe.img,
+            imgPath: this.recipe.img || "../img/placeholder.jpeg",
             newRecipe: {},
             staticRecipe: {},
             deleting: false,
@@ -549,7 +549,19 @@ export default {
                 console.error('Unable to copy to clipboard', err);
             }
             document.body.removeChild(textArea);
+            },
+        async loadImage() {
+            if (this.recipe.imageId && !this.recipe.img) {
+                const response = await ImageService.getImage(this.recipe.imageId);
+                const base64 = ImageService.parseImg(response);
+                this.imgPath = `data:image/png;base64,${base64}`;
+                this.showImage = true;
+                this.$store.commit('SAVE_IMAGE', { id: this.recipe.imageId, base64, type: 'recipe' });
             }
+        }
+    },
+    mounted() {
+        this.loadImage();
     }
 }
 </script>

@@ -1,6 +1,6 @@
 <template>
     <Transition>
-    <div @click="showMore = !showMore" v-show="showImg = true">
+    <div @click="showMore = !showMore" v-show="showImg = true" ref="observerTarget">
         <body>
             <div id="details" class="body-card">
                 <div class="meal-img" >
@@ -93,9 +93,17 @@ export default {
     props: ['meal', 'isPublic'],
     data() {
         return {
-            showMore: false        }
+            showMore: false
+        }
     },
     methods: {
+        async loadImage() {
+            if (this.meal.imageId && !this.meal.img) {
+                const response = await ImageService.getImage(this.meal.imageId);
+                const base64 = ImageService.parseImg(response);
+                this.$store.commit('SAVE_IMAGE', { id: this.meal.imageId, base64, type: 'meal' });
+            }
+        },
         goDetail() {
             this.$router.push( {name: 'meal-detail', params: {mealId: this.meal.mealId} })
         },
@@ -107,7 +115,19 @@ export default {
         },
         formatDate(date) {
             return UtilityService.formatDate(date);
+        },
+        observeVisibility() {
+            const observer = new IntersectionObserver((entries) => {
+                if (entries[0].isIntersecting) {
+                    this.loadImage();
+                    observer.disconnect();
+                }
+            });
+            observer.observe(this.$refs.observerTarget);
         }
+    },
+    mounted() {
+        this.observeVisibility();
     }
 }
 </script>

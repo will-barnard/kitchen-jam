@@ -266,8 +266,8 @@ export default {
         return {
             editing: false,
             deleting: false,
-            showImage: false,
-            imgPath: "",
+            showImage: !!this.meal.img,
+            imgPath: this.meal.img || "../img/placeholder.jpeg",
             newMeal: {},
             staticMeal: {},
             newTag: {},
@@ -571,7 +571,19 @@ export default {
                 console.error('Unable to copy to clipboard', err);
             }
             document.body.removeChild(textArea);
+        },
+        async loadImage() {
+            if (this.meal.imageId && !this.meal.img) {
+                const response = await ImageService.getImage(this.meal.imageId);
+                const base64 = ImageService.parseImg(response);
+                this.imgPath = `data:image/png;base64,${base64}`;
+                this.showImage = true;
+                this.$store.commit('SAVE_IMAGE', { id: this.meal.imageId, base64, type: 'meal' });
+            }
         }
+    },
+    mounted() {
+        this.loadImage();
     }
 }
 </script>
