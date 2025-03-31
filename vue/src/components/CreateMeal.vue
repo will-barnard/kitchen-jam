@@ -47,7 +47,7 @@
                         </div>
                         <div class="recipe-search">
                             <input type="text" v-model="newRecipe.recipeName" @keyup="searchForRecipes()"/>
-                            <button @click="createRecipe()">Create New Recipe</button>
+                            <button @click.prevent="createRecipe()">Create New Recipe</button>
                         </div>
                         <div class="recipe-search-results">
                             <div v-for="recipe in searchRecipe" class="recipe">
@@ -133,6 +133,7 @@
 </template>
 <script>
 import MealService from '../services/MealService.js';
+import RecipeService from '../services/RecipeService.js';
 import ImageService from '../services/ImageService.js';
 import TagService from '../services/TagService.js';
 
@@ -261,6 +262,7 @@ export default {
             RecipeService.createRecipe(this.newRecipe).then(
                 (response) => {
                     this.addRecipe(response.data);
+                    this.$store.state.commit('CREATE_RECIPE', response.data);
                 }
             )
         },

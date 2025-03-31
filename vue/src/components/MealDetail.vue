@@ -157,6 +157,7 @@
             <div class="edit-form">
                    <div class="input-area">
                         <h3>Ingredients</h3>
+                        <button v-if="newMeal.recipeId" @click="copyIngredientsFromLastTime">Copy ingredients from last time</button>
                         <div v-for="ingredient in newMeal.ingredientList" :key="ingredient.listOrder" class="single-row">
                             <p class="list-number">&#8226;</p>
                             <div class="single-column spacer">
@@ -395,6 +396,7 @@ export default {
             RecipeService.createRecipe(this.newRecipe).then(
                 (response) => {
                     this.addRecipe(response.data);
+                    this.$store.state.commit('CREATE_RECIPE', response.data);
                 }
             )
         },
@@ -468,6 +470,14 @@ export default {
             }
             if (null) {
                 
+            }
+        },
+        copyIngredientsFromLastTime() {
+            const lastMeal = this.$store.state.userMeals
+                .filter(meal => meal.recipeId === this.newMeal.recipeId && meal.mealId !== this.newMeal.mealId)
+                .sort((a, b) => new Date(b.dateCooked) - new Date(a.dateCooked))[0];
+            if (lastMeal && lastMeal.ingredientList) {
+                this.newMeal.ingredientList = [...lastMeal.ingredientList];
             }
         },
 
