@@ -1,11 +1,11 @@
 <template>
     <Transition>
     <body>
-        <div class="recipe-img" v-if="localImg && editing">
-            <img :src="localImg" />
+        <div class="recipe-img" v-if="editing">
+            <img :src="imgPath" />
         </div>
 
-       <div v-show="!editing">
+       <div v-if="!editing">
            <RecipeDetailCard :recipe="staticRecipe" :editing="true"/>
        </div>
 
@@ -252,7 +252,7 @@ export default {
             this.imgPath = "../img/placeholder.jpeg";
             this.showImage = true;
         } else {
-            this.imgPath = this.recipe.img;
+            this.loadImage();
             this.showImage = true;
         }
 
@@ -555,11 +555,9 @@ export default {
                 const base64 = ImageService.parseImg(response);
                 this.localImg = `data:image/png;base64,${base64}`; // Update with the loaded image
                 this.$store.commit('SAVE_IMAGE', { id: this.recipe.imageId, base64, type: 'recipe' });
+                this.imgPath = this.recipe.img || this.localImg;
             }
         }
-    },
-    mounted() {
-        this.loadImage();
     }
 }
 </script>

@@ -8,7 +8,7 @@
                 </div>
         </div>
 
-        <div v-show="!editing">
+        <div v-if="!editing">
             <MealDetailCard :meal="staticMeal" :editable="true" :img="imgPath"/>
         </div>
 
@@ -311,6 +311,8 @@ export default {
                             (r) => {
                                 const base64 = ImageService.parseImg(r);
                                 newMeal.img = "data:image/png;base64," + base64;
+                                this.staticMeal.img = newMeal.img; // Update staticMeal image
+                                this.imgPath = newMeal.img; // Update imgPath for display
                             }
                         )
                     }

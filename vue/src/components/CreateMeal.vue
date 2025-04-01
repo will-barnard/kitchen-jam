@@ -647,4 +647,21 @@ export default {
         margin-right: 10px;
         color: var(--light-5);
     }
+    .image {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .image img {
+        max-width: 100%;
+        max-height: 300px;
+        object-fit: cover;
+        border-radius: 10px;
+    }
+    .image img {
+        max-width: 100%;
+        max-height: 300px;
+        object-fit: cover;
+        border-radius: 10px;
+    }
 </style>

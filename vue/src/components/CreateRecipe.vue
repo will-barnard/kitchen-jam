@@ -107,6 +107,7 @@
 <script>
 import RecipeService from '../services/RecipeService.js'
 import CategoryService from '../services/CategoryService.js';
+import ImageService from '../services/ImageService.js';
 
 export default {
     data() {
@@ -435,5 +436,25 @@ export default {
         flex-wrap: nowrap;
         align-items: center;
         justify-content: start;
+    }
+    .image-block {
+        background-color: var(--light-1);
+        padding: 10px;
+        border-radius: 10px;
+    }
+    .image-block h3 {
+        margin: 0px;
+        margin-bottom: 5px;
+    }
+    .image {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .image img {
+        max-width: 100%;
+        max-height: 300px;
+        object-fit: cover;
+        border-radius: 10px;
     }
 </style>
