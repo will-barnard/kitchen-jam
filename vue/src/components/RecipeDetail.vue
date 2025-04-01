@@ -84,6 +84,9 @@
                 <div class="edit-form">
                    <div class="input-area">
                         <h3>Ingredients</h3>
+                        <button v-if="mealList.length > 0 && newRecipe.ingredientList.length === 0" @click.prevent="copyIngredientsFromLastTime">
+                            Copy ingredients from last logged
+                        </button>
                         <div v-for="ingredient in newRecipe.ingredientList" :key="ingredient.listOrder" class="single-row">
                             <p class="list-number">&#8226;</p>
                             <div class="single-column spacer">
@@ -557,7 +560,15 @@ export default {
                 this.$store.commit('SAVE_IMAGE', { id: this.recipe.imageId, base64, type: 'recipe' });
                 this.imgPath = this.recipe.img || this.localImg;
             }
-        }
+        },
+        copyIngredientsFromLastTime() {
+            const lastMeal = this.$store.state.userMeals
+                .filter(meal => meal.recipeId === this.recipe.recipeId)
+                .sort((a, b) => new Date(b.dateCooked) - new Date(a.dateCooked))[0];
+            if (lastMeal && lastMeal.ingredientList) {
+                this.newRecipe.ingredientList = [...lastMeal.ingredientList];
+            }
+        },
     }
 }
 </script>
