@@ -16,6 +16,9 @@
                     <div class="recipe" v-if="meal.recipeId">
                         <h3><i class="fas fa-book"></i> {{ meal.recipeName }}</h3>
                     </div>
+                    <div v-if="isFeed" class="user-box">
+                        <p class="name"><i class="fas fa-user"></i> {{ meal.userName }}</p>
+                    </div>
                     <div class="date-box" v-if="meal.dateCooked">
                         <p class="date"><i class="fas fa-calendar-alt"></i> {{ formatDate(meal.dateCooked) }}</p>
                     </div>
@@ -70,12 +73,17 @@
 
             <Transition name="control">
                 <div>
-                    <div id="controls" v-if="showMore && !isPublic">
+                    <div id="controls" v-if="showMore && !isPublic && !isFeed">
                         <div class="control" v-on:click="goDetail()">
                             <i class="fa-solid fa-magnifying-glass"></i>
                         </div>
                     </div>
                     <div id="controls" v-if="showMore && isPublic">
+                        <div class="control" v-on:click="goPublicDetail()">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </div>
+                    </div>
+                    <div id="controls" v-if="showMore && isFeed">
                         <div class="control" v-on:click="goPublicDetail()">
                             <i class="fa-solid fa-magnifying-glass"></i>
                         </div>
@@ -94,7 +102,7 @@ import Tag from './Tag.vue';
 
 export default {
     components: {Tag},
-    props: ['meal', 'isPublic'],
+    props: ['meal', 'isPublic', 'isFeed'],
     data() {
         return {
             showMore: false
@@ -105,14 +113,18 @@ export default {
             if (this.meal.imageId && !this.meal.img) {
                 const response = await ImageService.getImage(this.meal.imageId);
                 const base64 = ImageService.parseImg(response);
-                this.$store.commit('SAVE_IMAGE', { id: this.meal.imageId, base64, type: 'meal' });
+                if (this.isFeed) {
+                    this.meal.img = "data:image/png;base64," + base64;
+                } else {
+                    this.$store.commit('SAVE_IMAGE', { id: this.meal.imageId, base64, type: 'meal' });
+                }
             }
         },
         goDetail() {
             this.$router.push( {name: 'meal-detail', params: {mealId: this.meal.mealId} })
         },
         goPublicDetail() {
-            this.$router.push( {name: 'public-meal-detail', params: {mealId: this.meal.mealId} })
+            this.$router.push( {name: 'public-meal', params: {uuid: this.meal.publicUrl} })
         },
         switch() {
             this.showMore = !this.showMore;
@@ -305,6 +317,19 @@ export default {
         justify-content: center;
     }
     .date-box p i {
+        margin-right: 5px;
+    }
+    .user-box p {
+        padding: 5px;
+        background-color: var(--light-1);
+        border-radius: 10px;
+        margin: 0px;
+        margin-top: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .user-box p i {
         margin-right: 5px;
     }
    

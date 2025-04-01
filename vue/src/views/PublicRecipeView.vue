@@ -35,7 +35,6 @@ export default {
                 if (!this.recipe.stepList) {
                     this.recipe.stepList = [];
                 }
-                console.log(this.recipe)
                 if (this.recipe.imageId) {
                     ImageService.getImage(this.recipe.imageId).then(
                         (res) => {

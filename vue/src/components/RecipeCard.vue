@@ -21,6 +21,10 @@
                         <h3>{{ recipe.categoryName }}</h3>
                     </div> 
 
+                    <div v-if="isFeed" class="user-box">
+                        <p class="name"><i class="fas fa-user"></i> {{ recipe.userName }}</p>
+                    </div>
+
                     <div class="info" v-show="recipe.description">
                         <p >{{ recipe.description }}</p>
                     </div>
@@ -50,7 +54,10 @@
 
             <Transition name="control">
               <div id="controls" v-if="showMore">
-                <div class="control" v-on:click="goDetail()">
+                <div class="control" v-on:click="goDetail()" v-if="!isFeed">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </div>
+                <div class="control" v-on:click="goPublicDetail()" v-if="isFeed">
                     <i class="fa-solid fa-magnifying-glass"></i>
                 </div>
             </div>  
@@ -66,7 +73,7 @@ import StepList from './StepList.vue';
 import ImageService from '../services/ImageService';
 
 export default {
-    props: ['recipe'],
+    props: ['recipe', 'isFeed'],
     components: {StepList},
     data() {
         return {
@@ -78,11 +85,17 @@ export default {
             if (this.recipe.imageId && !this.recipe.img) {
                 const response = await ImageService.getImage(this.recipe.imageId);
                 const base64 = ImageService.parseImg(response);
-                this.$store.commit('SAVE_IMAGE', { id: this.recipe.imageId, base64, type: 'recipe' });
+                if (this.isFeed) {
+                    this.recipe.img = "data:image/png;base64," + base64;
+                } else {
+                    this.$store.commit('SAVE_IMAGE', { id: this.recipe.imageId, base64, type: 'recipe' });                }
             }
         },
         goDetail() {
             this.$router.push( {name: 'recipe-detail', params: {recipeId: this.recipe.recipeId} })
+        },
+        goPublicDetail() {
+            this.$router.push( {name: 'public-recipe', params: {uuid: this.recipe.publicUrl} })
         },
         switch() {
             this.showMore = !this.showMore;
@@ -251,6 +264,19 @@ export default {
         text-align: center;
         margin-top: 5px;
         font-weight: bold;
+    }
+    .user-box p {
+        padding: 5px;
+        background-color: var(--light-1);
+        border-radius: 10px;
+        margin: 0px;
+        margin-top: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .user-box p i {
+        margin-right: 5px;
     }
     .v-enter-active,
 .v-leave-active {
