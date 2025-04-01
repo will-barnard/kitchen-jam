@@ -61,7 +61,7 @@
                 </div>
                 <div class="recipe-search">
                     <input type="text" v-model="newRecipe.recipeName" @keyup="searchForRecipes()"/>
-                    <button @click="newRecipe.recipeName ? createRecipe() : null">Create New Recipe</button>
+                    <button @click="newRecipe.recipeName ? createRecipe() : null">Create&nbsp;New&nbsp;Recipe</button>
                 </div>
                 <div class="recipe-search-results">
                     <div v-for="recipe in searchRecipe" class="recipe">
@@ -92,7 +92,7 @@
 
                 <div class="tag-search">
                     <input type="text" v-model="newTag.tagName" @keyup="searchForTags()"/>
-                    <button @click.prevent="newTag.tagName ? createTag() : null">Create New Tag</button>
+                    <button @click.prevent="newTag.tagName ? createTag() : null">Create&nbsp;New&nbsp;Tag</button>
                 </div>
 
                 <div class="search-tags">
@@ -111,26 +111,24 @@
                     
                     <h3>Edit details</h3>
 
-                    <label>Name</label>
-                    <input type="text" v-model="newMeal.mealName">
-                    
-                    
-                    <label>Date cooked</label>
-                    <input type="date" v-model="newMeal.dateCooked"/>
-                    
-                    
-                    <label>Comment</label>
-                    <input type="text" v-model="newMeal.mealComment"/>
-                    
-                    <label>Ingredient list</label>
-                    <input type="text" v-model="newMeal.ingredients"/>
-                    <label>Notes</label>
-                    <textarea v-model="newMeal.notes"></textarea>
-
+                    <div class="detail-section">
+                        <label>Name</label>
+                        <input type="text" v-model="newMeal.mealName">
+                    </div>
+                    <div class="detail-section">
+                        <label>Comment</label>
+                        <input type="text" v-model="newMeal.mealComment"/>
+                    </div>
+                    <div class="detail-section">
+                        <label>Date cooked</label>
+                        <input type="date" v-model="newMeal.dateCooked"/>
+                    </div>
+        
                     <div class="edit-widgets">
                         
-                        <div class="">
-                            <label>Cook time (min)</label>
+                        <div class="single-row">
+                            <label>Cook&nbsp;time&nbsp;(min)</label>
+                            <div class="spacer-cooktime"></div>
                             <input type="number" v-model="newMeal.cookTime"/>
                         </div>
 
@@ -147,10 +145,10 @@
                                 <input type="range" min="0" max="10" step="1" v-model="newMeal.rating"/>
                             </div>
                         </div> 
-
-                        
-
                     </div> 
+
+                    <label>Notes</label>
+                    <textarea class="notes-textarea" v-model="newMeal.notes"></textarea>
                     
                 </div>
        </form>
@@ -714,8 +712,8 @@ export default {
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        margin-top: 5px;
-        margin-bottom: 5px;
+        margin-top: 10px;
+        margin-bottom: 10px;
     }
     .edit-widget {
         width: 65%;
@@ -865,6 +863,16 @@ export default {
         padding: 15px;
         margin: 5px;
         border-radius: 10px;
+    }
+    .detail-section {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 5px;
+    }
+    .detail-section label, input {
+        width: 100%;
     }
     .title {
         display: flex;
@@ -1039,5 +1047,12 @@ export default {
         align-items: center;
         justify-content: space-between;
     }
-
+    .spacer-cooktime {
+        width: 50vw;
+    }
+    .notes-textarea {
+        height: 100px;
+        border-radius: 5px;
+        padding: 5px;
+    }
 </style>
