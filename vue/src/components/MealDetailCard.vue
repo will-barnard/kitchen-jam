@@ -90,15 +90,16 @@ export default {
   props: ['meal', 'editable', 'img', 'showUser'],
   data() {
     return {
-      localImg: this.img || null
+        localImg: "/img/placeholder.jpeg", // Initialize with placeholder
+        showGoToRecipe: false
     };
   },
   methods: {
     async loadImage() {
-      if (this.meal.imageId && !this.localImg) {
+      if (this.meal.imageId) { // Remove the check for !this.localImg
         const response = await ImageService.getImage(this.meal.imageId);
         const base64 = ImageService.parseImg(response);
-        this.localImg = `data:image/png;base64,${base64}`;
+        this.localImg = `data:image/png;base64,${base64}`; // Update with the loaded image
         this.$store.commit('SAVE_IMAGE', { id: this.meal.imageId, base64, type: 'meal' });
       }
     },

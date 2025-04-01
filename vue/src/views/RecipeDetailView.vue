@@ -43,24 +43,11 @@ export default {
                             return recipeObj.recipeId == this.$route.params.recipeId;
                         }
                     );
-                    if (!this.recipe.imageId) {
-                        this.loading = false;
-                    } else {
-                        this.imgTick();
-                    }
+                    this.loading = false;
                 } else {
                     this.loadingTick();
                 }
             }, 500)
-        },
-        imgTick() {
-            setTimeout( () => {
-                if (this.recipe.img) {
-                    this.loading = false;
-                } else {
-                        this.imgTick();
-                }
-            }, 500);
         }
     }
 }

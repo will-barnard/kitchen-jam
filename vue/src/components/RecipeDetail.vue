@@ -1,10 +1,8 @@
 <template>
     <Transition>
     <body>
-        <div class="recipe-img">
-            <div>
-                <img :src="imgPath" />
-            </div>
+        <div class="recipe-img" v-if="localImg && editing">
+            <img :src="localImg" />
         </div>
 
        <div v-show="!editing">
@@ -220,6 +218,7 @@ export default {
     components: {Tag, MealCard, StepList, RecipeDetailCard},
     data() {
         return {
+            localImg: "/img/placeholder.jpeg", // Initialize with placeholder
             editing: false,
             showImage: !!this.recipe.img,
             imgPath: this.recipe.img || "../img/placeholder.jpeg",
@@ -551,11 +550,10 @@ export default {
             document.body.removeChild(textArea);
             },
         async loadImage() {
-            if (this.recipe.imageId && !this.recipe.img) {
+            if (this.recipe.imageId) { // Remove the check for !this.recipe.img
                 const response = await ImageService.getImage(this.recipe.imageId);
                 const base64 = ImageService.parseImg(response);
-                this.imgPath = `data:image/png;base64,${base64}`;
-                this.showImage = true;
+                this.localImg = `data:image/png;base64,${base64}`; // Update with the loaded image
                 this.$store.commit('SAVE_IMAGE', { id: this.recipe.imageId, base64, type: 'recipe' });
             }
         }

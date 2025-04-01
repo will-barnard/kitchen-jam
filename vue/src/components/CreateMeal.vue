@@ -47,7 +47,7 @@
                         </div>
                         <div class="recipe-search">
                             <input type="text" v-model="newRecipe.recipeName" @keyup="searchForRecipes()"/>
-                            <button @click.prevent="createRecipe()">Create New Recipe</button>
+                            <button @click.prevent="newRecipe.recipeName ? createRecipe() : null">Create New Recipe</button>
                         </div>
                         <div class="recipe-search-results">
                             <div v-for="recipe in searchRecipe" class="recipe">
@@ -75,7 +75,7 @@
 
                         <div class="tag-search">
                             <input type="text" v-model="newTag.tagName" @keyup="searchForTags()"/>
-                            <button @click="createTag()">Create&nbsp;New&nbsp;Tag</button>
+                            <button @click.prevent="newTag.tagName ? createTag() : null">Create&nbsp;New&nbsp;Tag</button>
                         </div>
 
                         <div class="search-tags">
@@ -89,6 +89,7 @@
 
                     <div class="input-area edit-block">
                         <h3>Ingredients</h3>
+                        <button v-if="meal.recipeId && meal.ingredientList.length == 0" @click="copyIngredientsFromLastTime">Copy ingredients from last time</button>
                         <div v-for="ingredient in meal.ingredientList" :key="ingredient.listOrder" class="ingredient-row">
                             <p class="list-number">&#8226;</p>
                             <div class="single-column spacer">
@@ -141,7 +142,9 @@ export default {
     data() {
         return {
             meal: {
-                rating: 0
+                rating: 0,
+                ingredientList: [],
+                tags: []
             },
             showImage: false,
             imgPath: "",
@@ -211,7 +214,7 @@ export default {
             TagService.createTag(this.newTag).then(
                 (response) => {
                     this.meal.tags.push(response.data)
-                    $store.state.commit('ADD_TAG', response.data);
+                    this.$store.commit('ADD_TAG', response.data);
                     this.newTag.tagName = "";
                     this.searchTags = [];
                 }
@@ -262,7 +265,7 @@ export default {
             RecipeService.createRecipe(this.newRecipe).then(
                 (response) => {
                     this.addRecipe(response.data);
-                    this.$store.state.commit('CREATE_RECIPE', response.data);
+                    this.$store.commit('CREATE_RECIPE', response.data);
                 }
             )
         },
@@ -339,6 +342,14 @@ export default {
             }
             if (null) {
                 
+            }
+        },
+        copyIngredientsFromLastTime() {
+            const lastMeal = this.$store.state.userMeals
+                .filter(meal => meal.recipeId === this.meal.recipeId && meal.mealId !== this.meal.mealId)
+                .sort((a, b) => new Date(b.dateCooked) - new Date(a.dateCooked))[0];
+            if (lastMeal && lastMeal.ingredientList) {
+                this.meal.ingredientList = [...lastMeal.ingredientList];
             }
         }
     }

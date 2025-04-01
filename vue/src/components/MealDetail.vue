@@ -2,14 +2,14 @@
     <Transition>
      <body v-show="showImage">
 
-        <div class="meal-img">
+        <div class="meal-img" v-show="editing">
                 <div>
                     <img :src="imgPath" />
                 </div>
         </div>
 
         <div v-show="!editing">
-            <MealDetailCard :meal="staticMeal" :editable="true"/>
+            <MealDetailCard :meal="staticMeal" :editable="true" :img="imgPath"/>
         </div>
 
         <div class="edit" v-show="editing">
@@ -61,7 +61,7 @@
                 </div>
                 <div class="recipe-search">
                     <input type="text" v-model="newRecipe.recipeName" @keyup="searchForRecipes()"/>
-                    <button @click="createRecipe()">Create New Recipe</button>
+                    <button @click="newRecipe.recipeName ? createRecipe() : null">Create New Recipe</button>
                 </div>
                 <div class="recipe-search-results">
                     <div v-for="recipe in searchRecipe" class="recipe">
@@ -92,7 +92,7 @@
 
                 <div class="tag-search">
                     <input type="text" v-model="newTag.tagName" @keyup="searchForTags()"/>
-                    <button @click="createTag()">Create New Tag</button>
+                    <button @click.prevent="newTag.tagName ? createTag() : null">Create New Tag</button>
                 </div>
 
                 <div class="search-tags">
@@ -157,7 +157,7 @@
             <div class="edit-form">
                    <div class="input-area">
                         <h3>Ingredients</h3>
-                        <button v-if="newMeal.recipeId" @click="copyIngredientsFromLastTime">Copy ingredients from last time</button>
+                        <button v-if="newMeal.recipeId && newMeal.ingredientList.length == 0" @click="copyIngredientsFromLastTime">Copy ingredients from last time</button>
                         <div v-for="ingredient in newMeal.ingredientList" :key="ingredient.listOrder" class="single-row">
                             <p class="list-number">&#8226;</p>
                             <div class="single-column spacer">
@@ -266,7 +266,7 @@ export default {
         return {
             editing: false,
             deleting: false,
-            showImage: !!this.meal.img,
+            showImage: this.meal.img,
             imgPath: this.meal.img || "../img/placeholder.jpeg",
             newMeal: {},
             staticMeal: {},
@@ -289,7 +289,7 @@ export default {
             this.imgPath = "../img/placeholder.jpeg";
             this.showImage = true;
         } else {
-            this.imgPath = this.meal.img;
+            this.loadImage();
             this.showImage = true;
         }
     },
@@ -348,7 +348,7 @@ export default {
             TagService.createTag(this.newTag).then(
                 (response) => {
                     this.newMeal.tags.push(response.data)
-                    $store.state.commit('ADD_TAG', response.data);
+                    this.$store.commit('ADD_TAG', response.data);
                     this.newTag.tagName = "";
                     this.searchTags = [];
                 }
@@ -396,7 +396,7 @@ export default {
             RecipeService.createRecipe(this.newRecipe).then(
                 (response) => {
                     this.addRecipe(response.data);
-                    this.$store.state.commit('CREATE_RECIPE', response.data);
+                    this.$store.commit('CREATE_RECIPE', response.data);
                 }
             )
         },
@@ -577,13 +577,11 @@ export default {
                 const response = await ImageService.getImage(this.meal.imageId);
                 const base64 = ImageService.parseImg(response);
                 this.imgPath = `data:image/png;base64,${base64}`;
-                this.showImage = true;
                 this.$store.commit('SAVE_IMAGE', { id: this.meal.imageId, base64, type: 'meal' });
+                this.imgPath = this.meal.img;
+                this.showImage = true;
             }
         }
-    },
-    mounted() {
-        this.loadImage();
     }
 }
 </script>

@@ -1,7 +1,7 @@
 <template>
     <div ref="observerTarget">
-        <div class="recipe-img">
-            <img :src="localImg || '../img/placeholder.jpeg'" />
+        <div class="recipe-img" v-if="localImg">
+            <img :src="localImg" />
         </div>
         <div class="details">
             <div class="single-row" v-show="showUser">
@@ -66,15 +66,15 @@ export default {
   props: ['recipe', 'editable', 'img', 'showUser'],
   data() {
     return {
-      localImg: this.img || null
+      localImg: "/img/placeholder.jpeg" // Initialize with placeholder
     };
   },
   methods: {
     async loadImage() {
-      if (this.recipe.imageId && !this.localImg) {
+      if (this.recipe.imageId) { // Remove the check for !this.localImg
         const response = await ImageService.getImage(this.recipe.imageId);
         const base64 = ImageService.parseImg(response);
-        this.localImg = `data:image/png;base64,${base64}`;
+        this.localImg = `data:image/png;base64,${base64}`; // Update with the loaded image
         this.$store.commit('SAVE_IMAGE', { id: this.recipe.imageId, base64, type: 'recipe' });
       }
     },

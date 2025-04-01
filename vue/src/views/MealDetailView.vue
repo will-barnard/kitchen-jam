@@ -23,18 +23,12 @@ export default {
     },
     created() {
         if (this.$store.state.loadedMeals) {
-            let tempMeal = this.$store.state.userMeals.find(
+            this.meal = this.$store.state.userMeals.find(
                 (mealObj) => {
                     return mealObj.mealId == this.$route.params.mealId;
                 }
             )
-            if (tempMeal) {
-                this.meal = tempMeal;
-                this.loading = false;
-            } else {
-                this.createdTick();
-            }
-            
+            this.loading = false;
         } else {
             this.loadingTick();
         }
@@ -48,37 +42,10 @@ export default {
                             return mealObj.mealId == this.$route.params.mealId;
                         }
                     );
-                    if (!this.meal.imageId) {
-                        this.loading = false;
-                    } else {
-                        this.imgTick();
-                    }
+                    this.loading = false;
                 } else {
                     this.loadingTick();
                 }
-            }, 500)
-        },
-        imgTick() {
-            setTimeout( () => {
-                if (this.meal.img) {
-                    this.loading = false;
-                } else {
-                        this.imgTick();
-                }
-            }, 500);
-        },
-        createdTick() {
-            setTimeout( () => {
-                let tempMeal = this.$store.state.userMeals.find(
-                    (mealObj) => {
-                        return mealObj.mealId == this.$route.params.mealId;
-                    })
-                if (tempMeal) {
-                    this.meal = tempMeal;
-                    this.loading = false;
-            } else {
-                this.createdTick();
-            }
             }, 500)
         }
     }

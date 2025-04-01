@@ -236,7 +236,8 @@ export function createStore(currentToken, currentUser) {
         );
       },
       ADD_TAG(state, payload) {
-        state.userTags.unshift(payload);
+        state.userTags.push(payload);
+        state.userTags.sort((a, b) => a.tagName.localeCompare(b.tagName));
       },
       EDIT_TAG(state, payload) {
         let i = state.userTags.findIndex(
