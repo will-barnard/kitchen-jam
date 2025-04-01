@@ -6,7 +6,7 @@
         </div>
 
        <div v-if="!editing">
-           <RecipeDetailCard :recipe="staticRecipe" :editing="true"/>
+           <RecipeDetailCard :recipe="staticRecipe" :editing="true" :img="imgPath"/>
        </div>
 
        <div v-show="editing">
@@ -257,8 +257,11 @@ export default {
         if (this.recipe.imageId == 0 || this.recipe.imageId == null) {
             this.imgPath = "../img/placeholder.jpeg";
             this.showImage = true;
-        } else {
+        } else if (this.recipe.imageId && !this.recipe.img) {
             this.loadImage();
+            this.showImage = true;
+        } else {
+            this.imgPath = this.recipe.img;
             this.showImage = true;
         }
 

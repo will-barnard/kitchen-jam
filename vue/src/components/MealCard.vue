@@ -71,10 +71,14 @@
             <Transition name="control">
                 <div>
                     <div id="controls" v-if="showMore && !isPublic">
-                        <div class="control" v-on:click="goDetail()"><img src="/img/detail.png" /></div>
+                        <div class="control" v-on:click="goDetail()">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </div>
                     </div>
                     <div id="controls" v-if="showMore && isPublic">
-                        <div class="control" v-on:click="goPublicDetail()"><img src="/img/detail.png" /></div>
+                        <div class="control" v-on:click="goPublicDetail()">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </div>
                     </div>
                 </div>
             </Transition>
@@ -159,7 +163,7 @@ export default {
     .control:hover {
         cursor: pointer;
     }
-    .control img {
+    .control i {
         height: 1em;
     }
     .control {

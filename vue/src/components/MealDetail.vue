@@ -119,10 +119,12 @@
                         <label>Comment</label>
                         <input type="text" v-model="newMeal.mealComment"/>
                     </div>
-                    <div class="detail-section">
-                        <label>Date cooked</label>
+                    <div class="single-row date-input">
+                        <label>Date&nbsp;cooked</label>
+                        <div class="spacer-cooktime"></div>
                         <input type="date" v-model="newMeal.dateCooked"/>
                     </div>
+                    
         
                     <div class="edit-widgets">
                         
@@ -286,8 +288,11 @@ export default {
         if (this.meal.imageId == 0 || this.meal.imageId == null) {
             this.imgPath = "../img/placeholder.jpeg";
             this.showImage = true;
-        } else {
+        } else if (this.meal.imageId && !this.meal.img) {
             this.loadImage();
+            this.showImage = true;
+        } else {
+            this.imgPath = this.meal.img;
             this.showImage = true;
         }
     },
@@ -919,6 +924,9 @@ export default {
         margin-right: 0px;
         height: 100%;
         margin-left: 5px;
+    }
+    .date-input {
+        margin-top: 5px;
     }
     .widgets p {
         margin: 0px;

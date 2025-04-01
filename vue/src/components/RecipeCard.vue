@@ -50,7 +50,9 @@
 
             <Transition name="control">
               <div id="controls" v-if="showMore">
-                <div class="control" v-on:click="goDetail()"><img src="/img/detail.png" /></div>
+                <div class="control" v-on:click="goDetail()">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </div>
             </div>  
             </Transition>
             
@@ -218,7 +220,7 @@ export default {
     .control:hover {
         cursor: pointer;
     }
-    .control img {
+    .control i {
         height: 1em;
     }
     .control {

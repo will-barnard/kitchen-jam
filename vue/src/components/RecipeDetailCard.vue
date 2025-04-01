@@ -1,7 +1,7 @@
 <template>
     <div ref="observerTarget">
         <div class="recipe-img" v-if="localImg">
-            <img :src="localImg" />
+            <img :src="img || localImg" />
         </div>
         <div class="details">
             <div class="single-row" v-show="showUser">

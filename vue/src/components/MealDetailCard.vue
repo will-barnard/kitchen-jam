@@ -3,7 +3,7 @@
         <div>
             <div class="meal-img" v-if="localImg">
                 <div>
-                    <img :src="localImg" />
+                    <img :src="img || localImg" />
                 </div>
             </div>
             <div class="single-row" v-show="showUser">
@@ -96,7 +96,7 @@ export default {
   },
   methods: {
     async loadImage() {
-      if (this.meal.imageId) { // Remove the check for !this.localImg
+      if (this.meal.imageId && !this.img) { // Remove the check for !this.localImg
         const response = await ImageService.getImage(this.meal.imageId);
         const base64 = ImageService.parseImg(response);
         this.localImg = `data:image/png;base64,${base64}`; // Update with the loaded image
