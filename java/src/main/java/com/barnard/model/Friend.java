@@ -4,7 +4,7 @@ public class Friend {
 
     private int userId;
     private int friendId;
-    private int frienshipId;
+    private int friendshipId;
     private String status;
     private String username;
 
@@ -40,11 +40,11 @@ public class Friend {
         this.username = username;
     }
 
-    public int getFrienshipId() {
-        return frienshipId;
+    public int getFriendshipId() {
+        return friendshipId;
     }
 
-    public void setFrienshipId(int frienshipId) {
-        this.frienshipId = frienshipId;
+    public void setFriendshipId(int friendshipId) {
+        this.friendshipId = friendshipId;
     }
 }

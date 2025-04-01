@@ -31,32 +31,6 @@ public class ProfileController {
     @Autowired
     private RecipeDao recipeDao;
 
-    @PostMapping(path = "/search")
-    public List<UserProfilePrimitive> searchUsers(@RequestBody String search, Principal principal) {
-        List<UserProfilePrimitive> result;
-        String decodedSearch = search.substring(0, search.length() - 1);
-        int userId = userDao.getUserByUsername(principal.getName()).getId();
-        try {
-            result = profileDao.searchUsers(decodedSearch, userId);
-        } catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
-        }
-        return result;
-    }
-
-    @PreAuthorize("isAuthenticated()")
-    @GetMapping(path = "/principal")
-    public UserProfile getPrincipalUserProfile(Principal principal) {
-        UserProfile profile;
-        try {
-            int userId = userDao.getUserByUsername(principal.getName()).getId();
-            profile = profileDao.getUserProfile(userId);
-        } catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
-        }
-        return profile;
-    }
-
     @GetMapping(path = "/{userId}")
     public UserProfile getUserProfile(@PathVariable int userId) {
         UserProfile profile;
@@ -71,20 +45,17 @@ public class ProfileController {
         return profile;
     }
 
-    @GetMapping(path = "/log/{userId}")
-    public ProfileLogDto getUserProfileLog(@PathVariable int userId) {
-        ProfileLogDto profileLog = new ProfileLogDto();
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping(path = "/principal")
+    public UserProfile getPrincipalUserProfile(Principal principal) {
+        UserProfile profile;
         try {
-            if (!profileDao.isProfilePublic(userId)) {
-                throw new Exception("profile not public");
-            }
-            profileLog.setUserId(userId);
-            profileLog.setMeals(mealDao.getUserProfileMeals(userId));
-            profileLog.setRecipes(recipeDao.getUserProfileRecipes(userId));
+            int userId = userDao.getUserByUsername(principal.getName()).getId();
+            profile = profileDao.getUserProfile(userId);
         } catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
         }
-        return profileLog;
+        return profile;
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -103,6 +74,37 @@ public class ProfileController {
         }
         return updatedProfile;
     }
+
+    @PostMapping(path = "/search")
+    public List<UserProfilePrimitive> searchUsers(@RequestBody String search, Principal principal) {
+        List<UserProfilePrimitive> result;
+        String decodedSearch = search.substring(0, search.length() - 1);
+        int userId = userDao.getUserByUsername(principal.getName()).getId();
+        try {
+            result = profileDao.searchUsers(decodedSearch, userId);
+        } catch(Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
+        }
+        return result;
+    }
+
+    @GetMapping(path = "/log/{userId}")
+    public ProfileLogDto getUserProfileLog(@PathVariable int userId) {
+        ProfileLogDto profileLog = new ProfileLogDto();
+        try {
+            if (!profileDao.isProfilePublic(userId)) {
+                throw new Exception("profile not public");
+            }
+            profileLog.setUserId(userId);
+            profileLog.setMeals(mealDao.getUserProfileMeals(userId));
+            profileLog.setRecipes(recipeDao.getUserProfileRecipes(userId));
+        } catch(Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
+        }
+        return profileLog;
+    }
+
+
 
 
 }

@@ -2,6 +2,7 @@ package com.barnard.dao;
 
 
 import com.barnard.exception.DaoException;
+import com.barnard.model.Friend;
 import com.barnard.model.Recipe;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -191,6 +192,71 @@ public class JdbcRecipeDao implements RecipeDao {
         }
         return recipes;
 
+    }
+
+    @Override
+    public List<Recipe> getRecipeFeed(int userId, List<Friend> friendsList) {
+        List<Recipe> recipes = new ArrayList<>();
+        String sql = "SELECT recipe.*, category.category_name, user_attributes.display_name, " +
+                "(SELECT AVG(rating) FROM meal WHERE meal.recipe_id = recipe.recipe_id) AS avg_rating, " +
+                "(SELECT AVG(cook_time) FROM meal WHERE meal.recipe_id = recipe.recipe_id) AS avg_cook_time, " +
+                "(SELECT MAX(date_cooked) FROM meal WHERE meal.recipe_id = recipe.recipe_id) as last_created " +
+                "FROM recipe " +
+                "LEFT JOIN category ON recipe.category_id = category.category_id " +
+                "JOIN user_attributes ON recipe.user_id = user_attributes.user_id " +
+                "WHERE recipe.is_public = true " +
+                "AND recipe.user_id = ";
+        for (Friend friend : friendsList) {
+            sql += friend.getFriendId() + " OR meal.user_id = ";
+        }
+        sql = sql.substring(0, sql.length() - 18);
+        sql +=  " AND recipe.is_public = true " +
+                "ORDER BY last_created DESC " +
+                "LIMIT 10;";
+        try {
+            SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql);
+            while (rowSet.next()) {
+                recipes.add(mapRowToRecipe(rowSet, true));
+            }
+        }  catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Unable to connect to server or database", e);
+        } catch (DataIntegrityViolationException e) {
+            throw new DaoException("Data integrity violation", e);
+        }
+        return recipes;
+    }
+
+    @Override
+    public List<Recipe> getMoreRecipes(int userId, List<Friend> friendsList, int timesLoaded) {
+        List<Recipe> recipes = new ArrayList<>();
+        String sql = "SELECT recipe.*, category.category_name, user_attributes.display_name, " +
+                "(SELECT AVG(rating) FROM meal WHERE meal.recipe_id = recipe.recipe_id) AS avg_rating, " +
+                "(SELECT AVG(cook_time) FROM meal WHERE meal.recipe_id = recipe.recipe_id) AS avg_cook_time, " +
+                "(SELECT MAX(date_cooked) FROM meal WHERE meal.recipe_id = recipe.recipe_id) as last_created " +
+                "FROM recipe " +
+                "LEFT JOIN category ON recipe.category_id = category.category_id " +
+                "JOIN user_attributes ON recipe.user_id = user_attributes.user_id " +
+                "WHERE recipe.is_public = true " +
+                "AND recipe.user_id = ";
+        for (Friend friend : friendsList) {
+            sql += friend.getFriendId() + " OR meal.user_id = ";
+        }
+        sql = sql.substring(0, sql.length() - 18);
+        sql +=  " AND recipe.is_public = true " +
+                "ORDER BY last_created DESC " +
+                "LIMIT 10 " +
+                "OFFSET ?;";
+        try {
+            SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, (timesLoaded * 10));
+            while (rowSet.next()) {
+                recipes.add(mapRowToRecipe(rowSet, true));
+            }
+        }  catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Unable to connect to server or database", e);
+        } catch (DataIntegrityViolationException e) {
+            throw new DaoException("Data integrity violation", e);
+        }
+        return recipes;
     }
 
     @Override

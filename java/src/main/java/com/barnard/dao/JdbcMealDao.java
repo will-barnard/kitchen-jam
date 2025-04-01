@@ -1,6 +1,7 @@
 package com.barnard.dao;
 
 import com.barnard.exception.DaoException;
+import com.barnard.model.Friend;
 import com.barnard.model.Meal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -169,6 +170,66 @@ public class JdbcMealDao implements MealDao {
         }
         return meals;
     }
+
+    @Override
+    public List<Meal> getMealFeed(int userId, List<Friend> friendsList) {
+        List<Meal> meals = new ArrayList<>();
+        String sql = "SELECT meal.*, recipe.recipe_name, user_attributes.display_name " +
+                "FROM meal " +
+                "LEFT JOIN recipe ON meal.recipe_id = recipe.recipe_id " +
+                "JOIN user_attributes ON meal.user_id = user_attributes.user_id " +
+                "WHERE meal.user_id = ";
+
+        for (Friend friend : friendsList) {
+            sql += friend.getFriendId() + " OR meal.user_id = ";
+        }
+        sql = sql.substring(0, sql.length() - 18);
+        sql += " AND meal.is_public = true " +
+                "ORDER BY date_cooked DESC " +
+                "LIMIT 10;";
+        try {
+            SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql);
+            while (rowSet.next()) {
+                meals.add(mapRowToMeal(rowSet));
+            }
+        } catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Unable to connect to server or database", e);
+        } catch (DataIntegrityViolationException e) {
+            throw new DaoException("Data integrity violation", e);
+        }
+        return meals;
+    }
+
+    @Override
+    public List<Meal> getMoreMeals(int userId, List<Friend> friendsList, int timesLoaded) {
+        List<Meal> meals = new ArrayList<>();
+        String sql = "SELECT meal.*, recipe.recipe_name, user_attributes.display_name " +
+                "FROM meal " +
+                "LEFT JOIN recipe ON meal.recipe_id = recipe.recipe_id " +
+                "JOIN user_attributes ON meal.user_id = user_attributes.user_id " +
+                "WHERE meal.user_id = ";
+
+        for (Friend friend : friendsList) {
+            sql += friend.getFriendId() + " OR meal.user_id = ";
+        }
+        sql = sql.substring(0, sql.length() - 18);
+        sql += " AND meal.is_public = true " +
+                "ORDER BY date_cooked DESC " +
+                "LIMIT 10 " +
+                "OFFSET ?;";
+        try {
+            SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, (timesLoaded * 10));
+            while (rowSet.next()) {
+                meals.add(mapRowToMeal(rowSet));
+            }
+        } catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Unable to connect to server or database", e);
+        } catch (DataIntegrityViolationException e) {
+            throw new DaoException("Data integrity violation", e);
+        }
+        return meals;
+    }
+
 
     @Override
     public Meal createMeal(Meal meal) {

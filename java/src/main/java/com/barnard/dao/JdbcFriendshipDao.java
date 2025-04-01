@@ -249,7 +249,7 @@ public class JdbcFriendshipDao implements FriendshipDao {
             friend.setFriendId(friendship.getUserId1());
         }
         friend.setStatus(friendship.getStatus());
-        friend.setFrienshipId(friendship.getFriendshipId());
+        friend.setFriendshipId(friendship.getFriendshipId());
 
 
         return friend;
