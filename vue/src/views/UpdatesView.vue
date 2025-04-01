@@ -34,6 +34,16 @@ export default {
         for (let patch of this.updates) {
             if (patch.type == 0) {
                 patch.typeDisplay = "Major Deployment"
+            } else if (patch.type == 1) {
+                patch.typeDisplay = "Minor Deployment"
+            } else if (patch.type == 2) {
+                patch.typeDisplay = "Hotfix"
+            } else if (patch.type == 3) {
+                patch.typeDisplay = "Feature"
+            } else if (patch.type == 4) {
+                patch.typeDisplay = "Bugfix"
+            } else if (patch.type == 5) {
+                patch.typeDisplay = "Security Patch"
             }
         }
         setTimeout(() => {

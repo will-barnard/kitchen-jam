@@ -26,6 +26,14 @@ export default {
             headline: "Jam Page, Friendships, and other bug fixes and improvements",
             notes: "The Jam Page is now implemented, where you can generate insights based on your meals and recipes logged. You can now also add friends and create friendships, a social friend feed where you can see what your friends are cooking is forthcoming. A few bugs have been fixed, and recipe/meal creation now allows all parameters to be set on creation. Also, ratings now display as stars.",
             type: 0
+        },
+        {
+            order: 3,
+            version: "1.3.3",
+            date: "03/31/2025",
+            headline: "Bug fixes and improvements",
+            notes: "Images now lazy load, greatly speeding up the performance of the application. There is now a button to grab ingredients from last time a recipe was logged, both in meal logging and on the edit recipe page. This should save some time when logging meals. Lastly, some styles were updated for a better look. It still doesn't look totally polished but I'm working on it. Forthcoming still are friend feeds, commenting, and collaboration.",
+            type: 1
         }
     ]
 }
