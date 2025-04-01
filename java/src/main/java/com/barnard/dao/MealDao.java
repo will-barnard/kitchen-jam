@@ -12,6 +12,7 @@ public interface MealDao {
     List<Meal> getMealsByTagAndUser(int tagId, int userId);
     List<Meal> getMealsByUserId(int userId);
     List<Meal> getMealsByRecipeId(int recipeId);
+    List<Meal> getUserProfileMeals(int userId);
     Meal createMeal(Meal meal);
     Meal updateMeal(Meal meal);
     Meal getPublicMeal(String uuid);

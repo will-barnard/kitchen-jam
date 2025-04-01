@@ -1,8 +1,10 @@
 package com.barnard.controller;
 
+import com.barnard.dao.MealDao;
 import com.barnard.dao.ProfileDao;
+import com.barnard.dao.RecipeDao;
 import com.barnard.dao.UserDao;
-import com.barnard.model.UserFeedDto;
+import com.barnard.model.ProfileLogDto;
 import com.barnard.model.UserProfile;
 import com.barnard.model.UserProfilePrimitive;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,10 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -27,6 +26,10 @@ public class ProfileController {
     private ProfileDao profileDao;
     @Autowired
     private UserDao userDao;
+    @Autowired
+    private MealDao mealDao;
+    @Autowired
+    private RecipeDao recipeDao;
 
     @PostMapping(path = "/search")
     public List<UserProfilePrimitive> searchUsers(@RequestBody String search, Principal principal) {
@@ -68,6 +71,22 @@ public class ProfileController {
         return profile;
     }
 
+    @GetMapping(path = "/log/{userId}")
+    public ProfileLogDto getUserProfileLog(@PathVariable int userId) {
+        ProfileLogDto profileLog = new ProfileLogDto();
+        try {
+            if (!profileDao.isProfilePublic(userId)) {
+                throw new Exception("profile not public");
+            }
+            profileLog.setUserId(userId);
+            profileLog.setMeals(mealDao.getUserProfileMeals(userId));
+            profileLog.setRecipes(recipeDao.getUserProfileRecipes(userId));
+        } catch(Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
+        }
+        return profileLog;
+    }
+
     @PreAuthorize("isAuthenticated()")
     @PutMapping(path = "/update")
     public UserProfile updateUserProfile(@RequestBody UserProfile userProfile, Principal principal) {
@@ -83,18 +102,6 @@ public class ProfileController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
         }
         return updatedProfile;
-    }
-
-    @GetMapping(path = "/feed/{userId}")
-    public UserFeedDto getUserFeed(@PathVariable int userId) {
-        UserFeedDto feed = new UserFeedDto();
-        try {
-            feed.setMeals(profileDao.getUserFeedMeals(userId));
-            feed.setRecipes(profileDao.getUserFeedRecipes(userId));
-        } catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
-        }
-        return feed;
     }
 
 

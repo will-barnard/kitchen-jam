@@ -12,7 +12,6 @@ public interface ProfileDao {
     List<UserProfilePrimitive> searchUsers(String search, int userId);
     UserProfile getUserProfile(int userId);
     UserProfile updateUserProfile(UserProfile userProfile);
-    List<Meal> getUserFeedMeals(int userId);
-    List<Recipe> getUserFeedRecipes(int userId);
+    boolean isProfilePublic(int userId);
 
 }

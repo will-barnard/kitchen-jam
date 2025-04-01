@@ -166,6 +166,34 @@ public class JdbcRecipeDao implements RecipeDao {
     }
 
     @Override
+    public List<Recipe> getUserProfileRecipes(int userId) {
+
+        List<Recipe> recipes = new ArrayList<>();
+        String sql = "SELECT recipe.*, category.category_name, user_attributes.display_name, " +
+                "(SELECT AVG(rating) FROM meal WHERE meal.recipe_id = recipe.recipe_id) AS avg_rating, " +
+                "(SELECT AVG(cook_time) FROM meal WHERE meal.recipe_id = recipe.recipe_id) AS avg_cook_time, " +
+                "(SELECT MAX(date_cooked) FROM meal WHERE meal.recipe_id = recipe.recipe_id) as lastCreated " +
+                "FROM recipe " +
+                "LEFT JOIN category ON recipe.category_id = category.category_id " +
+                "JOIN user_attributes ON recipe.user_id = user_attributes.user_id " +
+                "WHERE recipe.user_id = ? " +
+                "ANDS is_public = true;";
+
+        try {
+            SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, userId);
+            while (rowSet.next()) {
+                recipes.add(mapRowToRecipe(rowSet, true));
+            }
+        }  catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Unable to connect to server or database", e);
+        } catch (DataIntegrityViolationException e) {
+            throw new DaoException("Data integrity violation", e);
+        }
+        return recipes;
+
+    }
+
+    @Override
     public Recipe createRecipe(Recipe recipe) {
         Recipe newRecipe = new Recipe();
         String uuid = UUID.randomUUID().toString();

@@ -12,6 +12,7 @@ public interface RecipeDao {
     List<Recipe> searchLikeRecipes(String search, int userId);
     List<Recipe> getRecipesByUserId(int userId);
     List<Recipe> getRecipesByCategoryId(int categoryId, int userId);
+    List<Recipe> getUserProfileRecipes(int userId);
     Recipe getRecipeByMealId(int mealId);
     Recipe createRecipe(Recipe recipe);
     Recipe updateRecipe(Recipe recipe);

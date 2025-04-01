@@ -2,7 +2,7 @@ package com.barnard.model;
 
 import java.util.List;
 
-public class UserFeedDto {
+public class ProfileLogDto {
 
     private int userId;
     private List<Meal> meals;

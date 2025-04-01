@@ -101,59 +101,6 @@ public class JdbcProfileDao implements ProfileDao {
         return updatedProfile;
     }
 
-    // todo move these to appropriate daos not here
-    @Override
-    public List<Meal> getUserFeedMeals(int userId) {
-
-        List<Meal> meals = new ArrayList<>();
-        String sql = "SELECT meal.*, recipe.recipe_name, user_attributes.display_name " +
-                "FROM meal " +
-                "LEFT JOIN recipe ON meal.recipe_id = recipe.recipe_id " +
-                "JOIN user_attributes ON meal.user_id = user_attributes.user_id " +
-                "WHERE meal.user_id = ? " +
-                "AND is_public = true " +
-                "ORDER BY date_created DESC;";
-
-        try {
-            SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, userId);
-            while (rowSet.next()) {
-                meals.add(mapRowToMeal(rowSet));
-            }
-        }  catch (CannotGetJdbcConnectionException e) {
-            throw new DaoException("Unable to connect to server or database", e);
-        } catch (DataIntegrityViolationException e) {
-            throw new DaoException("Data integrity violation", e);
-        }
-        return meals;
-    }
-
-    @Override
-    public List<Recipe> getUserFeedRecipes(int userId) {
-
-        List<Recipe> recipes = new ArrayList<>();
-        String sql = "SELECT recipe.*, category.category_name, user_attributes.display_name, " +
-                "(SELECT AVG(rating) FROM meal WHERE meal.recipe_id = recipe.recipe_id) AS avg_rating, " +
-                "(SELECT AVG(cook_time) FROM meal WHERE meal.recipe_id = recipe.recipe_id) AS avg_cook_time, " +
-                "(SELECT MAX(date_cooked) FROM meal WHERE meal.recipe_id = recipe.recipe_id) as lastCreated " +
-                "FROM recipe " +
-                "LEFT JOIN category ON recipe.category_id = category.category_id " +
-                "JOIN user_attributes ON recipe.user_id = user_attributes.user_id " +
-                "WHERE recipe.user_id = ? " +
-                "ANDS is_public = true;";
-
-        try {
-            SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, userId);
-            while (rowSet.next()) {
-                recipes.add(mapRowToRecipe(rowSet));
-            }
-        }  catch (CannotGetJdbcConnectionException e) {
-            throw new DaoException("Unable to connect to server or database", e);
-        } catch (DataIntegrityViolationException e) {
-            throw new DaoException("Data integrity violation", e);
-        }
-        return recipes;
-    }
-
     private UserProfilePrimitive mapRowToProfilePrimitive(SqlRowSet rs) {
         UserProfilePrimitive profile = new UserProfilePrimitive();
 
@@ -161,6 +108,26 @@ public class JdbcProfileDao implements ProfileDao {
         profile.setDisplayName(rs.getString("display_name"));
 
         return profile;
+    }
+
+    @Override
+    public boolean isProfilePublic(int userId) {
+
+        boolean isPublic = false;
+        String sql = "SELECT is_public FROM user_attributes WHERE user_id = ?;";
+
+        try {
+            SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, userId);
+            if (rowSet.next()) {
+                isPublic = rowSet.getBoolean("is_public");
+            }
+        }  catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Unable to connect to server or database", e);
+        } catch (DataIntegrityViolationException e) {
+            throw new DaoException("Data integrity violation", e);
+        }
+        return isPublic;
+
     }
 
     private UserProfile mapRowToProfile(SqlRowSet rs) {
