@@ -1,106 +1,111 @@
 <template>
     <div>
-        <form v-on:submit.prevent="createRecipe()">
-            <h1>New Recipe</h1>
+        
+        <h1>New Recipe</h1>
 
-            <div class="image-block">
-                <div class="edit-form">
-                    <div class="image" v-if="showImage">
-                        <img :src="imgPath" />
-                    </div>
-                    <div class="add-image">
-                        <h3>Add image</h3>
-                        <input type="file" name="file" accept="image/*" @change="uploadImage">
+        <div class="image-block">
+            <div class="edit-form">
+                <div class="image" v-if="showImage">
+                    <img :src="imgPath" />
+                </div>
+                <div class="add-image">
+                    <h3>Add image</h3>
+                    <input type="file" name="file" accept="image/*" @change="uploadImage">
+                </div>
+            </div>
+            
+        </div>
+
+        <div class="edit-block">
+            <form v-on:submit.prevent="createRecipe()">
+                <div class="">
+                    <div class="edit-form">
+                        <h3>Recipe Details</h3>
+                        <label>Name</label><input type="text" v-model="recipe.recipeName">
+                        <label>Description</label><input type="text" v-model="recipe.description"/>
                     </div>
                 </div>
-                
-            </div>
 
-            <div class="container">
-                <h3>Recipe Details</h3>
-                <label>Name</label><input type="text" v-model="recipe.recipeName">
-                <label>Description</label><input type="text" v-model="recipe.description"/>
-            </div>
-
-            <div class="edit-form edit-category">
-                <h3>Category</h3>
-                <div>
-                    <div v-if="recipe.categoryId" class="current-category">
-                        <i class="fas fa-minus minus mini-button" @click="removeCategory()"></i>
-                        <div class="tag-spacer"></div>
-                        <h4>{{ recipe.categoryName }}</h4>
-                    </div>
-                    <div class="category-search">
-                        <input type="text" v-model="newCategory.categoryName" @keyup="searchForCategory()"/>
-                        <button @click="createCategory()">Create New Category</button>
-                    </div>
-                    <div class="category-search-results" v-if="searchCategory">
-                        <div v-for="category in searchCategory" class="category-item">
-                            <i class="fas fa-plus plus mini-button" @click="addCategory(category)"></i>
+                <div class="edit-form edit-category">
+                    <h3>Category</h3>
+                    <div>
+                        <div v-if="recipe.categoryId" class="current-category">
+                            <i class="fas fa-minus minus mini-button" @click="removeCategory()"></i>
                             <div class="tag-spacer"></div>
-                            <p>{{ category.categoryName }}</p>
+                            <h4>{{ recipe.categoryName }}</h4>
+                        </div>
+                        <div class="category-search">
+                            <input type="text" v-model="newCategory.categoryName" @keyup="searchForCategory()"/>
+                            <button @click="createCategory()">Create New Category</button>
+                        </div>
+                        <div class="category-search-results" v-if="searchCategory">
+                            <div v-for="category in searchCategory" class="category-item">
+                                <i class="fas fa-plus plus mini-button" @click="addCategory(category)"></i>
+                                <div class="tag-spacer"></div>
+                                <p>{{ category.categoryName }}</p>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="edit-form">
-                <h3>Ingredients</h3>
-                <div v-for="ingredient in recipe.ingredientList" :key="ingredient.listOrder" class="ingredient-row">
-                    <p class="list-number">&#8226;</p>
-                    <div class="single-column spacer">
+                <div class="edit-form">
+                    <h3>Ingredients</h3>
+                    <div v-for="ingredient in recipe.ingredientList" :key="ingredient.listOrder" class="ingredient-row">
+                        <p class="list-number">&#8226;</p>
+                        <div class="single-column spacer">
+                            <div class="ingredient-row">
+                                <p>QTY:</p><input type="text" v-model="ingredient.quantity" class="quantity">
+                                <div class="spacer"></div>
+                            </div>
+                            <input type="text" class="ingredient-input" v-model="ingredient.ingredientName">
+                        </div>
                         <div class="ingredient-row">
-                            <p>QTY:</p><input type="text" v-model="ingredient.quantity" class="quantity">
+                            <div class="arrow small-button" @click="moveIngredient(-1, ingredient)">
+                                <i class="fas fa-arrow-up"></i>
+                            </div>
+                            <div class="arrow small-button" @click="moveIngredient(1, ingredient)">
+                                <i class="fas fa-arrow-down"></i>
+                            </div>
+                            <div @click="deleteIngredient(ingredient)">
+                                <i class="far fa-trash-alt small-button minus"></i>
+                            </div>
+                        </div> 
+                    </div>
+                    <div class="ingredient-column spacer border">
+                        <div class="ingredient-row">
+                            <p>QTY:</p>
+                            <input type="text" class="quantity" v-model="newIngredientQuantity">
                             <div class="spacer"></div>
                         </div>
-                        <input type="text" class="ingredient-input" v-model="ingredient.ingredientName">
+                        <input type="text" v-model="newIngredient" class="ingredient-input">
+                        <button @click.prevent="addIngredient">Add Ingredient</button>
                     </div>
-                    <div class="ingredient-row">
-                        <div class="arrow small-button" @click="moveIngredient(-1, ingredient)">
-                            <i class="fas fa-arrow-up"></i>
-                        </div>
-                        <div class="arrow small-button" @click="moveIngredient(1, ingredient)">
-                            <i class="fas fa-arrow-down"></i>
-                        </div>
-                        <div @click="deleteIngredient(ingredient)">
-                            <i class="far fa-trash-alt small-button minus"></i>
-                        </div>
-                    </div> 
                 </div>
-                <div class="ingredient-column spacer border">
-                    <div class="ingredient-row">
-                        <p>QTY:</p>
-                        <input type="text" class="quantity" v-model="newIngredientQuantity">
-                        <div class="spacer"></div>
+
+                <div class="edit-form">
+                    <h3>Steps</h3>
+                    <div v-for="step in recipe.stepList" :key="step.stepOrder" class="single-row">
+                        <p class="list-number">{{ step.stepOrder }}</p>
+                        <textarea class="step-input" v-model="step.stepDescription"></textarea>
+                        <div class="single-row">
+                            <div class="arrow small-button" @click="moveStep(-1, step)">
+                                <i class="fas fa-arrow-up"></i>
+                            </div>
+                            <div class="arrow small-button" @click="moveStep(1, step)">
+                                <i class="fas fa-arrow-down"></i>
+                            </div>
+                            <div @click="deleteStep(step)">
+                                <i class="far fa-trash-alt small-button minus"></i>
+                            </div>
+                        </div> 
                     </div>
-                    <input type="text" v-model="newIngredient" class="ingredient-input">
-                    <button @click.prevent="addIngredient">Add Ingredient</button>
+                    <input type="text" v-model="newStep">
+                    <button @click.prevent="addStep">Add Step</button>
                 </div>
-            </div>
 
-            <div class="edit-form">
-                <h3>Steps</h3>
-                <div v-for="step in recipe.stepList" :key="step.stepOrder" class="single-row">
-                    <p class="list-number">{{ step.stepOrder }}</p>
-                    <textarea class="step-input" v-model="step.stepDescription"></textarea>
-                    <div class="single-row">
-                        <div class="arrow small-button" @click="moveStep(-1, step)">
-                            <i class="fas fa-arrow-up"></i>
-                        </div>
-                        <div class="arrow small-button" @click="moveStep(1, step)">
-                            <i class="fas fa-arrow-down"></i>
-                        </div>
-                        <div @click="deleteStep(step)">
-                            <i class="far fa-trash-alt small-button minus"></i>
-                        </div>
-                    </div> 
-                </div>
-                <input type="text" v-model="newStep">
-                <button @click.prevent="addStep">Add Step</button>
-            </div>
-
-            <input type="submit" value="Create Recipe" class="submit"/>
-        </form> 
+                <input type="submit" value="Create Recipe" class="submit"/>
+            </form> 
+        </div>    
     </div>
 </template>
 
@@ -456,5 +461,11 @@ export default {
         max-height: 300px;
         object-fit: cover;
         border-radius: 10px;
+    }
+    .edit-block {
+        background-color: var(--light-1);
+        padding: 10px;
+        border-radius: 10px;
+        margin-top: 10px;
     }
 </style>

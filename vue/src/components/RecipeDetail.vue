@@ -83,10 +83,13 @@
                 </div>
                 <div class="edit-form">
                    <div class="input-area">
-                        <h3>Ingredients</h3>
-                        <button v-if="mealList.length > 0 && newRecipe.ingredientList.length === 0" @click.prevent="copyIngredientsFromLastTime">
-                            Copy ingredients from last logged
-                        </button>
+                        <div class="single-row">
+                            <h3>Ingredients</h3>
+                            <div class="spacer"></div>
+                            <button v-if="mealList.length > 0 && newRecipe.ingredientList.length === 0" @click.prevent="copyIngredientsFromLastTime" class="grab-ingredients-button">
+                                Copy ingredients from last logged
+                            </button>
+                        </div>  
                         <div v-for="ingredient in newRecipe.ingredientList" :key="ingredient.listOrder" class="single-row">
                             <p class="list-number">&#8226;</p>
                             <div class="single-column spacer">
@@ -865,4 +868,8 @@ export default {
         padding: 10px;
         border-radius: 10px;;
     }
+    .grab-ingredients-button {
+        margin: 5px;
+        font-size: 0.7em;
+        }
 </style>
