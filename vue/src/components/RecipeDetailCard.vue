@@ -3,14 +3,23 @@
         <div class="recipe-img" v-if="localImg">
             <img :src="img || localImg" />
         </div>
-        <div class="details">
-            <div class="single-row" v-show="showUser">
+        <div class="top-tabs">
+                <div class="tab-area single-row">
+                    <p class="comment-tabs" :class="{ 'active-tab': activeTab === 'details' }" @click="activeTab = 'details'">
+                        <i class="fas fa-info-circle"></i> Details
+                    </p>
+                    <p class="comment-tabs" :class="{ 'active-tab': activeTab === 'comments' }" @click="activeTab = 'comments'">
+                        <i class="fas fa-comments"></i> Comments
+                    </p>
+                </div>
                 <div class="spacer"></div>
-                <div class="single-row user-field">
-                    <p>cooked by </p>
-                    <p class="username">{{ recipe.userName }}</p>
+                <div class="single-row">
+                    <p class="username" @click="$router.push({ name: 'profile', params: { userId: recipe.userId } })">
+                        <i class="fas fa-user"></i> {{ recipe.userName || $store.state.userProfile.displayName }}
+                    </p>
                 </div>
             </div>
+        <div class="details" v-show="activeTab === 'details'">
             <div class="title">
                 <h2 >{{ recipe.recipeName }}</h2>
             </div>
@@ -52,7 +61,11 @@
                     <p class="rating-label">Avg Rating</p>
                 </div>
             </div>
-        </div>            
+        </div>       
+        <div class="details" v-show="activeTab === 'comments'">
+            <h3>Comments</h3>
+            <p>Comments go here</p>
+        </div>     
     </div>
 </template>
 
@@ -66,7 +79,8 @@ export default {
   props: ['recipe', 'editable', 'img', 'showUser'],
   data() {
     return {
-      localImg: "/img/placeholder.jpeg" // Initialize with placeholder
+      localImg: "/img/placeholder.jpeg", // Initialize with placeholder
+      activeTab: 'details' // Track the active tab
     };
   },
   methods: {
@@ -115,7 +129,6 @@ export default {
     }
     .button {
         width: 15vw;
-        /* border: 1px solid var(--border-color); */
         border-radius: 10px;
         padding: 5px;
         margin-right: 5px;
@@ -123,7 +136,7 @@ export default {
     .details {
         background-color: var(--light-2);
         padding: 15px;
-        margin: 5px;
+        margin: 0 5px;
         border-radius: 10px;
     }
     .title {
@@ -242,17 +255,34 @@ export default {
     }
     .username {
         background-color: var(--light-8);
-        padding: 5px;
-        margin: 5px;
-        border-radius: 5px;;
+        padding: 10px;
+        padding-bottom: 5px;
+        margin-right: 15px;
+        border-radius: 10px 10px 0 0; /* Round top corners only */
     }
-    .user-field {
+
+    .comment-tabs {
         background-color: var(--light-1);
-        border-radius: 10px;
-        padding-right: 10px;
-        padding-left: 10px;
-        margin-right: 0px;
-        margin-left: 5px;
-        margin-bottom: 5px;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        padding: 10px;
+        padding-bottom: 5px;
+        gap: 10px;
+        border-radius: 10px 10px 0 0; /* Round top corners only */
+    }
+
+    .tab-area {
+        margin-left: 15px;
+    }
+
+    .top-tabs {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .active-tab {
+        background-color: var(--light-2);
     }
 </style>

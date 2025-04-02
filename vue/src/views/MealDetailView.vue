@@ -1,6 +1,6 @@
 <template>
     <div>
-        <MealMenu />
+        <TopBanner />
         <LoadingWidget v-if="loading"/>
         <Transition>
             <MealDetail v-if="!loading" :meal="meal"/>
@@ -12,9 +12,10 @@
 import MealMenu from '../components/MealMenu.vue';
 import MealDetail from '../components/MealDetail.vue';
 import LoadingWidget from '../components/LoadingWidget.vue';
+import TopBanner from '../components/TopBanner.vue';
 
 export default {
-    components: {MealMenu, MealDetail, LoadingWidget},
+    components: {MealMenu, MealDetail, LoadingWidget, TopBanner},
     data() {
         return {
             meal: {},

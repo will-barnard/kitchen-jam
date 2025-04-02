@@ -6,14 +6,23 @@
                     <img :src="img || localImg" />
                 </div>
             </div>
-            <div class="single-row" v-show="showUser">
-                    <div class="spacer"></div>
-                    <div class="single-row user-field">
-                        <p>cooked by </p>
-                        <p class="username">{{ meal.userName }}</p>
-                    </div>
+            <div class="top-tabs">
+                <div class="tab-area single-row">
+                    <p class="comment-tabs" :class="{ 'active-tab': activeTab === 'details' }" @click="activeTab = 'details'">
+                        <i class="fas fa-info-circle"></i> Details
+                    </p>
+                    <p class="comment-tabs" :class="{ 'active-tab': activeTab === 'comments' }" @click="activeTab = 'comments'">
+                        <i class="fas fa-comments"></i> Comments
+                    </p>
                 </div>
-            <div class="details">
+                <div class="spacer"></div>
+                <div class="single-row">
+                    <p class="username" @click="$router.push({ name: 'profile', params: { userId: meal.userId } })">
+                        <i class="fas fa-user"></i> {{ meal.userName || $store.state.userProfile.displayName }}
+                    </p>
+                </div>
+            </div>
+            <div class="details" v-show="activeTab === 'details'">
                 <div class="title">
                     <h2 >{{ meal.mealName }}</h2>
                     <div class="single-row">
@@ -67,7 +76,7 @@
                         <p>{{ meal.ingredients }}</p>
                     </div>
                     <div class="notes" v-show="meal.notes">
-                        <h3 class="right" >Notes</h3>
+                        <h3>Notes</h3>
                         <p>{{ meal.notes }}</p>
                     </div>
         
@@ -76,6 +85,10 @@
                     <IngredientList :ingredientList="meal.ingredientList"/>
                 </div>
 
+            </div>
+            <div class="details" v-show="activeTab === 'comments'">
+                <h3>Comments</h3>
+                <p>Comments go here</p>
             </div>            
         </div>
     </div>
@@ -90,8 +103,9 @@ export default {
   props: ['meal', 'editable', 'img', 'showUser'],
   data() {
     return {
-        localImg: "/img/placeholder.jpeg", // Initialize with placeholder
-        showGoToRecipe: false
+        localImg: "/img/placeholder.jpeg", 
+        showGoToRecipe: false,
+        activeTab: 'details'
     };
   },
   methods: {
@@ -107,7 +121,11 @@ export default {
         return UtilityService.formatDate(date);
     },
     goToRecipe() {
-      this.$router.push({ name: 'recipe-detail', params: { recipeId: this.meal.recipeId } });
+        if (this.editable) {
+            this.$router.push({ name: 'recipe-detail', params: { recipeId: this.meal.recipeId } });
+        } else {
+            this.$router.push({ name: 'public-recipe', params: { uuid: this.meal.recipePublicUrl } });
+        }
     },
     observeVisibility() {
       const observer = new IntersectionObserver((entries) => {
@@ -130,7 +148,6 @@ export default {
         margin: 0px;
     }
     .meal-img {
-        margin-top: 15px;
         overflow: hidden;
         text-align: center;
         margin-bottom: 15px;
@@ -245,9 +262,6 @@ export default {
     }
     .tag-search input {
         flex-grow: 1;
-    }
-    .recipe-search {
-        display: flex;
     }
     .edit-block input {
         margin: 0px;
@@ -385,13 +399,42 @@ export default {
         background-color: var(--light-3);
     }
 
+    .username {
+        background-color: var(--light-8);
+        padding: 10px;
+        padding-bottom: 5px;
+        margin-right: 15px;
+        border-radius: 10px 10px 0 0; /* Round top corners only */
+    }
 
+    .comment-tabs {
+        background-color: var(--light-1);
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        padding: 10px;
+        padding-bottom: 5px;
+        gap: 10px;
+        border-radius: 10px 10px 0 0; /* Round top corners only */
+    }
 
+    .tab-area {
+        margin-left: 15px;
+    }
 
+    .top-tabs {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .active-tab {
+        background-color: var(--light-2);
+    }
     .details {
         background-color: var(--light-2);
         padding: 15px;
-        margin: 5px;
+        margin: 0 5px;
         border-radius: 10px;
     }
     .title {
@@ -502,21 +545,7 @@ export default {
     .right {
         text-align: right;
     }
-    .username {
-        background-color: var(--light-8);
-        padding: 5px;
-        margin: 5px;
-        border-radius: 5px;;
-    }
-    .user-field {
-        background-color: var(--light-1);
-        border-radius: 10px;
-        padding-right: 10px;
-        padding-left: 10px;
-        margin-right: 0px;
-        margin-left: 5px;
-        margin-bottom: 5px;
-    }
+    
     .stars {
         display: flex;
         flex-direction: column;

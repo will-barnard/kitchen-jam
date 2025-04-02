@@ -33,6 +33,7 @@ export default {
     }
     h3 {
         margin: 5px;
-        text-align: right;
+        margin-left: 10px;
+        text-align: left;
     }
 </style>

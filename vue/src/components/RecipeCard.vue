@@ -192,6 +192,7 @@ export default {
     }
     #notes {
         flex-grow: 1;
+        
     }
     #tags {
         display: flex;
@@ -203,12 +204,12 @@ export default {
         display: flex;
         flex-direction: row;
         justify-content: space-between;
+        
     }
     .widget {
         flex-grow: 0;
         background-color: var(--light-1);
         margin-top: 5px;
-        margin-bottom: 5px;
         padding: 5px;
         border-radius: 10px;
         display: flex;
@@ -259,6 +260,9 @@ export default {
     .star {
         color: var(--light-5);
         margin: 0 2px;
+    }
+    .rating {
+        margin-top: 5px;
     }
     .rating-label {
         text-align: center;

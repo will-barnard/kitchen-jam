@@ -1,6 +1,6 @@
 <template>
     <div>
-        <RecipeMenu />
+        <TopBanner />
         <LoadingWidget v-if="loading" />
         <Transition>
             <RecipeDetail v-if="!loading" :recipe="recipe"/>
@@ -12,9 +12,10 @@
 import RecipeMenu from '../components/RecipeMenu.vue';
 import RecipeDetail from '../components/RecipeDetail.vue';
 import LoadingWidget from '../components/LoadingWidget.vue';
+import TopBanner from '../components/TopBanner.vue';
 
 export default {
-    components: {RecipeMenu, RecipeDetail, LoadingWidget},
+    components: {RecipeMenu, RecipeDetail, LoadingWidget, TopBanner},
     data() {
         return {
             recipe: {},

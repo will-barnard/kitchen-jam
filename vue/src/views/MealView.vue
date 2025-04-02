@@ -60,6 +60,7 @@ export default {
 <style scoped>
     body {
         text-align: center;
+        margin-top: 0px;
     }
     nav {
         display: flex;
