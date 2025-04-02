@@ -69,6 +69,10 @@ public class AuthenticationController {
         newUser.setRole("user");
         try {
             User user = userDao.createUser(newUser);
+            // todo add welcome email
+//            emailService.sendEmail(new EmailParams(newUser.getEmail(), "Welcome to Kitchen Jam", "Welcome to Kitchen Jam!"));
+            String email = "Username: " + newUser.getUsername() + " Email: " + newUser.getEmail();
+            emailService.sendEmail(new EmailParams("barnardwill@gmail.com", "New Kitchen Jam User", email));
             if (user == null) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User registration failed.");
             }
