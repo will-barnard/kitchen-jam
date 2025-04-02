@@ -32,6 +32,10 @@ export default {
 <style scoped>
     .main {
         margin-top: 20px;
+        margin-bottom: 0;
+        padding-bottom: 0;
+        position: relative; /* allow positioning */
+        top: 1px; /* Move the menu down by 1 pixel */
     }
     header {
         text-align: center;

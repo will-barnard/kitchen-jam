@@ -40,10 +40,13 @@ export default {
 }
 </script>
 <style scoped>
+    .log {
+        margin-top: 0; 
+        padding-top: 0;
+    }
     .search-input {
         padding: 0.5rem;
         width: 100%;
-        box-sizing: border-box;
         border-radius: 5px;
         border: 1px  var(--dark-1);
     }
@@ -56,13 +59,13 @@ export default {
         border-radius: 5px;
     }
     .v-enter-active,
-.v-leave-active {
-  transition: opacity 0.5s ease;
-}
+    .v-leave-active {
+    transition: opacity 0.5s ease;
+    }
 
-.v-enter-from,
-.v-leave-to {
-  opacity: 0;
-  transition: opacity 0.5s ease;
-}
+    .v-enter-from,
+    .v-leave-to {
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    }
 </style>

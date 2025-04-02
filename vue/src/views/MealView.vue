@@ -60,7 +60,8 @@ export default {
 <style scoped>
     body {
         text-align: center;
-        margin-top: 0px;
+        margin-top: 0;
+        padding-top: 0;
     }
     nav {
         display: flex;
@@ -68,7 +69,8 @@ export default {
         justify-content: center;
     }
     div {
-        margin: 0px;
+        margin: 0;
+        padding: 0; 
     }
     p {
         margin: 0px;

@@ -28,6 +28,8 @@ export default {
 header {
     text-align: center;
     margin-top: 20px;
+    position: relative; /* allow positioning */
+    top: 1px; /* Move the menu down by 1 pixel */
 }
 nav {
     display: flex;
