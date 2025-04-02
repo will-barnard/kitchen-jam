@@ -194,7 +194,7 @@ public class JdbcFriendshipDao implements FriendshipDao {
     }
 
     private List<Friend> getFriendUsernames(List<Friend> friends) {
-        String sql = "SELECT username, user_id FROM users " +
+        String sql = "SELECT display_name as name, user_id FROM user_attributes " +
                 "WHERE user_id = ";
         for (Friend friend : friends) {
             sql += friend.getFriendId() + " OR user_id = ";
@@ -205,7 +205,7 @@ public class JdbcFriendshipDao implements FriendshipDao {
             while (rowSet.next()) {
                 for (Friend friend : friends) {
                     if (friend.getFriendId() == rowSet.getInt("user_id")) {
-                        friend.setUsername(rowSet.getString("username"));
+                        friend.setUsername(rowSet.getString("name"));
                     }
                 }
             }
