@@ -155,7 +155,7 @@ public class JdbcMealDao implements MealDao {
                 "LEFT JOIN recipe ON meal.recipe_id = recipe.recipe_id " +
                 "JOIN user_attributes ON meal.user_id = user_attributes.user_id " +
                 "WHERE meal.user_id = ? " +
-                "AND is_public = true " +
+                "AND meal.is_public = true " +
                 "ORDER BY date_cooked DESC;";
 
         try {
