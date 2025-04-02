@@ -67,12 +67,12 @@ export default {
     cursor: pointer;
     padding: 10px;
     margin: 0 5px;
-    border: 2px solid var(--light-2);
+    border: 2px solid var(--light-1);
     border-radius: 10px;
     background-color: var(--light-1);
 }
 .toggle-buttons .active {
-    background-color: var(--light-5);
+    background-color: var(--light-2);
 }
 .toggle-buttons h3 {
     font-size: 1em;

@@ -312,6 +312,9 @@ export default {
 </script>
 
 <style scoped>
+    h1 {
+        margin-top: 0px;
+    }
     .container {
         border-radius: 10px;
         padding: 10px;

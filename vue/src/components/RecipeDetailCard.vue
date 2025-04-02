@@ -113,7 +113,6 @@ export default {
         margin: 0px;
     }
     .recipe-img {
-        margin-top: 10px;
         overflow: hidden;
         text-align: center;
         margin-bottom: 15px;

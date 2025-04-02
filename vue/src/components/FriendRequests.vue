@@ -9,13 +9,19 @@
                     <p class="user-name">{{ request.username }}</p>
                     <div class="spacer"></div>
                     <div class="user-button accept">
-                        <p @click="acceptRequest(request)">Accept</p>
+                        <p @click="acceptRequest(request)">
+                            <i class="fa fa-check"></i> Accept
+                        </p>
                     </div>
                     <div class="user-button reject">
-                        <p @click="rejectRequest(request)">Reject</p>
+                        <p @click="rejectRequest(request)">
+                            <i class="fa fa-times"></i> Reject
+                        </p>
                     </div>
                     <div class="user-button view-profile" @click="$router.push({name: 'profile', params: {userId: request.friendId}})">
-                        <p>View Profile</p>
+                        <p>
+                            <i class="fa fa-user"></i> View Profile
+                        </p>
                     </div>
                 </div>
             </div>
@@ -86,8 +92,7 @@ p {
         cursor: pointer;
         padding: 5px;
         margin: 0 5px;
-        border: 2px solid var(--light-2);
-        border-radius: 10px;
+        border-radius: 5px;
         background-color: var(--light-1);
         font-size: .8em;
     }

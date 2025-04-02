@@ -1,37 +1,41 @@
 <template>
     <div>
-        <div v-if="$store.state.loadedFriends && $store.state.userFriends.length === 0">
+        <hr />
+        <div v-if="$store.state.loadedFriends && $store.state.userFriends.length === 0" class="no-friends">
             <p>No friends yet. Search for users to add as friends.</p>
         </div>
         <div v-if="loading">
             <LoadingWidget />
         </div>
-        <div class="toggle-buttons">
-            <h3 :class="{ active: showEnum === 'meals' }" @click="showEnum = 'meals'">Meals</h3>
-            <h3 :class="{ active: showEnum === 'recipes' }" @click="showEnum = 'recipes'">Recipes</h3>
+        <div v-if="$store.state.loadedFriends && $store.state.userFriends.length > 0">
+            
+            <div class="toggle-buttons">
+                <h3 :class="{ active: showEnum === 'meals' }" @click="showEnum = 'meals'">Meals</h3>
+                <h3 :class="{ active: showEnum === 'recipes' }" @click="showEnum = 'recipes'">Recipes</h3>
+            </div>
+            <Transition name="fade">
+                <div v-if="!loading && showEnum === 'meals'">
+                    <div v-for="meal in meals" :key="meal.id">
+                        <MealCard :meal="meal" :isFeed="true" />
+                    </div>
+                    <div class="button-container">
+                        <button v-if="!loadingMore" @click="loadMoreMeals">Load More</button>
+                        <p v-if="loadingMore">Loading more meals...</p>
+                    </div>
+                </div>
+            </Transition>
+            <Transition name="fade">
+                <div v-if="!loading && showEnum === 'recipes'">
+                    <div v-for="recipe in recipes" :key="recipe.id">
+                        <RecipeCard :recipe="recipe" :isFeed="true" />
+                    </div>
+                    <div class="button-container">
+                        <button v-if="!loadingMore" @click="loadMoreRecipes">Load More</button>
+                        <p v-if="loadingMore">Loading more recipes...</p>
+                    </div>
+                </div>
+            </Transition>
         </div>
-        <Transition name="fade">
-            <div v-if="!loading && showEnum === 'meals'">
-                <div v-for="meal in meals" :key="meal.id">
-                    <MealCard :meal="meal" :isFeed="true" />
-                </div>
-                <div class="button-container">
-                    <button v-if="!loadingMore" @click="loadMoreMeals">Load More</button>
-                    <p v-if="loadingMore">Loading more meals...</p>
-                </div>
-            </div>
-        </Transition>
-        <Transition name="fade">
-            <div v-if="!loading && showEnum === 'recipes'">
-                <div v-for="recipe in recipes" :key="recipe.id">
-                    <RecipeCard :recipe="recipe" :isFeed="true" />
-                </div>
-                <div class="button-container">
-                    <button v-if="!loadingMore" @click="loadMoreRecipes">Load More</button>
-                    <p v-if="loadingMore">Loading more recipes...</p>
-                </div>
-            </div>
-        </Transition>
     </div>
 </template>
 
@@ -128,12 +132,12 @@ export default {
     cursor: pointer;
     padding: 10px;
     margin: 0 5px;
-    border: 2px solid var(--light-2);
+    border: 2px solid var(--light-1);
     border-radius: 10px;
     background-color: var(--light-1);
 }
 .toggle-buttons .active {
-    background-color: var(--light-5);
+    background-color: var(--light-2);
 }
 .toggle-buttons h3 {
     font-size: 1em;
@@ -157,5 +161,17 @@ button {
 
 button:hover {
     background-color: #0056b3;
+}
+.no-friends {
+    text-align: center;
+    margin-top: 20px;
+}
+hr {
+    border: none;
+    height: 2px;
+    background-color: var(--border-color);
+    border-radius: 5px;
+    margin: 15px 15px 0px 15px;;
+    opacity: 50%;
 }
 </style>

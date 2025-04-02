@@ -1,6 +1,6 @@
 <template>
     <div>
-        <RecipeMenu :create="true" />
+        <TopBanner />
         <Transition name="quickFade">
             <div v-show="show">
                 <CreateRecipe />
@@ -12,9 +12,10 @@
 <script>
 import RecipeMenu from '../components/RecipeMenu.vue';
 import CreateRecipe from '../components/CreateRecipe.vue';
+import TopBanner from '../components/TopBanner.vue';
 
 export default {
-    components: {RecipeMenu, CreateRecipe},
+    components: {RecipeMenu, CreateRecipe, TopBanner},
     data() {
         return {
             show: false

@@ -1,33 +1,35 @@
 <template>
     <div>
-        <div class="search-area">
-            <input v-model="query" @input="searchUsers" placeholder="Search users..." />
-        </div>
         <Transition name="fade">
-            <div class="search-results" v-show="query">
+            <div class="search-results">
+                <div class="search-area">
+                    <input v-model="query" class="search-input" @input="searchUsers" placeholder="Search users..." />
+                </div>
                 <LoadingWidget v-if="loading" />
-                <div v-if="!loading && users.length === 0">
+                <div v-if="!loading && users.length === 0 && query.length > 0">
                     <p>No users found.</p>
                 </div>
                 <div v-for="user in users" :key="user.id" class="search-result">
-                    <p class="user-name">{{ user.displayName }}</p>
+                    <div class="user-name">
+                        <p>{{ user.displayName }}</p>
+                    </div>
                     <div class="spacer"></div>
                     <div class="user-button">
                         <div class="add-friend" v-if="!isPending(user.userId) && !isFriend(user.userId) && !isRequest(user.userId)" @click="addFriend(user)">
-                            <p>Add Friend</p>
+                            <p><i class="fa fa-plus"></i> Add Friend</p>
                         </div>
                         <div class="pending" v-if="isRequest(user.userId)" @click="respondToRequest">
                             <p>Respond to Request</p>
                         </div>
-                        <div class="pending" v-if="isPending(user.userId)">
-                            <p>Requested <i class="fa fa-times" @click="cancelRequest(user)"></i></p>
+                        <div class="pending" v-if="isPending(user.userId)" @click="cancelRequest(user)">
+                            <p><i class="fa fa-times"></i> Requested</p>
                         </div>
                         <div class="friends" v-if="isFriend(user.userId)">
-                            <p>Friends</p>
+                            <p><i class="fa fa-check"></i> Friends</p>
                         </div>
                     </div>
                     <div class="user-button view-profile" @click="$router.push({name: 'profile', params: {userId: user.userId}})">
-                        <p>View Profile</p>
+                        <p><i class="fa fa-user"></i> Profile</p>
                     </div>
                 </div>
             </div>
@@ -113,15 +115,16 @@ export default {
     .search-results {
         background-color: var(--light-2);
         border-radius: 10px;
-        padding: 15px;
+        padding: 5px;
         margin: 5px;
         display: flex;
         flex-direction: column;
     }
     .search-result {
-        padding: 10px;
+        padding: 5px;
         margin-bottom: 5px;
-        margin-top: 5px;
+        margin-left: 10px;
+        margin-right: 10px;
         background-color: var(--light-1);
         border-radius: 10px;
         display: flex;
@@ -138,6 +141,8 @@ export default {
     }
     .user-name {
         font-weight: bold;
+        margin-left: 10px;
+
     }
     .user-button {
         cursor: pointer;
@@ -146,27 +151,25 @@ export default {
         background-color: var(--light-1);
         font-size: .8em;
     }
-    input {
-        width: 80%;
-        padding: 10px;
-        margin: 5px;
-        border-radius: 10px;
-        border: 2px solid var(--light-2);
+    .search-input {
+        margin-bottom: 10px;
+        padding: 8px;
+        border-radius: 5px;
+        border: 1px;
+        width: 100%;
+        box-sizing: border-box;
     }
     .spacer {
         flex-grow: 1;
     }
     .add-friend {
-        background-color: var(--light-2);
-        border: 2px solid var(--light-2);
-
+        background-color: var(--light-6);
         border-radius: 10px;
         padding: 5px;
 
     }
     .pending {
         background-color: var(--light-5);
-        border: 2px solid var(--light-2);
 
         border-radius: 10px;
         padding: 5px;
@@ -174,15 +177,13 @@ export default {
     }
     .view-profile {
         background-color: var(--light-8);
-        border: 2px solid var(--light-2);
 
         border-radius: 10px;
         padding: 5px;
 
     }
     .friends {
-        background-color: var(--light-6);
-        border: 2px solid var(--light-2);
+        background-color: var(--light-4);
 
         border-radius: 10px;
         padding: 5px;

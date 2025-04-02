@@ -15,7 +15,7 @@ export default {
     return axios.post('/profile/search', search)
   },
   getUserProfileLog(userId) {
-    return axios.get('/log/' + userId)
+    return axios.get('/profile/log/' + userId)
   },
 
 }

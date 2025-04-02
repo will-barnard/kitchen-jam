@@ -1,6 +1,6 @@
 <template>
     <div>
-        <MealMenu :create="true"/>
+        <TopBanner/>
         <Transition name="quickFade">
             <div v-show="show">
                 <CreateMeal />
@@ -11,9 +11,10 @@
 <script>
 import MealMenu from '../components/MealMenu.vue';
 import CreateMeal from '../components/CreateMeal.vue';
+import TopBanner from '../components/TopBanner.vue';
 
 export default {
-    components: {MealMenu, CreateMeal},
+    components: {MealMenu, CreateMeal, TopBanner},
     data() {
         return {
             show: false

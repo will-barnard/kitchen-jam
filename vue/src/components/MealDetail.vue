@@ -663,22 +663,27 @@ export default {
     }
     
     .delete {
+        margin-top: 10px;
         display: flex;
         flex-direction: row;
         justify-content: center;
-        align-items: center;
-        margin: 10px;
+        margin-left: 20px;
+        margin-right: 20px;
     }
     .delete h2 {
         margin: 5px;
-        padding: 5px;
+        padding: 8px;
         border-radius: 10px;
+        font-size: 1.3em;
     }
     .yes-delete {
         background-color: var(--light-3);
     }
     .cancel-delete {
         background-color: var(--edit);
+    }
+    #delete-check {
+        font-size: .8em;
     }
     .delete:hover {
         cursor: pointer;

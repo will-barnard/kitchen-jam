@@ -151,9 +151,13 @@
 
 
        <div class="delete" v-if="deleting">
-           <p id="delete-check">Are you sure you want to delete? This cannot be undone</p>
-           <h2 class="yes-delete" v-on:click="deleteRecipe()">Delete</h2>
-           <h2 class="cancel-delete" v-on:click="deleting = false">Cancel</h2>
+            <p id="delete-check">Are you sure you want to delete? This cannot be undone</p>
+            <div>
+                <h2 class="yes-delete" v-on:click="deleteRecipe()">Delete</h2>
+            </div>
+            <div>
+                <h2 class="cancel-delete" v-on:click="deleting = false">Cancel</h2>
+            </div>
        </div>
        <div class="controls" v-show="!deleting">
             <div class="link-button button" v-show="staticRecipe.public" @click="unsecuredCopyToClipboard(newRecipe.publicUrl)">
@@ -616,20 +620,27 @@ export default {
         margin: 0px;
     }
     .delete {
+        margin-top: 10px;
         display: flex;
         flex-direction: row;
         justify-content: center;
+        margin-left: 20px;
+        margin-right: 20px;
     }
     .delete h2 {
         margin: 5px;
-        padding: 5px;
+        padding: 8px;
         border-radius: 10px;
+        font-size: 1.3em;
     }
     .yes-delete {
         background-color: var(--light-3);
     }
     .cancel-delete {
         background-color: var(--edit);
+    }
+    #delete-check {
+        font-size: .8em;
     }
     .delete:hover {
         cursor: pointer;

@@ -361,6 +361,10 @@ export default {
         display: flex;
         flex-direction: column;
         padding: 5px;
+        margin-top: 0px;
+    }
+    h1 {
+        margin-top: 0px;
     }
     div {
         display: flex;
