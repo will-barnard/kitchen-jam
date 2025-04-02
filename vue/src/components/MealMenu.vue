@@ -1,7 +1,9 @@
 <template>
    <header>
         <div class="main">
-            <h1 v-on:click="log()">Meal Log</h1>
+            <h1 v-on:click="log()">
+                <i class="fa fa-utensils"></i> Meal Log
+            </h1>
             <div class="spacer"></div>
             <nav>
                 <p v-on:click="newMeal()" v-show="!create">
@@ -68,6 +70,8 @@ export default {
         padding: 10px;
         padding-bottom: 5px;
         text-align: left;
+        font-size: 1.5em;
+
     }
     .spacer {
         flex-grow: 1;

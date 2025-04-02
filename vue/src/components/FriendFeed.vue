@@ -19,8 +19,9 @@
                         <MealCard :meal="meal" :isFeed="true" />
                     </div>
                     <div class="button-container">
-                        <button v-if="!loadingMore" @click="loadMoreMeals">Load More</button>
+                        <button v-if="!loadingMore && !compact" @click="loadMoreMeals">Load More</button>
                         <p v-if="loadingMore">Loading more meals...</p>
+                        <button v-if="compact" @click="$router.push({name: 'friends'})">Friend Page</button>
                     </div>
                 </div>
             </Transition>
@@ -30,8 +31,9 @@
                         <RecipeCard :recipe="recipe" :isFeed="true" />
                     </div>
                     <div class="button-container">
-                        <button v-if="!loadingMore" @click="loadMoreRecipes">Load More</button>
+                        <button v-if="!loadingMore && !compact" @click="loadMoreRecipes">Load More</button>
                         <p v-if="loadingMore">Loading more recipes...</p>
+                        <button v-if="compact" @click="$router.push({name: 'friends'})">Friend Page</button>
                     </div>
                 </div>
             </Transition>
@@ -46,6 +48,7 @@ import LoadingWidget from './LoadingWidget.vue';
 import RecipeCard from './RecipeCard.vue';
 
 export default {
+    props: ['compact'],
     components: {
         MealCard, LoadingWidget, RecipeCard
     },
@@ -102,7 +105,7 @@ export default {
                         meal.tags = [];
                     }
                 }
-                this.meals = response.data;
+                this.meals = this.compact ? response.data.slice(0, 3) : response.data;
                 this.loading = false;
             }
         ).catch((error) => {
@@ -111,7 +114,7 @@ export default {
         });
         FeedService.getRecipeFeed().then( 
             (response) => {
-                this.recipes = response.data;
+                this.recipes = this.compact ? response.data.slice(0, 3) : response.data;
                 this.loading = false;
             }
         ).catch((error) => {

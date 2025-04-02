@@ -17,19 +17,25 @@
                 <Transition name="fade">
                     <div v-show="control === 'recipes'">
                         <RecipeJam v-if="validRecipes"/>
-                        <h3 v-if="!validRecipes && $store.state.loadedRecipes">Log more recipes to generate insights</h3>
+                        <div class="create-more">
+                            <h3 v-if="!validRecipes && $store.state.loadedRecipes">Log more recipes to generate insights</h3>
+                        </div>
                     </div>
                 </Transition>
                 <Transition name="fade">
                     <div v-show="control === 'tags'">
                         <TagJam v-show="validTags"/>
-                        <h3 v-if="!validTags && $store.state.loadedTags">Create more tags to generate insights</h3>
+                        <div class="create-more">
+                            <h3 v-if="!validTags && $store.state.loadedTags">Create more tags to generate insights</h3>
+                        </div>
                     </div>
                 </Transition>
                 <Transition name="fade">
                     <div v-show="control === 'categories'">
                         <CategoryJam v-show="validCategories"/>
-                        <h3 v-if="!validCategories && $store.state.loadedCategories">Create more categories to generate insights</h3>
+                        <div class="create-more">
+                            <h3 v-if="!validCategories && $store.state.loadedCategories">Create more categories to generate insights</h3>
+                        </div>
                     </div>
                 </Transition>
             </div>
@@ -110,6 +116,15 @@ export default {
     }
     .controls h3.selected {
         font-weight: bold;
-        background-color: var(--light-5);
+        background-color: var(--light-1);
+    }
+    .create-more {
+        display: flex;
+        justify-content: center;
+        margin: 10px;
+        padding: 10px;
+        background-color: var(--light-1);
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
 </style>

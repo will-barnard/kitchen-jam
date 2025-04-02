@@ -1,13 +1,15 @@
 <template>
     <Transition>
-
     <div class="log">
-        <p v-if="!mealList">you have not logged any meals</p>  
+        <div class="search-area">
+            <input type="text" v-model="searchTerm" placeholder="Search meals..." class="search-input" />
+        </div>
+        <p v-if="!filteredMeals.length">you have not logged any meals</p>  
         <TransitionGroup>
-            <MealCard class="meal-card" v-for="meal in mealList" :key="meal.mealId" :meal="meal" :selected="select == meal.mealId" :isPublic="isPublic" v-on:click="selectCard()"/>
+            <MealCard class="meal-card" v-for="meal in filteredMeals" :key="meal.mealId" :meal="meal" :selected="select == meal.mealId" :isPublic="isPublic" v-on:click="selectCard()"/>
         </TransitionGroup>
     </div>
-</Transition>
+    </Transition>
 </template>
 
 <script>
@@ -19,10 +21,16 @@ export default {
     props: ['mealList', 'isPublic'],
     data() {
         return {
-            select: 0
+            select: 0,
+            searchTerm: ''
         }
     },
-    created() {
+    computed: {
+        filteredMeals() {
+            return this.mealList.filter(meal => 
+                meal.mealName.toLowerCase().includes(this.searchTerm.toLowerCase())
+            );
+        }
     },
     methods: {
         selectCard() {
@@ -32,6 +40,21 @@ export default {
 }
 </script>
 <style scoped>
+    .search-input {
+        padding: 0.5rem;
+        width: 100%;
+        box-sizing: border-box;
+        border-radius: 5px;
+        border: 1px  var(--dark-1);
+    }
+    .search-area {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 1rem;
+        padding: 1rem;
+        background-color: var(--light-2);
+        border-radius: 5px;
+    }
     .v-enter-active,
 .v-leave-active {
   transition: opacity 0.5s ease;

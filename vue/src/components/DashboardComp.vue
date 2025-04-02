@@ -13,10 +13,6 @@
                 <i class="fas fa-guitar"></i>
                 <span>Jam Page</span>
             </h3>
-            <h3 class="child" @click="$router.push({ name: 'profile' , params: {userId: $store.state.user.id}})">
-                <i class="fas fa-user"></i>
-                <span>Profile</span>
-            </h3>
             <h3 class="child" @click="$router.push({ name: 'friends' })">
                 <i class="fas fa-users"></i>
                 <span>Friends</span>
@@ -24,6 +20,10 @@
             <h3 class="child" @click="$router.push({ name: 'notifications' })">
                 <i class="fas fa-bell"></i>
                 <span>Notifications</span>
+            </h3>
+            <h3 class="child" @click="$router.push({ name: 'profile' , params: {userId: $store.state.user.id}})">
+                <i class="fas fa-user"></i>
+                <span>Profile</span>
             </h3>
             <h3 class="child" @click="$router.push({ name: 'settings' })">
                 <i class="fas fa-cog"></i>

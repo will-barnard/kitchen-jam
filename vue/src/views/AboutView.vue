@@ -17,7 +17,7 @@
             </ul>
         </div>
         
-        <h3 class="button" @click="$router.push('will')">Will's Cookbook</h3 >
+        <h3 class="button" @click="$router.push({ name: 'profile', params: { userId: 1001 }})">Will's Cookbook</h3 >
         <h3 class="button" @click="$router.push('walkthrough')">How does it work?</h3>
         <h3 class="button" @click="$router.push('register')">Sign up for a free account</h3>
 

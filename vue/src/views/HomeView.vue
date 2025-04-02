@@ -66,7 +66,7 @@ export default {
     padding: 15px;
   }
   .title {
-    margin: 30px;
+    margin: 20px;
   }
   .buttons {
     margin: 10px;
