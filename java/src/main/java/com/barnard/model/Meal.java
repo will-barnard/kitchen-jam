@@ -13,6 +13,7 @@ public class Meal {
     private String userName;
     private Integer recipeId;
     private String recipeName;
+    private String recipePublicUrl;
     private Recipe recipe;
     private String mealName;
     private String mealComment;
@@ -188,4 +189,13 @@ public class Meal {
     public void setIngredientList(List<Ingredient> ingredientList) {
         this.ingredientList = ingredientList;
     }
+
+    public String getRecipePublicUrl() {
+        return recipePublicUrl;
+    }
+
+    public void setRecipePublicUrl(String recipePublicUrl) {
+        this.recipePublicUrl = recipePublicUrl;
+    }
+
 }
