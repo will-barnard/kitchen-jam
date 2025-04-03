@@ -19,7 +19,7 @@
                         </div>
                     </div>
                     <div class="spacer"></div>
-                    <div class="friends-area">
+                    <div class="friends-area" v-show="$store.state.token != ''">
                         <div class="add-friend">
                             <h3 v-if="!isPending(profile.userId) && !isFriend(profile.userId) && !isRequest(profile.userId)" @click="addFriend(profile)">Add&nbsp;Friend</h3>
                         </div>

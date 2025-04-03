@@ -15,7 +15,8 @@
                 <div class="spacer"></div>
                 <div class="single-row">
                     <p class="username" @click="$router.push({ name: 'profile', params: { userId: recipe.userId } })">
-                        <i class="fas fa-user"></i> {{ recipe.userName || $store.state.userProfile.displayName }}
+                        <i class="fas fa-user"></i> 
+                        {{ truncateName(recipe.userName || $store.state.userProfile.displayName) }}
                     </p>
                 </div>
             </div>
@@ -100,6 +101,10 @@ export default {
         }
       });
       observer.observe(this.$refs.observerTarget);
+    },
+    truncateName(name) {
+        const maxLength = 20; // Adjust the max length as needed
+        return name.length > maxLength ? name.slice(0, maxLength) + '...' : name;
     }
   },
   mounted() {
