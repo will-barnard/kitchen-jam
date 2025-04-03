@@ -1,5 +1,7 @@
 package com.barnard.model;
 
+import java.time.LocalDateTime;
+
 public class Comment {
 
     private Integer commentId;
@@ -11,13 +13,13 @@ public class Comment {
     private Integer userId;
     private String userName;
     private String commentContent;
-    private String createdAt;
-    private String updatedAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     public Comment() {
     }
 
-    public Comment(Integer commentId, Integer mealId, Integer recipeId, Integer parentId, Integer userId, String commentContent, String createdAt, String updatedAt, String mealUrl, String recipeUrl) {
+    public Comment(Integer commentId, Integer mealId, Integer recipeId, Integer parentId, Integer userId, String commentContent, LocalDateTime createdAt, LocalDateTime updatedAt, String mealUrl, String recipeUrl, String userName) {
         this.commentId = commentId;
         this.mealId = mealId;
         this.recipeId = recipeId;
@@ -28,6 +30,7 @@ public class Comment {
         this.updatedAt = updatedAt;
         this.mealUrl = mealUrl;
         this.recipeUrl = recipeUrl;
+        this.userName = userName;
     }
 
     public Integer getCommentId() {
@@ -78,19 +81,19 @@ public class Comment {
         this.commentContent = commentContent;
     }
 
-    public String getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(String createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
-    public String getUpdatedAt() {
+    public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(String updatedAt) {
+    public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
 
@@ -108,5 +111,13 @@ public class Comment {
 
     public void setRecipeUrl(String recipeUrl) {
         this.recipeUrl = recipeUrl;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 }

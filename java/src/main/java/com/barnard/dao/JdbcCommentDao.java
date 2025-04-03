@@ -2,6 +2,7 @@ package com.barnard.dao;
 
 import com.barnard.exception.DaoException;
 import com.barnard.model.Comment;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -14,23 +15,19 @@ import java.util.List;
 @Component
 public class JdbcCommentDao implements CommentDao {
 
+    @Autowired
     private JdbcTemplate jdbcTemplate;
-
-//    CREATE TABLE comments (
-//            comment_id SERIAL PRIMARY KEY,
-//            meal_id INT REFERENCES meal(meal_id) ON DELETE CASCADE,
-//    recipe_id INT REFERENCES recipe(recipe_id) ON DELETE CASCADE,
-//    parent_id INT REFERENCES comments(comment_id) ON DELETE CASCADE,
-//    user_id INT NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
-//    comment_content TEXT NOT NULL,
-//    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-//    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-//);
 
     @Override
     public Comment getComment(int commentId) {
         Comment comment = null;
-        String sql = "SELECT * FROM comments WHERE comment_id = ?";
+        String sql = "SELECT comments.*, user_attributes.display_name AS user_name, " +
+                     "meal.public_url AS meal_url, recipe.public_url AS recipe_url " +
+                     "FROM comments " +
+                     "LEFT JOIN meal ON comments.meal_id = meal.meal_id " +
+                     "LEFT JOIN recipe ON comments.recipe_id = recipe.recipe_id " +
+                     "JOIN user_attributes ON comments.user_id = user_attributes.user_id " +
+                     "WHERE comment_id = ?";
         try {
             SqlRowSet rs = jdbcTemplate.queryForRowSet(sql, commentId);
             if (rs.next()) {
@@ -48,8 +45,13 @@ public class JdbcCommentDao implements CommentDao {
     @Override
     public List<Comment> getCommentsByMeal(int mealId) {
         List<Comment> comments = new ArrayList<>();
-        String sql = "SELECT * FROM comments WHERE meal_id = ? " +
-                "ORDER BY created_at DESC";
+        String sql = "SELECT comments.*, user_attributes.display_name AS user_name, " +
+                     "meal.public_url AS meal_url " +
+                     "FROM comments " +
+                     "LEFT JOIN meal ON comments.meal_id = meal.meal_id " +
+                     "JOIN user_attributes ON comments.user_id = user_attributes.user_id " +
+                     "WHERE comments.meal_id = ? " +
+                     "ORDER BY created_at DESC";
         try {
             SqlRowSet rs = jdbcTemplate.queryForRowSet(sql, mealId);
             while (rs.next()) {
@@ -67,8 +69,13 @@ public class JdbcCommentDao implements CommentDao {
     @Override
     public List<Comment> getCommentsByRecipe(int recipeId) {
         List<Comment> comments = new ArrayList<>();
-        String sql = "SELECT * FROM comments WHERE recipe_id = ? " +
-                "ORDER BY created_at DESC";
+        String sql = "SELECT comments.*, user_attributes.display_name AS user_name, " +
+                     "recipe.public_url AS recipe_url " +
+                     "FROM comments " +
+                     "LEFT JOIN recipe ON comments.recipe_id = recipe.recipe_id " +
+                     "JOIN user_attributes ON comments.user_id = user_attributes.user_id " +
+                     "WHERE comments.recipe_id = ? " +
+                     "ORDER BY created_at DESC";
         try {
             SqlRowSet rs = jdbcTemplate.queryForRowSet(sql, recipeId);
             while (rs.next()) {
@@ -104,32 +111,30 @@ public class JdbcCommentDao implements CommentDao {
         boolean isParentComment = comment.getParentId() != null && comment.getParentId() != 0;
         if (isParentComment) {
             sql = "INSERT INTO comments (meal_id, user_id, comment_content, parent_id) " +
-                    "VALUES (?, ?, ?, ?) RETURNING *";
+                    "VALUES (?, ?, ?, ?) RETURNING comment_id;";
         } else {
             sql = "INSERT INTO comments (meal_id, user_id, comment_content) " +
-                    "VALUES (?, ?, ?) RETURNING *";
+                    "VALUES (?, ?, ?) RETURNING comment_id;";
         }
 
         try {
             // Use the appropriate SQL statement based on whether it's a parent comment or not
-            SqlRowSet rs;
+            int commentId;
             if (isParentComment) {
-                rs = jdbcTemplate.queryForRowSet(sql,
+                commentId = jdbcTemplate.queryForObject(sql, int.class,
                         comment.getMealId(),
                         comment.getUserId(),
                         comment.getCommentContent(),
                         comment.getParentId()
                 );
             } else {
-                rs = jdbcTemplate.queryForRowSet(sql,
+                commentId = jdbcTemplate.queryForObject(sql, int.class,
                         comment.getMealId(),
                         comment.getUserId(),
                         comment.getCommentContent()
                 );
             }
-            if (rs.next()) {
-                newComment = mapRowToComment(rs);
-            }
+            newComment = getComment(commentId);
         } catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database", e);
         } catch (DataIntegrityViolationException e) {
@@ -144,32 +149,30 @@ public class JdbcCommentDao implements CommentDao {
         boolean isParentComment = comment.getParentId() != null && comment.getParentId() != 0;
         if (isParentComment) {
             sql = "INSERT INTO comments (recipe_id, user_id, comment_content, parent_id) " +
-                    "VALUES (?, ?, ?, ?) RETURNING *";
+                    "VALUES (?, ?, ?, ?) RETURNING comment_id;";
         } else {
             sql = "INSERT INTO comments (recipe_id, user_id, comment_content) " +
-                    "VALUES (?, ?, ?) RETURNING *";
+                    "VALUES (?, ?, ?) RETURNING comment_id;";
         }
 
         try {
             // Use the appropriate SQL statement based on whether it's a parent comment or not
-            SqlRowSet rs;
+            int commentId;
             if (isParentComment) {
-                rs = jdbcTemplate.queryForRowSet(sql,
+                commentId = jdbcTemplate.queryForObject(sql, int.class,
                         comment.getRecipeId(),
                         comment.getUserId(),
                         comment.getCommentContent(),
                         comment.getParentId()
                 );
             } else {
-                rs = jdbcTemplate.queryForRowSet(sql,
+                commentId = jdbcTemplate.queryForObject(sql, int.class,
                         comment.getRecipeId(),
                         comment.getUserId(),
                         comment.getCommentContent()
                 );
             }
-            if (rs.next()) {
-                newComment = mapRowToComment(rs);
-            }
+            newComment = getComment(commentId);
         } catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database", e);
         } catch (DataIntegrityViolationException e) {
@@ -182,12 +185,10 @@ public class JdbcCommentDao implements CommentDao {
     public Comment updateComment(Comment comment) {
         Comment updatedComment = null;
         String sql = "UPDATE comments SET comment_content = ?, updated_at = CURRENT_TIMESTAMP " +
-                     "WHERE comment_id = ? RETURNING *";
+                     "WHERE comment_id = ?";
         try {
-            SqlRowSet rs = jdbcTemplate.queryForRowSet(sql, comment.getCommentContent(), comment.getCommentId());
-            if (rs.next()) {
-                updatedComment = mapRowToComment(rs);
-            }
+            jdbcTemplate.update(sql, comment.getCommentContent(), comment.getCommentId());
+            updatedComment = getComment(comment.getCommentId());
         } catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database", e);
         } catch (DataIntegrityViolationException e) {
@@ -262,18 +263,33 @@ public class JdbcCommentDao implements CommentDao {
     }
 
     private Comment mapRowToComment(SqlRowSet rs) {
-        return new Comment(
-                rs.getInt("comment_id"),
-                rs.getInt("meal_id"),
-                rs.getInt("recipe_id"),
-                rs.getInt("parent_id"),
-                rs.getInt("user_id"),
-                rs.getString("comment_content"),
-                rs.getString("created_at"),
-                rs.getString("updated_at"),
-                rs.getString("meal_url"),
-                rs.getString("recipe_url")
-        );
+        Comment comment = new Comment();
+
+        comment.setCommentId(rs.getInt("comment_id"));
+        comment.setMealId(rs.getInt("meal_id"));
+        comment.setRecipeId(rs.getInt("recipe_id"));
+        comment.setParentId(rs.getInt("parent_id"));
+        comment.setUserId(rs.getInt("user_id"));
+        comment.setCommentContent(rs.getString("comment_content"));
+        if (rs.getString("created_at") != null) {
+            comment.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+        }
+        if (rs.getString("updated_at") != null) {
+            comment.setUpdatedAt(rs.getTimestamp("updated_at").toLocalDateTime());
+        }
+        try {
+            comment.setMealUrl(rs.getString("meal_url") != null ? rs.getString("meal_url") : null);
+        } catch(Exception e) {
+            // do nothing
+        }
+        try {
+            comment.setRecipeUrl(rs.getString("recipe_url") != null ? rs.getString("recipe_url") : null);
+        } catch(Exception e) {
+            // do nothing
+        }
+        comment.setUserName(rs.getString("user_name"));
+
+        return comment;
     }
 
 }
