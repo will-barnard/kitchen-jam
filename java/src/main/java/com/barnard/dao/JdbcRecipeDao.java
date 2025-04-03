@@ -378,6 +378,22 @@ public class JdbcRecipeDao implements RecipeDao {
     }
 
     @Override
+    public boolean isRecipePublic(int recipeId) {
+        boolean result = false;
+        String sql = "SELECT is_public FROM recipe " +
+                "WHERE recipe_id = ?;";
+
+        try {
+            result = jdbcTemplate.queryForObject(sql, boolean.class, recipeId);
+        } catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Unable to connect to server or database", e);
+        } catch (DataIntegrityViolationException e) {
+            throw new DaoException("Data integrity violation", e);
+        }
+        return result;
+    }
+
+    @Override
     public void deleteRecipeById(int recipeId) {
 
         String sql = "UPDATE meal SET recipe_id = NULL " +

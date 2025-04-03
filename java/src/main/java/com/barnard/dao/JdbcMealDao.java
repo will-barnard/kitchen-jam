@@ -345,6 +345,22 @@ public class JdbcMealDao implements MealDao {
     }
 
     @Override
+    public boolean isMealPublic(int mealId) {
+        boolean result = false;
+        String sql = "SELECT is_public FROM meal " +
+                "WHERE meal_id = ?;";
+
+        try {
+            result = jdbcTemplate.queryForObject(sql, boolean.class, mealId);
+        } catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Unable to connect to server or database", e);
+        } catch (DataIntegrityViolationException e) {
+            throw new DaoException("Data integrity violation", e);
+        }
+        return result;
+    }
+
+    @Override
     public void deleteMealById(int mealId) {
 
         String sql = "DELETE FROM tags_meal " +

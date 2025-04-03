@@ -22,6 +22,7 @@ public interface RecipeDao {
     Recipe getPublicRecipe(String uuid);
     String makePublic(Recipe recipe);
     void makePrivate(Recipe recipe);
+    boolean isRecipePublic(int recipeId);
     void deleteRecipeById(int recipeId);
     boolean verifyRecipeOwner(int userId, int recipeId);
 

@@ -21,6 +21,7 @@ public interface MealDao {
     Meal getPublicMeal(String uuid);
     String makePublic(Meal meal);
     void makePrivate(Meal meal);
+    boolean isMealPublic(int mealId);
     void deleteMealById(int mealId);
     boolean verifyMealOwner(int userId, int mealId);
 
