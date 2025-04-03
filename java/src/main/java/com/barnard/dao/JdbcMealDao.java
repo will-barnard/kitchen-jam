@@ -183,7 +183,7 @@ public class JdbcMealDao implements MealDao {
         for (Friend friend : friendsList) {
             sql += friend.getFriendId() + " OR meal.user_id = ";
         }
-        sql = sql.substring(0, sql.length() - 20);
+        sql = sql.substring(0, sql.length() - 19);
         sql += " AND meal.is_public = true " +
                 "ORDER BY date_cooked DESC " +
                 "LIMIT 10;";
@@ -212,7 +212,7 @@ public class JdbcMealDao implements MealDao {
         for (Friend friend : friendsList) {
             sql += friend.getFriendId() + " OR meal.user_id = ";
         }
-        sql = sql.substring(0, sql.length() - 18);
+        sql = sql.substring(0, sql.length() - 19);
         sql += " AND meal.is_public = true " +
                 "ORDER BY date_cooked DESC " +
                 "LIMIT 10 " +

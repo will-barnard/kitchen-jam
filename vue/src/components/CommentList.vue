@@ -149,7 +149,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .spacer {
     flex-grow: 1;
 }
