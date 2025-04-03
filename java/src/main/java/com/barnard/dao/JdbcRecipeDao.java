@@ -207,9 +207,9 @@ public class JdbcRecipeDao implements RecipeDao {
                 "WHERE recipe.is_public = true " +
                 "AND recipe.user_id = ";
         for (Friend friend : friendsList) {
-            sql += friend.getFriendId() + " OR meal.user_id = ";
+            sql += friend.getFriendId() + " OR recipe.user_id = ";
         }
-        sql = sql.substring(0, sql.length() - 18);
+        sql = sql.substring(0, sql.length() - 21);
         sql +=  " AND recipe.is_public = true " +
                 "ORDER BY last_created DESC " +
                 "LIMIT 10;";
@@ -239,9 +239,9 @@ public class JdbcRecipeDao implements RecipeDao {
                 "WHERE recipe.is_public = true " +
                 "AND recipe.user_id = ";
         for (Friend friend : friendsList) {
-            sql += friend.getFriendId() + " OR meal.user_id = ";
+            sql += friend.getFriendId() + " OR recipe.user_id = ";
         }
-        sql = sql.substring(0, sql.length() - 18);
+        sql = sql.substring(0, sql.length() - 21);
         sql +=  " AND recipe.is_public = true " +
                 "ORDER BY last_created DESC " +
                 "LIMIT 10 " +
