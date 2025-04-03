@@ -74,6 +74,7 @@
 import IngredientList from './IngredientList.vue';
 import StepList from './StepList.vue';
 import ImageService from '../services/ImageService';
+import CommentService from '../services/CommentService.js';
 
 export default {
   components: { StepList, IngredientList },
@@ -81,8 +82,33 @@ export default {
   data() {
     return {
       localImg: "/img/placeholder.jpeg", // Initialize with placeholder
-      activeTab: 'details' // Track the active tab
+      activeTab: 'details', // Track the active tab
+      comments: []
     };
+  },
+  created() {
+    CommentService.getCommentsByRecipe(this.recipe.recipeId).then(
+        (response) => {
+            let comments = response.data;
+            for (let i = comments.length - 1; i >= 0; i--) {
+                if (comments[i].createdAt != comments[i].updatedAt) {
+                    comments[i].updated = true;
+                }
+                const comment = comments[i];
+                if (comment.parentId) {
+                    const parent = comments.find(c => c.commentId === comment.parentId);
+                    if (parent) {
+                        if (!parent.subComments) {
+                            parent.subComments = [];
+                        }
+                        parent.subComments.push(comment);
+                        comments.splice(i, 1);
+                    }
+                }
+            }
+            this.comments = comments;
+        }
+    );
   },
   methods: {
     async loadImage() {

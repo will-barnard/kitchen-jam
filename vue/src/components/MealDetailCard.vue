@@ -88,8 +88,14 @@
 
             </div>
             <div class="details" v-show="activeTab === 'comments'">
-                <h3>Comments</h3>
-                <p>Comments go here</p>
+                <p v-if="comments.length === 0" class="no-comments">No comments yet</p>
+                <CommentList 
+                    :comments="comments" 
+                    @submit-comment="addComment" 
+                    @delete-comment="deleteComment" 
+                    @edit-comment="editComment" 
+                    :mealId="meal.mealId" 
+                />
             </div>            
         </div>
     </div>
@@ -98,16 +104,43 @@
 import UtilityService from '../services/UtilityService.js';
 import IngredientList from './IngredientList.vue';
 import ImageService from '../services/ImageService';
+import CommentService from '../services/CommentService.js';
+import CommentList from './CommentList.vue';
 
 export default {
-  components: { IngredientList },
+  components: { IngredientList, CommentList },
   props: ['meal', 'editable', 'img', 'showUser'],
   data() {
     return {
         localImg: "/img/placeholder.jpeg", 
         showGoToRecipe: false,
-        activeTab: 'details'
+        activeTab: 'details',
+        comments: []
     };
+  },
+  created() {
+    CommentService.getCommentsByMeal(this.meal.mealId).then(
+        (response) => {
+            let comments = response.data;
+            for (let i = comments.length - 1; i >= 0; i--) {
+                if (comments[i].createdAt != comments[i].updatedAt) {
+                    comments[i].updated = true;
+                }
+                const comment = comments[i];
+                if (comment.parentId) {
+                    const parent = comments.find(c => c.commentId === comment.parentId);
+                    if (parent) {
+                        if (!parent.subComments) {
+                            parent.subComments = [];
+                        }
+                        parent.subComments.push(comment);
+                        comments.splice(i, 1);
+                    }
+                }
+            }
+            this.comments = comments;
+        }
+    );
   },
   methods: {
     async loadImage() {
@@ -140,6 +173,61 @@ export default {
     truncateName(name) {
         const maxLength = 10; // Adjust the max length as needed
         return name.length > maxLength ? name.slice(0, maxLength) + '...' : name;
+    },
+    addComment(newComment) {
+        CommentService.createComment(newComment).then(
+            (response) => {
+                const comment = response.data;
+                if (comment.parentId) {
+                    const parent = this.comments.find(c => c.commentId === comment.parentId);
+                    if (parent) {
+                        if (!parent.subComments) {
+                            parent.subComments = [];
+                        }
+                        parent.subComments.push(comment);
+                    }
+                } else {
+                    this.comments.push(comment);
+                }
+            }
+        );
+    },
+    deleteComment(commentId) {
+        CommentService.deleteComment(commentId).then(() => {
+            const removeComment = (comments, id) => {
+                const index = comments.findIndex(c => c.commentId === id);
+                if (index !== -1) {
+                    comments.splice(index, 1);
+                } else {
+                    comments.forEach(c => {
+                        if (c.subComments) {
+                            removeComment(c.subComments, id);
+                        }
+                    });
+                }
+            };
+            removeComment(this.comments, commentId); // Ensure the comment is removed from the local state
+        });
+    },
+    editComment(updatedComment) {
+        CommentService.updateComment(updatedComment).then(
+            (response) => {
+                const updated = response.data; // Use the updated comment from the response
+                const updateComment = (comments, updated) => {
+                    const index = comments.findIndex(c => c.commentId === updated.commentId);
+                    if (index !== -1) {
+                        comments[index] = { ...comments[index], ...updated };
+                    } else {
+                        comments.forEach(c => {
+                            if (c.subComments) {
+                                updateComment(c.subComments, updated);
+                            }
+                        });
+                    }
+                };
+                updateComment(this.comments, updated); // Update the comment in the local state
+            }
+        );
     }
   },
   mounted() {
@@ -568,6 +656,9 @@ export default {
         text-align: center;
         margin-top: 5px;
         font-weight: bold;
+    }
+    .no-comments {
+        margin-bottom: 10px;
     }
 
 </style>
