@@ -64,8 +64,15 @@
             </div>
         </div>       
         <div class="details" v-show="activeTab === 'comments'">
-            <h3>Comments</h3>
-            <p>Comments go here</p>
+            <p v-if="comments.length === 0" class="no-comments">No comments yet</p>
+            <CommentList 
+                :comments="comments" 
+                @submit-comment="addComment" 
+                @delete-comment="deleteComment" 
+                @edit-comment="editComment" 
+                :recipeId="recipe.recipeId"
+                :userId="recipe.userId" 
+            />
         </div>     
     </div>
 </template>
@@ -75,67 +82,123 @@ import IngredientList from './IngredientList.vue';
 import StepList from './StepList.vue';
 import ImageService from '../services/ImageService';
 import CommentService from '../services/CommentService.js';
+import CommentList from './CommentList.vue';
 
 export default {
-  components: { StepList, IngredientList },
-  props: ['recipe', 'editable', 'img', 'showUser'],
-  data() {
-    return {
-      localImg: "/img/placeholder.jpeg", // Initialize with placeholder
-      activeTab: 'details', // Track the active tab
-      comments: []
-    };
-  },
-  created() {
-    CommentService.getCommentsByRecipe(this.recipe.recipeId).then(
-        (response) => {
-            let comments = response.data;
-            for (let i = comments.length - 1; i >= 0; i--) {
-                if (comments[i].createdAt != comments[i].updatedAt) {
-                    comments[i].updated = true;
-                }
-                const comment = comments[i];
-                if (comment.parentId) {
-                    const parent = comments.find(c => c.commentId === comment.parentId);
-                    if (parent) {
-                        if (!parent.subComments) {
-                            parent.subComments = [];
+    components: { StepList, IngredientList, CommentList },
+    props: ['recipe', 'editable', 'img', 'showUser'],
+    data() {
+        return {
+            localImg: "/img/placeholder.jpeg", // Initialize with placeholder
+            activeTab: 'details', // Track the active tab
+            comments: []
+        };
+    },
+    created() {
+        CommentService.getCommentsByRecipe(this.recipe.recipeId).then(
+            (response) => {
+                let comments = response.data;
+                for (let i = comments.length - 1; i >= 0; i--) {
+                    if (comments[i].createdAt != comments[i].updatedAt) {
+                        comments[i].updated = true;
+                    }
+                    const comment = comments[i];
+                    if (comment.parentId) {
+                        const parent = comments.find(c => c.commentId === comment.parentId);
+                        if (parent) {
+                            if (!parent.subComments) {
+                                parent.subComments = [];
+                            }
+                            parent.subComments.push(comment);
+                            comments.splice(i, 1);
                         }
-                        parent.subComments.push(comment);
-                        comments.splice(i, 1);
                     }
                 }
+                this.comments = comments;
             }
-            this.comments = comments;
-        }
-    );
-  },
-  methods: {
-    async loadImage() {
-      if (this.recipe.imageId) { // Remove the check for !this.localImg
-        const response = await ImageService.getImage(this.recipe.imageId);
-        const base64 = ImageService.parseImg(response);
-        this.localImg = `data:image/png;base64,${base64}`; // Update with the loaded image
-        this.$store.commit('SAVE_IMAGE', { id: this.recipe.imageId, base64, type: 'recipe' });
-      }
+        );
     },
-    observeVisibility() {
-      const observer = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting) {
-          this.loadImage();
-          observer.disconnect();
+    methods: {
+        async loadImage() {
+            if (this.recipe.imageId) { // Remove the check for !this.localImg
+                const response = await ImageService.getImage(this.recipe.imageId);
+                const base64 = ImageService.parseImg(response);
+                this.localImg = `data:image/png;base64,${base64}`; // Update with the loaded image
+                this.$store.commit('SAVE_IMAGE', { id: this.recipe.imageId, base64, type: 'recipe' });
+            }
+        },
+        observeVisibility() {
+            const observer = new IntersectionObserver((entries) => {
+                if (entries[0].isIntersecting) {
+                    this.loadImage();
+                    observer.disconnect();
+                }
+            });
+            observer.observe(this.$refs.observerTarget);
+        },
+        truncateName(name) {
+            const maxLength = 20; // Adjust the max length as needed
+            return name.length > maxLength ? name.slice(0, maxLength) + '...' : name;
+        },
+        addComment(newComment) {
+            CommentService.createComment(newComment).then(
+                (response) => {
+                    const comment = response.data;
+                    if (comment.parentId) {
+                        const parent = this.comments.find(c => c.commentId === comment.parentId);
+                        if (parent) {
+                            if (!parent.subComments) {
+                                parent.subComments = [];
+                            }
+                            parent.subComments.push(comment);
+                        }
+                    } else {
+                        this.comments.push(comment);
+                    }
+                }
+            );
+        },
+        deleteComment(commentId) {
+            CommentService.deleteComment(commentId).then(() => {
+                const removeComment = (comments, id) => {
+                    const index = comments.findIndex(c => c.commentId === id);
+                    if (index !== -1) {
+                        comments.splice(index, 1);
+                    } else {
+                        comments.forEach(c => {
+                            if (c.subComments) {
+                                removeComment(c.subComments, id);
+                            }
+                        });
+                    }
+                };
+                removeComment(this.comments, commentId); // Ensure the comment is removed from the local state
+            });
+        },
+        editComment(updatedComment) {
+            CommentService.updateComment(updatedComment).then(
+                (response) => {
+                    const updated = response.data; // Use the updated comment from the response
+                    const updateComment = (comments, updated) => {
+                        const index = comments.findIndex(c => c.commentId === updated.commentId);
+                        if (index !== -1) {
+                            comments[index] = { ...comments[index], ...updated };
+                        } else {
+                            comments.forEach(c => {
+                                if (c.subComments) {
+                                    updateComment(c.subComments, updated);
+                                }
+                            });
+                        }
+                    };
+                    updateComment(this.comments, updated); // Update the comment in the local state
+                }
+            );
         }
-      });
-      observer.observe(this.$refs.observerTarget);
     },
-    truncateName(name) {
-        const maxLength = 20; // Adjust the max length as needed
-        return name.length > maxLength ? name.slice(0, maxLength) + '...' : name;
+    mounted() {
+        this.observeVisibility();
     }
-  },
-  mounted() {
-    this.observeVisibility();
-  }
 };
 </script>
 
@@ -314,5 +377,8 @@ export default {
 
     .active-tab {
         background-color: var(--light-2);
+    }
+    .no-comments {
+        margin-bottom: 10px;
     }
 </style>

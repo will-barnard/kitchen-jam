@@ -10,18 +10,26 @@
                 <p>{{ formatDateTime(comment.createdAt) }}</p>
                 <div class="comment-actions">
                     <button 
-                        v-if="$store.state.userProfile.userId === comment.userId && !editingComments[comment.commentId]" 
+                        v-if="$store.state.userProfile.userId === comment.userId && !editingComments[comment.commentId] && !deleteConfirmations[comment.commentId]" 
                         @click="startEditing(comment.commentId)" 
                         class="edit-button"
                     >
                         <i class="far fa-edit"></i>
                     </button>
                     <button 
-                        v-if="$store.state.userProfile.userId === comment.userId" 
-                        @click="emitDeleteComment(comment.commentId)" 
+                        v-if="$store.state.userProfile.userId === comment.userId || $store.state.userProfile.userId === userId" 
+                        @click="toggleDeleteConfirmation(comment.commentId)" 
                         class="trash-button"
                     >
-                        <i class="far fa-trash-alt"></i>
+                        <span v-if="deleteConfirmations[comment.commentId]" 
+                            @click="emitDeleteComment(comment.commentId)" 
+                            class="confirm-delete-button"
+                            >Delete?
+                        </span>
+                        <i v-else class="far fa-trash-alt"></i>
+                    </button>
+                    <button v-if="deleteConfirmations[comment.commentId]" class="edit-button" @click="toggleDeleteConfirmation(comment.commentId)">
+                        <i class="fas fa-times"></i>
                     </button>
                 </div>
             </div>
@@ -37,7 +45,8 @@
                     :subComments="true" 
                     :parentId="comment.commentId" 
                     @delete-comment="$emit('delete-comment', $event)" 
-                    @edit-comment="$emit('edit-comment', $event)" 
+                    @edit-comment="$emit('edit-comment', $event)"
+                    :userId="userId" 
                 />
             </div>
             <div v-if="$store.state.token != '' && !subComments" class="new-comment">
@@ -69,7 +78,7 @@
 import UtilityService from '../services/UtilityService';
 
 export default {
-    props: ['comments', 'subComments', 'mealId', 'recipeId', 'parentId'],
+    props: ['comments', 'subComments', 'mealId', 'recipeId', 'parentId', 'userId'],
     data() {
         return {
             newComment: {
@@ -84,7 +93,8 @@ export default {
             replyForms: {}, // Initialize as an empty object
             replyContents: {}, // Initialize as an empty object
             editingComments: {}, // Track which comments are being edited
-            editingContents: {} // Track the content of comments being edited
+            editingContents: {}, // Track the content of comments being edited
+            deleteConfirmations: {} // Track delete confirmation states
         }
     },
     methods: {
@@ -119,8 +129,20 @@ export default {
         formatDateTime(date) {
             return UtilityService.formatDateTime(date);
         },
+        toggleDeleteConfirmation(commentId) {
+            this.deleteConfirmations = { 
+                ...this.deleteConfirmations, 
+                [commentId]: !this.deleteConfirmations[commentId] 
+            };
+        },
         emitDeleteComment(commentId) {
-            this.$emit('delete-comment', commentId); // Ensure the event is emitted correctly
+            if (this.deleteConfirmations[commentId]) {
+                this.$emit('delete-comment', commentId);
+                this.deleteConfirmations = { 
+                    ...this.deleteConfirmations, 
+                    [commentId]: false 
+                }; // Reset confirmation state
+            }
         },
         emitEditComment(comment) {
             this.$emit('edit-comment', comment); // Emit the edit-comment event with the comment data
@@ -295,6 +317,18 @@ p {
 }
 
 .cancel-edit-button:hover {
+    background-color: #c82333;
+}
+.confirm-delete-button {
+    border: none;
+    padding: 3px 6px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    margin-left: 5px;
+}
+
+.confirm-delete-button:hover {
     background-color: #c82333;
 }
 </style>

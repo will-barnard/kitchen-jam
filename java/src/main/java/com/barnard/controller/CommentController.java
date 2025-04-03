@@ -76,30 +76,34 @@ public class CommentController {
         Comment newComment = null;
         int userId = userDao.getUserByUsername(principal.getName()).getId();
         try {
-            if (comment.getMealId() != 0 && comment.getMealId() != null) {
-                if (!mealDao.isMealPublic(comment.getMealId())) {
-                    return ResponseEntity.status(403).build();
-                } else {
-                    Meal meal = mealDao.getMeal(comment.getMealId());
-                    if (meal.getUserId() == userId) {
-                        newComment = commentDao.createComment(comment);
-                    } else if (friendDao.isFriend(userId, meal.getUserId())) {
-                        newComment = commentDao.createComment(comment);
-                    } else {
+            if (comment.getMealId() != null) {
+                if (comment.getMealId() != 0) {
+                    if (!mealDao.isMealPublic(comment.getMealId())) {
                         return ResponseEntity.status(403).build();
+                    } else {
+                        Meal meal = mealDao.getMeal(comment.getMealId());
+                        if (meal.getUserId() == userId) {
+                            newComment = commentDao.createComment(comment);
+                        } else if (friendDao.isFriend(userId, meal.getUserId())) {
+                            newComment = commentDao.createComment(comment);
+                        } else {
+                            return ResponseEntity.status(403).build();
+                        }
                     }
                 }
-            } else if (comment.getRecipeId() != 0 && comment.getRecipeId() != null) {
-                if (!recipeDao.isRecipePublic(comment.getRecipeId())) {
-                    return ResponseEntity.status(403).build();
-                } else {
-                    Recipe recipe = recipeDao.getRecipe(comment.getRecipeId());
-                    if (recipe.getUserId() == userId) {
-                        newComment = commentDao.createComment(comment);
-                    } else if (friendDao.isFriend(userId, recipe.getUserId())) {
-                        newComment = commentDao.createComment(comment);
-                    } else {
+            } else if (comment.getRecipeId() != null) {
+                if (comment.getRecipeId() != 0) {
+                    if (!recipeDao.isRecipePublic(comment.getRecipeId())) {
                         return ResponseEntity.status(403).build();
+                    } else {
+                        Recipe recipe = recipeDao.getRecipe(comment.getRecipeId());
+                        if (recipe.getUserId() == userId) {
+                            newComment = commentDao.createComment(comment);
+                        } else if (friendDao.isFriend(userId, recipe.getUserId())) {
+                            newComment = commentDao.createComment(comment);
+                        } else {
+                            return ResponseEntity.status(403).build();
+                        }
                     }
                 }
             } else {

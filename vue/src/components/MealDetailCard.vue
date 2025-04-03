@@ -94,7 +94,8 @@
                     @submit-comment="addComment" 
                     @delete-comment="deleteComment" 
                     @edit-comment="editComment" 
-                    :mealId="meal.mealId" 
+                    :mealId="meal.mealId"
+                    :userId="meal.userId" 
                 />
             </div>            
         </div>
