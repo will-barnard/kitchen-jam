@@ -20,6 +20,9 @@
             <h3 class="child" @click="$router.push({ name: 'notifications' })">
                 <i class="fas fa-bell"></i>
                 <span>Notifications</span>
+                <span v-if="$store.state.loadedNotifications && $store.state.userNotifications.length > 0" class="notification-badge">
+                    {{ $store.state.userNotifications.length }}
+                </span>
             </h3>
             <h3 class="child" @click="$router.push({ name: 'profile' , params: {userId: $store.state.user.id}})">
                 <i class="fas fa-user"></i>
@@ -72,6 +75,7 @@ export default {
     transition: transform 0.3s, background-color 0.3s, color 0.3s;
     cursor: pointer;
     color: var(--dark-1);
+    position: relative; /* Add this to make the badge position relative to the child */
 }
 
 .child i {
@@ -92,5 +96,17 @@ export default {
 .child:active {
     background-color: var(--dark-1);
     color: var(--light-1);
+}
+
+.notification-badge {
+    position: absolute;
+    top: 15px; /* Adjusted to position above the bell */
+    right: 15px;
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    padding: 2px 6px;
+    font-size: 0.8em;
+    font-weight: bold;
 }
 </style>
