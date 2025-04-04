@@ -4,6 +4,7 @@ import com.barnard.dao.*;
 import com.barnard.exception.DaoException;
 import com.barnard.model.Comment;
 import com.barnard.model.Meal;
+import com.barnard.model.Notification;
 import com.barnard.model.Recipe;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +30,8 @@ public class CommentController {
     private UserDao userDao;
     @Autowired
     private FriendshipDao friendDao;
+    @Autowired
+    private NotificationDao notificationDao;
 
     @GetMapping("/{commentId}")
     public ResponseEntity<Comment> getComment(@PathVariable int commentId) {
@@ -74,6 +77,8 @@ public class CommentController {
     @PostMapping
     public ResponseEntity<Comment> createComment(@RequestBody Comment comment, Principal principal) {
         Comment newComment = null;
+        boolean sendNotification = false;
+        Notification notification = new Notification();
         int userId = userDao.getUserByUsername(principal.getName()).getId();
         try {
             if (comment.getMealId() != null) {
@@ -86,6 +91,14 @@ public class CommentController {
                             newComment = commentDao.createComment(comment);
                         } else if (friendDao.isFriend(userId, meal.getUserId())) {
                             newComment = commentDao.createComment(comment);
+                            sendNotification = true;
+                            notification.setUserId(meal.getUserId());
+                            notification.setActorId(userId);
+                            notification.setType("comment");
+                            notification.setTargetId(comment.getMealId());
+                            notification.setTargetType("meal");
+                            notification.setTargetUrl(meal.getPublicUrl());
+                            notification.setMessage("New comment on your meal: " + meal.getMealName());
                         } else {
                             return ResponseEntity.status(403).build();
                         }
@@ -101,6 +114,14 @@ public class CommentController {
                             newComment = commentDao.createComment(comment);
                         } else if (friendDao.isFriend(userId, recipe.getUserId())) {
                             newComment = commentDao.createComment(comment);
+                            sendNotification = true;
+                            notification.setUserId(recipe.getUserId());
+                            notification.setActorId(userId);
+                            notification.setType("comment");
+                            notification.setTargetId(comment.getRecipeId());
+                            notification.setTargetType("recipe");
+                            notification.setTargetUrl(recipe.getPublicUrl());
+                            notification.setMessage("New comment on your recipe: " + recipe.getRecipeName());
                         } else {
                             return ResponseEntity.status(403).build();
                         }
@@ -108,6 +129,9 @@ public class CommentController {
                 }
             } else {
                 return ResponseEntity.badRequest().build();
+            }
+            if (sendNotification) {
+                notificationDao.createNotification(notification);
             }
             return ResponseEntity.ok(newComment);
         } catch (DaoException e) {
