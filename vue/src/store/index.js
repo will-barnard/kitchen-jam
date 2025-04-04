@@ -8,6 +8,7 @@ import ProfileService from '../services/ProfileService';
 import TagService from '../services/TagService';
 import CategoryService from '../services/CategoryService';
 import FriendshipService from '../services/FriendshipService';
+import NotificationService from '../services/NotificationService';
 
 
 export function createStore(currentToken, currentUser) {
@@ -33,7 +34,11 @@ export function createStore(currentToken, currentUser) {
       userPending: [],
       loadedPending: false,
       userRequests: [],
-      loadedRequests: false
+      loadedRequests: false,
+      userNotifications: [],
+      loadedNotifications: false,
+      userOldNotifications: [],
+      loadedOldNotifications: false
     },
     mutations: {
       SET_AUTH_TOKEN(state, token) {
@@ -59,6 +64,7 @@ export function createStore(currentToken, currentUser) {
         this.commit('LOAD_USER_TAGS');
         this.commit('LOAD_USER_CATEGORIES');
         this.commit('LOAD_USER_FRIENDS');
+        this.commit('LOAD_USER_NOTIFICATIONS');
       },
       GET_USER_PROFILE(state) {
         ProfileService.getPrincipalProfile().then(
@@ -373,6 +379,60 @@ export function createStore(currentToken, currentUser) {
                 return friend.friendId != payload;
               }
             )
+          }
+        )
+      },
+      LOAD_USER_NOTIFICATIONS(state) {
+        NotificationService.getNotifications().then(
+          (response) => {
+            state.userNotifications = response.data;
+
+            const waitForPendingToLoad = () => {
+              if (state.loadedRequests) {
+                if (state.userRequests.length > 0) {
+                  let notification = {
+                    notificationId: -1,
+                    type: 'friends',
+                    message: state.userRequests.length == 1 ? 'You have a new friend request.' : 'You have ' + state.userRequests.length + ' new friend requests.',
+                    createdAt: null,
+                    read: false,
+                  };
+                  state.userNotifications.unshift(notification);
+                }
+                state.loadedNotifications = true;
+              } else {
+                setTimeout(waitForPendingToLoad, 100); // Check again after 100ms
+              }
+            };
+
+            waitForPendingToLoad();
+          }
+        );
+      },
+      MARK_NOTIFICATION_AS_READ(state, notificationId) {
+        NotificationService.markNotificationAsRead(notificationId).then(
+          () => {
+            const notification = state.userNotifications.find(notification => notification.notificationId === notificationId);
+            if (notification) {
+              notification.read = true;
+              state.userOldNotifications.push(notification);
+              state.userNotifications = state.userNotifications.filter(n => n.notificationId !== notificationId);
+            }
+         }
+        )
+      },
+      LOAD_OLD_NOTIFICATIONS(state) {
+        NotificationService.getOldNotifications().then(
+          (response) => {
+            state.userOldNotifications = response.data;
+            state.loadedOldNotifications = true;
+          }
+        )
+      },
+      DELETE_NOTIFICATION(state, notificationId) {
+        NotificationService.deleteNotification(notificationId).then(
+          () => {
+            state.userOldNotifications = state.userOldNotifications.filter(notification => notification.notificationId !== notificationId);
           }
         )
       },
