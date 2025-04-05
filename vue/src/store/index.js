@@ -27,7 +27,6 @@ export function createStore(currentToken, currentUser) {
       userCategories: [],
       loadedCategories: false,
       subMenu: {},
-      publicMealGallery: [],
       tagCategories: [],
       userFriends: [],
       loadedFriends: false,

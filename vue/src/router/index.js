@@ -12,8 +12,6 @@ import MealDetailView from '../views/MealDetailView.vue';
 import CreateRecipeView from '../views/CreateRecipeView.vue';
 import RecipeDetailView from '../views/RecipeDetailView.vue'
 import AboutView from '../views/AboutView.vue';
-import WillView from '../views/WillView.vue';
-import GalleryMealDetailView from '../views/GalleryMealDetailView.vue';
 import WalkthroughView from '../views/WalkthroughView.vue';
 import PublicMealView from '../views/PublicMealView.vue';
 import PublicRecipeView from '../views/PublicRecipeView.vue';
@@ -95,14 +93,6 @@ const routes = [
     }
   },
   {
-    path: "/meal/public/:mealId",
-    name: "public-meal-detail",
-    component: GalleryMealDetailView,
-    meta: {
-      requiresAuth: false
-    }
-  },
-  {
     path: "/cookbook",
     name: "cookbook",
     component: RecipeBookView,
@@ -135,11 +125,6 @@ const routes = [
     meta: {
       title: 'About - Kitchen Jam'
     }
-  },
-  {
-    path: '/will',
-    name: 'will',
-    component: WillView
   },
   {
     path: '/walkthrough',

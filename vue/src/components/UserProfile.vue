@@ -128,20 +128,17 @@
                 </div>
                 <div class="controls" v-if="allowEditing">
                     <div class="link-button button" v-show="profile.public" @click="unsecuredCopyToClipboard('http://kitchen-jam.com/profile/' + profile.userId)">
-                        <img src="/img/link-symbol.svg" />
+                        <i class="fas fa-link"></i>
                     </div>
                     <div class="spacer"><p v-show="copiedURL">Link copied!</p></div>
                     <div class="edit-button button" v-if="!editing" v-on:click="editing=true">
-                        <img src="/img/edit.png" />
+                        <i class="fas fa-edit"></i>
                     </div>
-                    <!-- <div class="trash button" v-if="editing" v-on:click="">
-                        <img src="/img/trash.png" />
-                    </div> -->
                     <div class="undo button" v-if="editing" v-on:click="undoEdit()">
-                        <img src="/img/undo.png" />
+                        <i class="fas fa-undo"></i>
                     </div>
                     <div class="check button" v-if="editing" v-on:click="updateProfile()">
-                        <img src="/img/check.png" />
+                        <i class="fas fa-check"></i>
                     </div>
                 </div>
             </div>
@@ -420,12 +417,17 @@ p {
     margin-top: 10px;
 }
 
-.controls img {
-    height: 5vh;
+.controls i {
+    font-size: 2em; /* Increase the size of the icons */
+    margin: 0 10px; /* Add some margin for spacing */
 }
 
 .controls:hover {
     cursor: pointer;
+}
+
+.controls img {
+    height: 5vh;
 }
 
 .button {
