@@ -25,30 +25,27 @@ export default {
     created() {
         if (this.$store.state.loadedRecipes) {
             this.recipe = this.$store.state.userRecipes.find(
-                (recipeObj) => {
-                    return recipeObj.recipeId == this.$route.params.recipeId;
-                }
+                (recipeObj) => recipeObj.recipeId == this.$route.params.recipeId
             );
+            document.title = `${this.recipe.recipeName} - Kitchen Jam`; // Set dynamic title
             this.loading = false;
         } else {
             this.loadingTick();
         }
-        
     },
     methods: {
         loadingTick() {
             setTimeout(() => {
                 if (this.$store.state.loadedRecipes) {
                     this.recipe = this.$store.state.userRecipes.find(
-                        (recipeObj) => {
-                            return recipeObj.recipeId == this.$route.params.recipeId;
-                        }
+                        (recipeObj) => recipeObj.recipeId == this.$route.params.recipeId
                     );
+                    document.title = `${this.recipe.recipeName} - Kitchen Jam`; // Set dynamic title
                     this.loading = false;
                 } else {
                     this.loadingTick();
                 }
-            }, 500)
+            }, 500);
         }
     }
 }

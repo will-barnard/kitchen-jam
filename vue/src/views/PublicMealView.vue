@@ -31,6 +31,7 @@ export default {
         MealService.getPublicMeal(this.$route.params.uuid).then(
             (response) => {
                 this.meal = response.data;
+                document.title = `${this.meal.mealName} - Kitchen Jam`; // Set dynamic title
                 if (!this.meal.ingredientList) {
                     this.meal.ingredientList = [];
                 }

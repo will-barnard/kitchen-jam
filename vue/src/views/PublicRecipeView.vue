@@ -29,6 +29,7 @@ export default {
         RecipeService.getPublicRecipe(this.$route.params.uuid).then(
             (response) => {
                 this.recipe = response.data;
+                document.title = `${this.recipe.recipeName} - Kitchen Jam`; // Set dynamic title
                 if (!this.recipe.ingredientList) {
                     this.recipe.ingredientList = [];
                 }

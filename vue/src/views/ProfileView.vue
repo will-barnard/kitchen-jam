@@ -31,6 +31,7 @@ export default {
     },
     created() {
         if (this.$route.params.userId == this.$store.state.user.id) {
+            document.title = "Your Profile - Kitchen Jam"; // Set title for own profile
             if (!this.$store.state.loadedProfile) {
                 this.loadingTick();
             } else {
@@ -41,6 +42,7 @@ export default {
         } else {
             ProfileService.getProfile(this.$route.params.userId).then(
                 (response) => {
+                    document.title = `${response.data.displayName}'s Profile - Kitchen Jam`; // Set title for other profiles
                     if (response.data.imageId != null && response.data.imageId > 0) {
                         ImageService.getImage(response.data.imageId).then(
                             (r) => {

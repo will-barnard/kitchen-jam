@@ -2,7 +2,7 @@
     <div>
         <TopBanner />
         <Transition name="fade">
-            <DashboardComp v-if="show"/>
+            <DashboardComp v-if="show" :clickable="true"/>
         </Transition>
     </div>
 </template>

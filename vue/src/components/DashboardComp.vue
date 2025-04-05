@@ -1,42 +1,42 @@
 <template>
     <div>
         <div class="main">
-            <h3 class="child" @click="$router.push({ name: 'meal-log' })">
+            <h3 class="child" @click="clickable ? $router.push({ name: 'meal-log' }) : ''">
                 <i class="fas fa-utensils"></i>
                 <span>Meal Log</span>
             </h3>
-            <h3 class="child" @click="$router.push({ name: 'cookbook' })">
+            <h3 class="child" @click="$clickable ? router.push({ name: 'cookbook' }) : ''">
                 <i class="fas fa-book"></i>
                 <span>Cookbook</span>
             </h3>
-            <h3 class="child" @click="$router.push({ name: 'jam' })">
+            <h3 class="child" @click="clickable ? $router.push({ name: 'jam' }) : ''">
                 <i class="fas fa-guitar"></i>
                 <span>Jam Page</span>
             </h3>
-            <h3 class="child" @click="$router.push({ name: 'friends' })">
+            <h3 class="child" @click="clickable ? $router.push({ name: 'friends' }) : ''">
                 <i class="fas fa-users"></i>
                 <span>Friends</span>
             </h3>
-            <h3 class="child" @click="$router.push({ name: 'notifications' })">
+            <h3 class="child" @click="clickable ? $router.push({ name: 'notifications' }) : ''">
                 <i class="fas fa-bell"></i>
                 <span>Notifications</span>
                 <span v-if="$store.state.loadedNotifications && $store.state.userNotifications.length > 0" class="notification-badge">
                     {{ $store.state.userNotifications.length }}
                 </span>
             </h3>
-            <h3 class="child" @click="$router.push({ name: 'profile' , params: {userId: $store.state.user.id}})">
+            <h3 class="child" @click="clickable ? $router.push({ name: 'profile' , params: {userId: $store.state.user.id}}) : ''">
                 <i class="fas fa-user"></i>
                 <span>Profile</span>
             </h3>
-            <h3 class="child" @click="$router.push({ name: 'settings' })">
+            <h3 class="child" @click="clickable ? $router.push({ name: 'settings' }) : ''">
                 <i class="fas fa-cog"></i>
                 <span>Settings</span>
             </h3>
-            <h3 class="child" @click="$router.push({ name: 'about' })">
+            <h3 class="child" @click="clickable ? $router.push({ name: 'about' }) : ''">
                 <i class="fas fa-info-circle"></i>
                 <span>About Kitchen Jam</span>
             </h3>
-            <h3 class="child" @click="$router.push({ name: 'updates' })">
+            <h3 class="child" @click="clickable ? $router.push({ name: 'updates' }) : ''">
                 <i class="fas fa-bell"></i>
                 <span>Site Updates</span>
             </h3>
@@ -45,7 +45,7 @@
 </template>
 <script>
 export default {
-    props: ['admin'],
+    props: ['admin', 'clickable'],
 }
 </script>
 <style scoped>

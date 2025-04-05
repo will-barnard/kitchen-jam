@@ -25,10 +25,9 @@ export default {
     created() {
         if (this.$store.state.loadedMeals) {
             this.meal = this.$store.state.userMeals.find(
-                (mealObj) => {
-                    return mealObj.mealId == this.$route.params.mealId;
-                }
-            )
+                (mealObj) => mealObj.mealId == this.$route.params.mealId
+            );
+            document.title = `${this.meal.mealName} - Kitchen Jam`; // Set dynamic title
             this.loading = false;
         } else {
             this.loadingTick();
@@ -36,18 +35,17 @@ export default {
     },
     methods: {
         loadingTick() {
-            setTimeout( () => {
+            setTimeout(() => {
                 if (this.$store.state.loadedMeals) {
                     this.meal = this.$store.state.userMeals.find(
-                        (mealObj) => {
-                            return mealObj.mealId == this.$route.params.mealId;
-                        }
+                        (mealObj) => mealObj.mealId == this.$route.params.mealId
                     );
+                    document.title = `${this.meal.mealName} - Kitchen Jam`; // Set dynamic title
                     this.loading = false;
                 } else {
                     this.loadingTick();
                 }
-            }, 500)
+            }, 500);
         }
     }
 }

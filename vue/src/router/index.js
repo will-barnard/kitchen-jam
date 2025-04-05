@@ -37,7 +37,8 @@ const routes = [
     name: 'home',
     component: HomeView,
     meta: {
-      requiresAuth: false
+      requiresAuth: false,
+      title: 'Home - Kitchen Jam'
     }
   },
   {
@@ -45,7 +46,8 @@ const routes = [
     name: "login",
     component: LoginView,
     meta: {
-      requiresAuth: false
+      requiresAuth: false,
+      title: 'Login - Kitchen Jam'
     }
   },
   {
@@ -53,7 +55,8 @@ const routes = [
     name: "logout",
     component: LogoutView,
     meta: {
-      requiresAuth: true
+      requiresAuth: true,
+      title: 'Logout - Kitchen Jam'
     }
   },
   {
@@ -61,7 +64,8 @@ const routes = [
     name: "register",
     component: RegisterView,
     meta: {
-      requiresAuth: false
+      requiresAuth: false,
+      title: 'Register - Kitchen Jam'
     }
   },
   {
@@ -69,7 +73,8 @@ const routes = [
     name: "meal-log",
     component: MealView,
     meta: {
-      requiresAuth: true
+      requiresAuth: true,
+      title: 'Meal Log - Kitchen Jam'
     }
   },
   {
@@ -77,7 +82,8 @@ const routes = [
     name: "new-meal",
     component: CreateMealView,
     meta: {
-      requiresAuth: true
+      requiresAuth: true,
+      title: 'Create Meal - Kitchen Jam'
     }
   },
   {
@@ -101,7 +107,8 @@ const routes = [
     name: "cookbook",
     component: RecipeBookView,
     meta: {
-      requiresAuth: true
+      requiresAuth: true,
+      title: 'Cookbook - Kitchen Jam'
     }
   },
   {
@@ -109,7 +116,8 @@ const routes = [
     name: "new-recipe",
     component: CreateRecipeView,
     meta: {
-      requiresAuth: true
+      requiresAuth: true,
+      title: 'Create Recipe - Kitchen Jam'
     }
   },
   {
@@ -124,6 +132,9 @@ const routes = [
     path: "/about",
     name: "about",
     component: AboutView,
+    meta: {
+      title: 'About - Kitchen Jam'
+    }
   },
   {
     path: '/will',
@@ -133,7 +144,10 @@ const routes = [
   {
     path: '/walkthrough',
     name: 'walkthrough',
-    component: WalkthroughView
+    component: WalkthroughView,
+    meta: {
+      title: 'Walkthrough - Kitchen Jam'
+    }
   },
   {
     path: '/p/meal/:uuid',
@@ -156,7 +170,8 @@ const routes = [
     name: 'updates',
     component: UpdatesView,
     meta: {
-      requiresAuth: false
+      requiresAuth: false,
+      title: 'Site Updates - Kitchen Jam'
     }
   },
   {
@@ -172,7 +187,8 @@ const routes = [
     name: 'dashboard',
     component: DashboardView,
     meta: {
-      requiresAuth: true
+      requiresAuth: true,
+      title: 'Dashboard - Kitchen Jam'
     }
   },
   {
@@ -180,7 +196,8 @@ const routes = [
     name: 'friends',
     component: FriendsView,
     meta: {
-      requiresAuth: true
+      requiresAuth: true,
+      title: 'Friends - Kitchen Jam'
     }
   },
   {
@@ -188,7 +205,8 @@ const routes = [
     name: 'settings',
     component: SettingsView,
     meta: {
-      requiresAuth: true
+      requiresAuth: true,
+      title: 'Settings - Kitchen Jam'
     }
   },
   {
@@ -196,7 +214,8 @@ const routes = [
     name: 'notifications',
     component: NotificationsView,
     meta: {
-      requiresAuth: true
+      requiresAuth: true,
+      title: 'Notifications - Kitchen Jam'
     }
   },
   {
@@ -236,7 +255,8 @@ const routes = [
     name: 'jam',
     component: JamView,
     meta: {
-      requiresAuth: true
+      requiresAuth: true,
+      title: 'Jam Page - Kitchen Jam'
     }
   },
   {
@@ -271,19 +291,22 @@ const router = createRouter({
 });
 
 router.beforeEach((to) => {
-
   // Get the Vuex store
   const store = useStore();
+
+  // Set the document title dynamically
+  if (to.meta.title) {
+    document.title = to.meta.title;
+  }
 
   // Determine if the route requires Authentication
   const requiresAuth = to.matched.some(x => x.meta.requiresAuth);
 
   // If it does and they are not logged in, send the user to "/login"
   if (requiresAuth && store.state.token === '') {
-    return {name: "login"};
+    return { name: "login" };
   }
   // Otherwise, do nothing and they'll go to their next destination
-
 });
 
 export default router;
