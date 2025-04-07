@@ -2,6 +2,7 @@ package com.barnard.dao;
 
 import com.barnard.exception.DaoException;
 import com.barnard.model.Comment;
+import com.barnard.model.UserAttributes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.CannotGetJdbcConnectionException;
@@ -88,6 +89,29 @@ public class JdbcCommentDao implements CommentDao {
             throw new DaoException("Data integrity violation", e);
         }
         return comments;
+    }
+
+    @Override
+    public List<UserAttributes> getCommentersByComment(int commentId) {
+        String sql = "SELECT user_attributes.user_id, user_attributes.display_name " +
+                     "FROM comments " +
+                     "JOIN user_attributes ON comments.user_id = user_attributes.user_id " +
+                     "WHERE comments.comment_id = ?";
+        try {
+            SqlRowSet rs = jdbcTemplate.queryForRowSet(sql, commentId);
+            List<UserAttributes> commenters = new ArrayList<>();
+            while (rs.next()) {
+                UserAttributes user = new UserAttributes();
+                user.setUserId(rs.getInt("user_id"));
+                user.setDisplayName(rs.getString("display_name"));
+                commenters.add(user);
+            }
+            return commenters;
+        } catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Unable to connect to server or database", e);
+        } catch (DataIntegrityViolationException e) {
+            throw new DaoException("Data integrity violation", e);
+        }
     }
 
     @Override

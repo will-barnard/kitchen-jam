@@ -1,8 +1,11 @@
 package com.barnard.controller;
 
 import com.barnard.dao.FriendshipDao;
+import com.barnard.dao.NotificationDao;
 import com.barnard.dao.UserDao;
 import com.barnard.model.Friend;
+import com.barnard.model.Notification;
+import com.barnard.model.UserAttributes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,6 +26,8 @@ public class FriendshipController {
     private UserDao userDao;
     @Autowired
     private FriendshipDao friendshipDao;
+    @Autowired
+    private NotificationDao notificationDao;
 
     @GetMapping(path = "/friendlist")
     public List<Friend> getFriendList(Principal principal) {
@@ -63,6 +68,17 @@ public class FriendshipController {
         int userId = userDao.getUserByUsername(principal.getName()).getId();
         try {
             friendshipDao.acceptFriendRequest(friendId, userId);
+            UserAttributes attributes = userDao.getAttributesByUser(userId);
+            Notification notification = new Notification();
+            notification.setUserId(friendId);
+            notification.setActorId(userId);
+            notification.setTargetId(userId);
+            notification.setTargetType("user");
+            notification.setTargetId(userId);
+            notification.setType("friend_request_accepted");
+            notification.setRead(false);
+            notification.setMessage(attributes.getDisplayName() + " accepted your friend request");
+            notificationDao.createNotification(notification);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
         }

@@ -1,6 +1,5 @@
 <template>
-
-    <body>
+    <body v-show="showForm">
         <h1>New Meal</h1>
         <div class="image-block">
             <div class="edit-block">
@@ -158,11 +157,13 @@ export default {
             },
             searchRecipe: [],
             newIngredient: "",
-            newIngredientQuantity: ""
+            newIngredientQuantity: "",
+            showForm: true
         }
     },
     methods: {
-        createMeal() {
+        async createMeal() {
+            this.showForm = false;
             MealService.createMeal(this.meal).then(
                 (response) => {
                     let newMeal = response.data;
@@ -183,7 +184,12 @@ export default {
                         this.$router.push({ name: 'meal-detail', params: {mealId: response.data.mealId} })
                     }
                 }
-            )
+            );
+            await this.resetShowFormAfterDelay();
+        },
+        async resetShowFormAfterDelay() {
+            await new Promise(resolve => setTimeout(resolve, 3000));
+            this.showForm = true;
         },
         uploadImage(event){
             this.showImage = false;

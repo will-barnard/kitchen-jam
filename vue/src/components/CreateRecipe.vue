@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-show="showForm">
         
         <h1>New Recipe</h1>
 
@@ -128,11 +128,13 @@ export default {
             newIngredientQuantity: "",
             showImage: false,
             imgPath: "",
-            newImgId: null
+            newImgId: null,
+            showForm: true
         }
     },
     methods: {
-        createRecipe() {
+        async createRecipe() {
+            this.showForm = false;
             RecipeService.createRecipe(this.recipe).then(
                 (response) => {
                     let newRecipe = response.data;
@@ -144,12 +146,17 @@ export default {
                                 this.$store.commit('CREATE_RECIPE', newRecipe);
                                 this.$router.push({name: 'recipe-detail', params: {recipeId: newRecipe.recipeId}})
                             }
-                    );
+                        );
                     }
-                    this.$store.commit('CREATE_RECIPE', newRecipe)
-                    this.$router.push({name: 'recipe-detail', params: {recipeId: newRecipe.recipeId}})
+                    this.$store.commit('CREATE_RECIPE', newRecipe);
+                    this.$router.push({name: 'recipe-detail', params: {recipeId: newRecipe.recipeId}});
                 }
-            )
+            );
+            await this.resetShowFormAfterDelay();
+        },
+        async resetShowFormAfterDelay() {
+            await new Promise(resolve => setTimeout(resolve, 3000));
+            this.showForm = true;
         },
         searchForCategory() {
             if (this.newCategory.categoryName) {

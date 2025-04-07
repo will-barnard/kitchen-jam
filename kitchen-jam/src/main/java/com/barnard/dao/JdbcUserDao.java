@@ -261,7 +261,7 @@ public class JdbcUserDao implements UserDao {
 
     @Override
     public void deleteOldPasswordResets() {
-        String sql = "DELETE FROM password_reset WHERE time_generated < NOW() - INTERVAL 1 DAY";
+        String sql = "DELETE FROM password_reset WHERE time_generated < CURRENT_TIMESTAMP - INTERVAL '1 DAY'";
         try {
             jdbcTemplate.update(sql);
         } catch (CannotGetJdbcConnectionException e) {

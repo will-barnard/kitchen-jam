@@ -1,6 +1,7 @@
 <template>
   <h1>Kitchen Jam</h1>
-  <div id="register" class="text-center">
+  <LoadingWidget v-if="!showForm" />
+  <div id="register" class="text-center" v-show="showForm">
     <form v-on:submit.prevent="register">
       <h2>Create Account</h2>
       <div role="alert" v-if="registrationErrors">
@@ -30,8 +31,12 @@
 
 <script>
 import authService from '../services/AuthService';
+import LoadingWidget from '../components/LoadingWidget.vue';
 
 export default {
+  components: {
+    LoadingWidget,
+  },
   data() {
     return {
       user: {
@@ -42,6 +47,7 @@ export default {
       },
       registrationErrors: false,
       registrationErrorMsg: 'There were problems registering this user.',
+      showForm: true
     };
   },
   methods: {
@@ -50,6 +56,7 @@ export default {
         this.registrationErrors = true;
         this.registrationErrorMsg = 'Password & Confirm Password do not match.';
       } else {
+        this.showForm = false;
         authService
           .register(this.user)
           .then((response) => {
