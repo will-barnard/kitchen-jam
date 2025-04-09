@@ -32,10 +32,13 @@ export default {
     created() {
         if (this.$route.params.userId == this.$store.state.user.id) {
             document.title = "Your Profile - Kitchen Jam"; // Set title for own profile
-            if (!this.$store.state.loadedProfile) {
+            if (!this.$store.state.loadedProfile && !this.$store.state.loadedFriends) {
                 this.loadingTick();
             } else {
                 this.profile = this.$store.state.userProfile;
+                if (this.profile.friends == null) {
+                    this.profile.friends = this.$store.state.userFriends;
+                }
                 this.showProfile = true;
                 this.allowEdit = true;
             }
@@ -50,6 +53,9 @@ export default {
                                 let imgPath = "data:image/png;base64," + base64;
                                 response.data.img = imgPath;
                                 this.profile = response.data;
+                                if (this.profile.friends == null) {
+                                    this.profile.friends = [];
+                                }
                                 this.showProfile = true;
                             }
                         )
@@ -68,10 +74,13 @@ export default {
         loadingTick() {
             setTimeout(
                 () => {
-                    if (!this.$store.state.loadedProfile) {
+                    if (!this.$store.state.loadedProfile && !this.$store.state.loadedFriends) {
                         this.loadingTick();
                     } else {
                         this.profile = this.$store.state.userProfile;
+                        if (this.profile.friends == null) {
+                            this.profile.friends = this.$store.state.userFriends;
+                        }
                         this.showProfile = true;
                         this.allowEdit = true;
                     }

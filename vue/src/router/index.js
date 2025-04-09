@@ -28,6 +28,7 @@ import EditCategoriesView from '../views/EditCategoriesView.vue';
 import JamView from '../views/JamView.vue';
 import TagView from '../views/TagView.vue';
 import CategoryView from '../views/CategoryView.vue';
+import FriendsListView from '../views/FriendsListView.vue';
 
 const routes = [
   {
@@ -36,7 +37,7 @@ const routes = [
     component: HomeView,
     meta: {
       requiresAuth: false,
-      title: 'Home - Kitchen Jam'
+      title: 'Kitchen Jam'
     }
   },
   {
@@ -163,6 +164,14 @@ const routes = [
     path: '/profile/:userId',
     name: 'profile',
     component: ProfileView,
+    meta: {
+      requiresAuth: false
+    }
+  },
+  {
+    path: '/profile/:userId/friends',
+    name: 'friends-list',
+    component: FriendsListView,
     meta: {
       requiresAuth: false
     }

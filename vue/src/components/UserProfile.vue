@@ -31,7 +31,7 @@
                         </div>
                         <div class="friends">
                             <div v-if="isFriend(profile.userId)" class="dropdown">
-                                <h3 @click="toggleDropdown">Friends</h3>
+                                <h3 @click="toggleDropdown"><i class="fa fa-check"></i>&nbsp;Friends</h3>
                                 <div v-if="showDropdown" class="dropdown-content">
                                     <p @click="removeFriend(profile)">Remove Friend</p>
                                 </div>
@@ -48,6 +48,9 @@
                         <div class="single-row">
                             <h3><i class="fas fa-utensils icon"></i>&nbsp;Meals: {{ profile.countMeals }}</h3>
                             <h3><i class="fas fa-book icon"></i>&nbsp;Recipes: {{ profile.countRecipes }}</h3>
+                        </div>
+                        <div class="count-friends" @click="$router.push({ name: 'friends-list', params: { userId: profile.userId }})">
+                            <h3><i class="fas fa-user-friends icon"></i>&nbsp;Friends: {{ profile.friends.length }}</h3>
                         </div>
                         <hr class="separator" />
                         <p v-if="profile.location"><i class="fas fa-map-marker-alt icon"></i>&nbsp;{{ profile.location }}</p>
@@ -598,5 +601,8 @@ p {
     display: block;
     margin-left: auto;
     margin-right: auto;
+}
+.count-friends h3 {
+    text-decoration: underline;
 }
 </style>

@@ -1,9 +1,6 @@
 package com.barnard.controller;
 
-import com.barnard.dao.MealDao;
-import com.barnard.dao.ProfileDao;
-import com.barnard.dao.RecipeDao;
-import com.barnard.dao.UserDao;
+import com.barnard.dao.*;
 import com.barnard.model.ProfileLogDto;
 import com.barnard.model.UserProfile;
 import com.barnard.model.UserProfilePrimitive;
@@ -30,12 +27,15 @@ public class ProfileController {
     private MealDao mealDao;
     @Autowired
     private RecipeDao recipeDao;
+    @Autowired
+    private FriendshipDao friendsDao;
 
     @GetMapping(path = "/{userId}")
     public UserProfile getUserProfile(@PathVariable int userId) {
         UserProfile profile;
         try {
             profile = profileDao.getUserProfile(userId);
+            profile.setFriends(friendsDao.getFriendList(userId));
             if (!profile.isPublic()) {
                 throw new Exception("profile not public");
             }

@@ -1,6 +1,8 @@
 package com.barnard.model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserProfile {
 
@@ -17,6 +19,7 @@ public class UserProfile {
     private LocalDateTime createdAt;
     private int countMeals;
     private int countRecipes;
+    private List<Friend> friends;
 
     public int getUserId() {
         return userId;
@@ -120,5 +123,13 @@ public class UserProfile {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public List<Friend> getFriends() {
+        return friends;
+    }
+
+    public void setFriends(List<Friend> friends) {
+        this.friends = friends;
     }
 }
