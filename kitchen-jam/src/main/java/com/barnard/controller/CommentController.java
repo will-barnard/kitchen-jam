@@ -85,30 +85,34 @@ public class CommentController {
                         Meal meal = mealDao.getMeal(comment.getMealId());
                         if (meal.getUserId() == userId) {
                             newComment = commentDao.createComment(comment);
-                            List<UserAttributes> commenters = commentDao.getCommentersByComment(comment.getRecipeId());
+                            List<UserAttributes> commenters = commentDao.getCommentersByMeal(comment.getMealId());
                             for (UserAttributes commenter : commenters) {
                                 if (commenter.getUserId() != userId) {
                                     notification.setUserId(commenter.getUserId());
                                     notification.setActorId(userId);
                                     notification.setType("comment");
-                                    notification.setTargetId(comment.getRecipeId());
+                                    notification.setTargetId(comment.getMealId());
                                     notification.setTargetType("meal");
                                     notification.setTargetUrl(meal.getPublicUrl());
-                                    notification.setMessage("New comment on a meal you commented on: " + meal.getRecipeName());
+                                    notification.setMessage("New comment on a meal you commented on: " + meal.getMealName());
+                                    notification.setCommentId(newComment.getCommentId());
+                                    notificationDao.createNotification(notification);
                                 }
                             }
                         } else if (friendDao.isFriend(userId, meal.getUserId())) {
                             newComment = commentDao.createComment(comment);
-                            List<UserAttributes> commenters = commentDao.getCommentersByComment(comment.getRecipeId());
+                            List<UserAttributes> commenters = commentDao.getCommentersByMeal(comment.getMealId());
                             for (UserAttributes commenter : commenters) {
                                 if (commenter.getUserId() != userId && commenter.getUserId() != meal.getUserId()) {
                                     notification.setUserId(commenter.getUserId());
                                     notification.setActorId(userId);
                                     notification.setType("comment");
-                                    notification.setTargetId(comment.getRecipeId());
+                                    notification.setTargetId(comment.getMealId());
                                     notification.setTargetType("meal");
                                     notification.setTargetUrl(meal.getPublicUrl());
-                                    notification.setMessage("New comment on a meal you commented on: " + meal.getRecipeName());
+                                    notification.setMessage("New comment on a meal you commented on: " + meal.getMealName());
+                                    notification.setCommentId(newComment.getCommentId());
+                                    notificationDao.createNotification(notification);
                                 }
                             }
                             notification.setUserId(meal.getUserId());
@@ -118,6 +122,8 @@ public class CommentController {
                             notification.setTargetType("meal");
                             notification.setTargetUrl(meal.getPublicUrl());
                             notification.setMessage("New comment on your meal: " + meal.getMealName());
+                            notification.setCommentId(newComment.getCommentId());
+                            notificationDao.createNotification(notification);
                         } else {
                             return ResponseEntity.status(403).build();
                         }
@@ -131,7 +137,7 @@ public class CommentController {
                         Recipe recipe = recipeDao.getRecipe(comment.getRecipeId());
                         if (recipe.getUserId() == userId) {
                             newComment = commentDao.createComment(comment);
-                            List<UserAttributes> commenters = commentDao.getCommentersByComment(comment.getRecipeId());
+                            List<UserAttributes> commenters = commentDao.getCommentersByRecipe(comment.getRecipeId());
                             for (UserAttributes commenter : commenters) {
                                 if (commenter.getUserId() != userId) {
                                     notification.setUserId(commenter.getUserId());
@@ -141,11 +147,13 @@ public class CommentController {
                                     notification.setTargetType("recipe");
                                     notification.setTargetUrl(recipe.getPublicUrl());
                                     notification.setMessage("New comment on a recipe you commented on: " + recipe.getRecipeName());
+                                    notification.setCommentId(newComment.getCommentId());
+                                    notificationDao.createNotification(notification);
                                 }
                             }
                         } else if (friendDao.isFriend(userId, recipe.getUserId())) {
                             newComment = commentDao.createComment(comment);
-                            List<UserAttributes> commenters = commentDao.getCommentersByComment(comment.getRecipeId());
+                            List<UserAttributes> commenters = commentDao.getCommentersByRecipe(comment.getRecipeId());
                             for (UserAttributes commenter : commenters) {
                                 if (commenter.getUserId() != userId && commenter.getUserId() != recipe.getUserId()) {
                                     notification.setUserId(commenter.getUserId());
@@ -155,6 +163,8 @@ public class CommentController {
                                     notification.setTargetType("recipe");
                                     notification.setTargetUrl(recipe.getPublicUrl());
                                     notification.setMessage("New comment on a recipe you commented on: " + recipe.getRecipeName());
+                                    notification.setCommentId(newComment.getCommentId());
+                                    notificationDao.createNotification(notification);
                                 }
                             }
                             notification.setUserId(recipe.getUserId());
@@ -164,8 +174,8 @@ public class CommentController {
                             notification.setTargetType("recipe");
                             notification.setTargetUrl(recipe.getPublicUrl());
                             notification.setMessage("New comment on your recipe: " + recipe.getRecipeName());
+                            notification.setCommentId(newComment.getCommentId());
                             notificationDao.createNotification(notification);
-
                         } else {
                             return ResponseEntity.status(403).build();
                         }

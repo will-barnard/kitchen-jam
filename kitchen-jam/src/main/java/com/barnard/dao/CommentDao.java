@@ -10,7 +10,8 @@ public interface CommentDao {
     Comment getComment(int commentId);
     List<Comment> getCommentsByMeal(int mealId);
     List<Comment> getCommentsByRecipe(int recipeId);
-    List<UserAttributes> getCommentersByComment(int mealId);
+    List<UserAttributes> getCommentersByMeal(int mealId);
+    List<UserAttributes> getCommentersByRecipe(int recipeId);
     Comment createComment(Comment comment);
     Comment updateComment(Comment comment);
     int deleteComment(int commentId);

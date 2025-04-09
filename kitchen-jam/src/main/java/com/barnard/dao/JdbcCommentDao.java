@@ -92,13 +92,13 @@ public class JdbcCommentDao implements CommentDao {
     }
 
     @Override
-    public List<UserAttributes> getCommentersByComment(int commentId) {
+    public List<UserAttributes> getCommentersByMeal(int mealId) {
         String sql = "SELECT user_attributes.user_id, user_attributes.display_name " +
                      "FROM comments " +
                      "JOIN user_attributes ON comments.user_id = user_attributes.user_id " +
-                     "WHERE comments.comment_id = ?";
+                     "WHERE comments.meal_id = ?";
         try {
-            SqlRowSet rs = jdbcTemplate.queryForRowSet(sql, commentId);
+            SqlRowSet rs = jdbcTemplate.queryForRowSet(sql, mealId);
             List<UserAttributes> commenters = new ArrayList<>();
             while (rs.next()) {
                 UserAttributes user = new UserAttributes();
@@ -113,6 +113,30 @@ public class JdbcCommentDao implements CommentDao {
             throw new DaoException("Data integrity violation", e);
         }
     }
+
+    @Override
+    public List<UserAttributes> getCommentersByRecipe(int recipeId) {
+        String sql = "SELECT user_attributes.user_id, user_attributes.display_name " +
+                     "FROM comments " +
+                     "JOIN user_attributes ON comments.user_id = user_attributes.user_id " +
+                     "WHERE comments.recipe_id = ?";
+        try {
+            SqlRowSet rs = jdbcTemplate.queryForRowSet(sql, recipeId);
+            List<UserAttributes> commenters = new ArrayList<>();
+            while (rs.next()) {
+                UserAttributes user = new UserAttributes();
+                user.setUserId(rs.getInt("user_id"));
+                user.setDisplayName(rs.getString("display_name"));
+                commenters.add(user);
+            }
+            return commenters;
+        } catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Unable to connect to server or database", e);
+        } catch (DataIntegrityViolationException e) {
+            throw new DaoException("Data integrity violation", e);
+        }
+    }
+
 
     @Override
     public Comment createComment(Comment comment) {
@@ -223,9 +247,10 @@ public class JdbcCommentDao implements CommentDao {
 
     @Override
     public int deleteComment(int commentId) {
-        String sql = "DELETE FROM comments WHERE comment_id = ?";
+        String sql = "DELETE FROM notifications WHERE comment_id = ?; " +
+        "DELETE FROM comments WHERE comment_id = ?;";
         try {
-            return jdbcTemplate.update(sql, commentId);
+            return jdbcTemplate.update(sql, commentId, commentId);
         } catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database", e);
         } catch (DataIntegrityViolationException e) {

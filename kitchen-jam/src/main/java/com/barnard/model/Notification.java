@@ -7,6 +7,7 @@ public class Notification {
     private Integer notificationId;
     private Integer userId;
     private Integer actorId;
+    private Integer commentId;
     private String type;
     private Integer targetId;
     private String targetType;
@@ -83,4 +84,13 @@ public class Notification {
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
+
+    public Integer getCommentId() {
+        return commentId;
+    }
+
+    public void setCommentId(Integer commentId) {
+        this.commentId = commentId;
+    }
+
 }

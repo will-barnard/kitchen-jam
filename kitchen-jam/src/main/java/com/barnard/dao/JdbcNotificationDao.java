@@ -68,8 +68,8 @@ public class JdbcNotificationDao implements NotificationDao {
     @Override
     public Notification createNotification(Notification notification) {
         Notification createdNotification = null;
-        String sql = "INSERT INTO notifications (user_id, actor_id, type, target_id, target_type, target_url, message, is_read) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING notification_id";
+        String sql = "INSERT INTO notifications (user_id, actor_id, type, target_id, target_type, target_url, message, is_read, comment_id) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING notification_id";
         try {
             int notificationId = jdbcTemplate.queryForObject(sql, int.class,
                 notification.getUserId(),
@@ -79,7 +79,8 @@ public class JdbcNotificationDao implements NotificationDao {
                 notification.getTargetType(),
                 notification.getTargetUrl(),
                 notification.getMessage(),
-                false
+                false,
+                notification.getCommentId()
             );
             createdNotification = getNotification(notificationId);
         } catch (CannotGetJdbcConnectionException e) {
