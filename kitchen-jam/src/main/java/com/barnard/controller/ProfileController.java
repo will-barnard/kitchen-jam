@@ -68,6 +68,7 @@ public class ProfileController {
                 throw new Exception("not authorized");
             } else {
                 updatedProfile = profileDao.updateUserProfile(userProfile);
+                updatedProfile.setFriends(friendsDao.getFriendList(userId));
             }
         } catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");

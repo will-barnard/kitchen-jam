@@ -34,6 +34,14 @@ export default {
             headline: "Bug fixes and improvements",
             notes: "Images now lazy load, greatly speeding up the performance of the application. There is now a button to grab ingredients from last time a recipe was logged, both in meal logging and on the edit recipe page. This should save some time when logging meals. Lastly, some styles were updated for a better look. It still doesn't look totally polished but I'm working on it. Forthcoming still are friend feeds, commenting, and collaboration.",
             type: 1
+        },
+        {
+            order: 4,
+            version: "1.4.0",
+            date: "04/10/2025",
+            headline: "Friend feeds, commenting, this is the big social update",
+            notes: "You can now see your friends' meals and recipes in a feed, and comment on their meals and recipes. This is a big step toward the social aspect of Kitchen Jam. I'm still working on collaboration, but as of now I'm officially broadcasting that the site is ready for use. Still more work to be done, but let's get cooking!",
+            type: 0
         }
     ]
 }
