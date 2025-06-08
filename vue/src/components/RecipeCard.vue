@@ -30,7 +30,7 @@
                     </div>
 
                     <div class="widget" v-show="recipe.avgCookTime > 0">
-                        <p>Avg Cook TIme: {{ Math.floor(recipe.avgCookTime) }} min</p>
+                        <p>Avg Cook Time: {{ Math.floor(recipe.avgCookTime) }} min</p>
                     </div>
                     
                     <div class="rating" v-show="recipe.avgRating">

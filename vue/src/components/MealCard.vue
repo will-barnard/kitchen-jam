@@ -26,7 +26,7 @@
                         <p>{{ meal.mealComment }}</p>
                     </div>
 
-                    <div class="tags" v-if="meal.tags.length > 0">
+                    <div class="tags" v-if="meal.tags.length > 0 && showMore">
                         <div class="tag-list">
                             <div  v-for="tag in meal.tags">
                                 <div class="tag-item">

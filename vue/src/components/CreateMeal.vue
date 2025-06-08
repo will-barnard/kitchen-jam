@@ -57,33 +57,30 @@
                     </div>
 
                     <div class="edit-tags edit-block">
-                
                         <h3>Tags</h3>
-               
                         <div>
-                            <p v-if="!meal.tags">no tags</p>
-
+                            <div class="single-row">
+                                <p v-if="meal.tags.length == 0">no tags</p>
+                                <div class="spacer"></div>
+                                <button v-if="meal.recipeId && (!meal.tags || meal.tags.length === 0)" @click="copyTagsFromLastTime">Copy tags from last time</button>
+                            </div>
                             <div class="search-tags">
                                 <div v-for="tag in meal.tags" class="tag-search-item">
                                     <p>{{tag.tagName}}</p>
                                     <i class="far fa-trash-alt delete-tag mini-button" @click="removeTag(tag.tagId)"></i>
                                 </div>
                             </div>    
-
                         </div>
-
                         <div class="tag-search">
                             <input type="text" v-model="newTag.tagName" @keyup="searchForTags()"/>
                             <button @click.prevent="newTag.tagName ? createTag() : null">Create&nbsp;New&nbsp;Tag</button>
                         </div>
-
                         <div class="search-tags">
                             <div class="tag-search-item" v-for="tag in searchTags">
                                 <p>{{ tag.tagName }}</p>
                                 <i class="fas fa-plus add-tag mini-button" @click="addTag(tag)"></i>
                             </div>
                         </div>
-                        
                     </div>
 
                     <div class="input-area edit-block">
@@ -356,6 +353,14 @@ export default {
                 .sort((a, b) => new Date(b.dateCooked) - new Date(a.dateCooked))[0];
             if (lastMeal && lastMeal.ingredientList) {
                 this.meal.ingredientList = [...lastMeal.ingredientList];
+            }
+        },
+        copyTagsFromLastTime() {
+            const lastMeal = this.$store.state.userMeals
+                .filter(meal => meal.recipeId === this.meal.recipeId && meal.mealId !== this.meal.mealId)
+                .sort((a, b) => new Date(b.dateCooked) - new Date(a.dateCooked))[0];
+            if (lastMeal && lastMeal.tags) {
+                this.meal.tags = [...lastMeal.tags];
             }
         }
     }

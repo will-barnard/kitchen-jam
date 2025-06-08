@@ -172,7 +172,7 @@ export default {
       observer.observe(this.$refs.observerTarget);
     },
     truncateName(name) {
-        const maxLength = 9; // Adjust the max length as needed
+        const maxLength = 7; // Adjust the max length as needed
         return name.length > maxLength ? name.slice(0, maxLength) + '...' : name;
     },
     addComment(newComment) {

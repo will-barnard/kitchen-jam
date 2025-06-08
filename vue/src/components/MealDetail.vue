@@ -74,10 +74,8 @@
 
             <div class="edit-tags edit-block">
                 <h3>Tags</h3>
-               
                 <div>
-                    <p v-if="!newMeal.tags">no tags</p>
-
+                 
                     <div class="tag-list">
                         <div  v-for="tag in newMeal.tags">
                             <div class="tag-item">
@@ -86,8 +84,15 @@
                                 <i class="far fa-trash-alt delete-tag mini-button" @click="removeTag(tag.tagId)"></i>
                             </div>    
                         </div>
-                    </div>    
+                    </div>                       
+                       
+                    <div class="single-row">
+                        <p v-if="newMeal.tags.length == 0">no tags</p>
+                        <div class="spacer"></div>
+                        <button v-if="newMeal.recipeId && (!newMeal.tags || newMeal.tags.length === 0)" @click="copyTagsFromLastTime">Copy tags from last time</button>
 
+                    </div>
+                
                 </div>
 
                 <div class="tag-search">
@@ -483,6 +488,14 @@ export default {
                 .sort((a, b) => new Date(b.dateCooked) - new Date(a.dateCooked))[0];
             if (lastMeal && lastMeal.ingredientList) {
                 this.newMeal.ingredientList = [...lastMeal.ingredientList];
+            }
+        },
+        copyTagsFromLastTime() {
+            const lastMeal = this.$store.state.userMeals
+                .filter(meal => meal.recipeId === this.newMeal.recipeId && meal.mealId !== this.newMeal.mealId)
+                .sort((a, b) => new Date(b.dateCooked) - new Date(a.dateCooked))[0];
+            if (lastMeal && lastMeal.tags) {
+                this.newMeal.tags = [...lastMeal.tags];
             }
         },
 
