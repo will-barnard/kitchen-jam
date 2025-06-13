@@ -14,6 +14,8 @@ public interface UserDao {
     User getUserByUsername(String username);
     UserAttributes getAttributesByUser(int userId);
     String getUsernameByEmail(LoginDto loginDto);
+    boolean checkIfEmailIsUsed(String email);
+    boolean checkIfUsernameIsUsed(String username);
     User createUser(RegisterUserDto user);
     String createResetPasswordLink(int userId);
     void clearPasswordResetToken(int userId);

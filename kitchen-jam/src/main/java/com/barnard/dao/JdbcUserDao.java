@@ -130,6 +130,34 @@ public class JdbcUserDao implements UserDao {
     }
 
     @Override
+    public boolean checkIfEmailIsUsed(String email) {
+        String sql = "SELECT EXISTS(SELECT 1 FROM user_attributes WHERE email = ?)";
+        boolean exists = false;
+        try {
+            exists = jdbcTemplate.queryForObject(sql, boolean.class, email);
+        } catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Unable to connect to server or database", e);
+        } catch (DataIntegrityViolationException e) {
+            throw new DaoException("Data integrity violation", e);
+        }
+        return exists;
+    }
+
+    @Override
+    public boolean checkIfUsernameIsUsed(String username) {
+        String sql = "SELECT EXISTS(SELECT 1 FROM users WHERE username = ?)";
+        boolean exists = false;
+        try {
+            exists = jdbcTemplate.queryForObject(sql, boolean.class, username);
+        } catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Unable to connect to server or database", e);
+        } catch (DataIntegrityViolationException e) {
+            throw new DaoException("Data integrity violation", e);
+        }
+        return exists;
+    }
+
+    @Override
     public User createUser(RegisterUserDto user) {
 
         User newUser = null;

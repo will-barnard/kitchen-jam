@@ -68,6 +68,15 @@ public class AuthenticationController {
     public void register(@Valid @RequestBody RegisterUserDto newUser) {
         newUser.setRole("user");
         try {
+
+            // todo add email validation and username unique handling
+            if (userDao.checkIfEmailIsUsed(newUser.getEmail())) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email is already in use.");
+            }
+            if (userDao.checkIfUsernameIsUsed(newUser.getUsername())) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username is already in use.");
+            }
+
             User user = userDao.createUser(newUser);
             // todo add welcome email
 //            emailService.sendEmail(new EmailParams(newUser.getEmail(), "Welcome to Kitchen Jam", "Welcome to Kitchen Jam!"));
@@ -78,6 +87,16 @@ public class AuthenticationController {
             }
         } catch (DaoException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "User registration failed.");
+        }
+    }
+
+    @PostMapping(path = "/checkemail")
+    public boolean checkEmail(@RequestBody EmailDto emailDto) {
+        String email = emailDto.getEmail();
+        try {
+            return userDao.checkIfEmailIsUsed(email);
+        } catch (DaoException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not check email.");
         }
     }
 
