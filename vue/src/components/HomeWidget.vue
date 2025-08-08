@@ -9,7 +9,7 @@
             </div>     
             <FriendFeed v-if="feedVisible" :compact="true"/>
         </div>
-        <div class="jam-holder" v-if="validRecipes">
+        <!-- <div class="jam-holder" v-if="validRecipes">
             <RecipeJam v-if="jamModule === 'recipe'" :compact="true"/>
 
         </div>
@@ -20,7 +20,7 @@
         <div class="jam-holder" v-if="validCategories">
             <TagJam v-if="jamModule === 'tag'" :compact="true"/>
         </div>
-        <p @click="cycleWidget" v-if="showCycleWidget"><i class="fas fa-exchange-alt cycle-widget"></i></p>
+        <p @click="cycleWidget" v-if="showCycleWidget"><i class="fas fa-exchange-alt cycle-widget"></i></p> -->
     </div>
 </template>
 
