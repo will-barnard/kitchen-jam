@@ -72,16 +72,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-
-        config.setAllowedOrigins(Collections.singletonList("https://kitchen-jam.com"));
+        config.setAllowedOrigins(Arrays.asList(
+            "https://kitchen-jam.com",
+            "http://localhost:5173",
+            "http://127.0.0.1:5173"
+        ));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With"));
-        config.setAllowCredentials(true); // ✅ Required if sending cookies or Authorization header
+        config.setAllowCredentials(true); // Required if sending cookies or Authorization header
         config.setMaxAge(3600L); // Optional: cache preflight for 1 hour
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
-
         return source;
     }
 
